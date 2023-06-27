@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 @ini_set( 'post_max_size', '164M' );
 @ini_set( 'max_execution_time', '300' );
 
+if (session_status() == PHP_SESSION_NONE) {
+	session_start();
+ }
+
 if ( ! function_exists( 'chld_thm_cfg_locale_css' ) ) :
 	function chld_thm_cfg_locale_css( $uri ) {
 		if ( empty( $uri ) && is_rtl() && file_exists( get_template_directory() . '/rtl.css' ) ) {
@@ -443,28 +447,231 @@ function load_the_details() {
 		return $details;
 }
 
+/************ */
+// function get_dynamic_price( $postid ) {
+
+// 		$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
+
+// 		$min_price = array();
+// 		$i         = 0;
+// 	if ( is_array( $pricing_rule ) || is_object( $pricing_rule ) ) {
+// 		foreach ( $pricing_rule as $key => $item ) {
+
+// 			$min_price[ $i ] = $pricing_rule[ $key ]['rules']['1']['amount'];
+// 			$i++;
+
+// 		}
+// 	}
+// 	if ( empty( $min_price ) ) {
+// 		$dynamic_price = false;
+// 	} else {
+// 		$dynamic_price = min( $min_price );
+// 	}
+// 		return $dynamic_price;
+// }
+/************ */
+
+
+// add_action( 'wp_ajax_dynamic_price_check', 'dynamic_price_check' );
+// add_action( 'wp_ajax_nopriv_dynamic_price_check', 'dynamic_price_check' );
+
+// $annual_select = '';
+// $monthly_select = '';
+
+// function dynamic_price_check () {
+// 	// check_ajax_referer( 'radio_button_check', '_nonce' );
+
+// 	global $annual_select;
+// 	global $monthly_select;
+
+// 	error_log('TEJA TEJA ');
+// 	if(isset($_POST["value"])) {
+// 		$value_of_radio_box = ($_POST["value"]);
+// 	}
+
+// 	if( $value_of_radio_box == 'withdealclub'){
+// 		$annual_select =  'withdealclub';
+// 	}else {
+// 		$monthly_select = 'withmonthlydealclub';
+// 	}
+
+// 	error_log($annual_select);
+// 	error_log($monthly_select);
+
+// 	wp_send_json_success( );
+
+// }
+
+add_action('wp_footer','get_dynamic_price_annual_monthly');
+
+function get_dynamic_price_annual_monthly () {
+
+	?>
+	<script>
+
+		alert('Ok wow!');
+
+		var ajaxurl="<?php echo admin_url( 'admin-ajax.php' ); ?>";
+		var nonce
+
+		jQuery(document).ready(function(){
+
+			jQuery('input[name="radiodealclub"]').click(function() {
+
+
+				var value = jQuery(this).val();
+				var productID = jQuery(this).data('product-id');
+
+				jQuery.ajax(
+				{
+					type: 'POST',
+					url: ajaxurl,
+					data:
+					{
+						action: 'dynamic_price_check',
+						value,
+						product_id: productID,
+
+					},
+					success: function success( data )
+					{
+						console.log(data);
+					},
+					error: function (error) {
+						console.log(error);
+					}
+				});
+
+			});
+
+
+		});
+
+	</script>
+
+	<?php
+
+
+}
+
+
+
+add_action( 'wp_ajax_dynamic_price_check', 'get_dynamic_price' );
+add_action( 'wp_ajax_nopriv_dynamic_price_check', 'get_dynamic_price' );
+
+$annual_dynamic_price = '';
+$monthly_dynamic_price = '';
+$both_dynamic_values = '';
+
 
 function get_dynamic_price( $postid ) {
 
-		$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
+	error_log(' get_dynamic_price is called ');
 
-		$min_price = array();
-		$i         = 0;
+	global $annual_dynamic_price;
+	global $monthly_dynamic_price;
+	global $both_dynamic_values;
+
+	error_log('TEJA TEJA ');
+
+	if(isset($_POST["product_id"])){
+
+		$postid = $_POST["product_id"];
+
+	}
+
+	$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
+
+	$min_price = array();
+	$i         = 0;
+
+
+	$dynamic_price_array = array();
+
+
 	if ( is_array( $pricing_rule ) || is_object( $pricing_rule ) ) {
 		foreach ( $pricing_rule as $key => $item ) {
 
+
+			$membership_type = $pricing_rule[ $key]['conditions']['1']['args']['memberships']['0'];
+
 			$min_price[ $i ] = $pricing_rule[ $key ]['rules']['1']['amount'];
+
+
+			if($membership_type==174761 || $membership_type==174765){
+
+
+				if( $membership_type==174765 ){
+
+					$dynamic_price_array [0] = $pricing_rule[ $key ]['rules']['1']['amount'];
+
+				}else {
+
+					$dynamic_price_array [1] = $pricing_rule[ $key ]['rules']['1']['amount'];
+
+				}
+
+			}
+
 			$i++;
 
 		}
 	}
-	if ( empty( $min_price ) ) {
+
+		if ( empty( $dynamic_price_array ) ) {
 		$dynamic_price = false;
-	} else {
-		$dynamic_price = min( $min_price );
-	}
-		return $dynamic_price;
+		} else {
+		$dynamic_price = $dynamic_price_array;
+		}
+
+
+		$both_dynamic_values = $dynamic_price ;
+
+		$value_of_radio_box = 'withdealclub';
+
+		if(isset($_POST["value"])) {
+			$value_of_radio_box = $_POST["value"];
+			$_SESSION['radio_button_value'] = $_POST["value"];
+		}
+
+		if ( $value_of_radio_box == '') {
+			$annual_dynamic_price = $both_dynamic_values[0];
+			// wp_send_json_success( array(
+			// 	'annual_dynamic_price' => $annual_dynamic_price,
+			// ) );
+
+
+			return $annual_dynamic_price;
+		}
+		else if( $value_of_radio_box == 'withdealclub'){
+			$annual_dynamic_price = $both_dynamic_values[0];
+			// wp_send_json_success( array(
+			// 	'annual_dynamic_price' => $annual_dynamic_price,
+			// ) );
+
+
+			return $annual_dynamic_price;
+
+		}else {
+
+			$monthly_dynamic_price = 	$both_dynamic_values[1];
+			// wp_send_json_success( array(
+			// 	'monthly_dynamic_price' => $monthly_dynamic_price,
+			// ) );
+
+			return $monthly_dynamic_price;
+		}
+
+
+
+		// return $dynamic_price;
+
+		// wp_send_json_success( );
+
+
 }
+
+
 
 // Thumbnail three column design
 function df_get_thumbnail_header( $shmink, $regularprice, $saleprice, $dealclub_price ) {
@@ -537,6 +744,7 @@ function df_get_thumbnail_header( $shmink, $regularprice, $saleprice, $dealclub_
 // Change 'add to cart' text on archive product page
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'button_add_to_cart_text' );
 function button_add_to_cart_text() {
+	error_log('button_add_to_cart_text');
 	 global $product;
 	if ( is_active_dealclub_member() ) {
 		   $updated_dynamic_price_for_dc_members = get_dynamic_price( $product->get_id() );
@@ -654,6 +862,27 @@ function remove_single_product_print_notices() {
 	remove_action( 'woocommerce_before_single_product', 'wc_print_notices', 10 );
 }
 
+/**
+ * Find out the type of user's memebrship
+ */
+
+ function is_user_has_annual_or_monthly_memebership ( ) {
+
+		global $wpdb;
+		// get any active user memberships (requires Memberships 1.4+)
+		if ( empty( $user_id ) ) {
+
+				$user_id = get_current_user_id();
+		}
+
+		$membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
+		$membership = $membership_type->post_parent;
+		// return $membership_type;
+		error_log('MEMEEMMEMEMEM');
+		error_log(print_r($membership,true));
+ }
+
+ is_user_has_annual_or_monthly_memebership();
 
 /*
  *Check if user has active WooCommerce membership or not
@@ -744,13 +973,26 @@ function checkUserMembership() {
 
 add_action( 'woocommerce_before_calculate_totals', 'wwpa_simple_add_cart_price' );
 function wwpa_simple_add_cart_price( $cart_object ) {
+
+	global $both_dynamic_values;
 	if ( ! is_array( is_dc_in_cart() ) || is_user_an_active_member_wcm() ) {
 		foreach ( $cart_object->cart_contents as $key => $value ) {
 			if ( $value['product_id'] == 174721 || $value['product_id'] == 174738 || $value['product_id'] == 174739 ) {
 				// dont modify prices here
 			} elseif ( empty( $value['variation'] ) ) {
-				  $updated_dynamic_price_for_dc_members = get_dynamic_price( $value['product_id'] );
-				  $value['data']->set_price( $updated_dynamic_price_for_dc_members );
+
+					$check_radio_button = $_SESSION['radio_button_value'];
+
+					if ($check_radio_button == 'withmonthlydealclub' ) {
+
+						$updated_dynamic_price_for_dc_members =  $both_dynamic_values[1];
+					}else{
+
+						$updated_dynamic_price_for_dc_members =   $both_dynamic_values[0];
+					}
+
+				  	$value['data']->set_price( $updated_dynamic_price_for_dc_members );
+
 			} else {
 
 				$variation_arr = get_post_meta( $value['product_id'], '_pricing_rules', 'true' );
@@ -765,6 +1007,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 	}
 }
 function is_dc_in_cart() {
+	error_log('is_dc_in_cart');
 	global $woocommerce;
 	$items                 = $woocommerce->cart->get_cart();
 	$ret_arr['total_cart'] = 0;
@@ -2123,7 +2366,7 @@ function save_password( $user_id ) {
 
 add_action( 'woocommerce_after_order_notes', 'my_custom_checkout_field' );
 function my_custom_checkout_field( $checkout ) {
-
+	error_log('my_custom_checkout_field');
 	global $woocommerce;
 	$cart_total_oncheckout = $woocommerce->cart->get_cart_total();
 
@@ -5148,6 +5391,7 @@ add_filter( 'woocommerce_return_to_shop_redirect', 'wc_empty_cart_redirect_url' 
 /* Added to display DC prices only on Deal Pages if DealClub is in cart - By Prasada */
 add_filter( 'woocommerce_get_price_html', 'df_change_product_price_html', 10, 2 );
 function df_change_product_price_html( $price, $product ) {
+	error_log('my_custom_checkout_field');
 
 	if(!is_admin()){
 	global $woocommerce;
@@ -5640,12 +5884,22 @@ function assign_download_permission_for_guest_checkout( $order_id ) {
 add_shortcode('productpage_sidebar_addtocart','productpage_sidebar_addtocart_shortcode');
 function productpage_sidebar_addtocart_shortcode(){
     global $product;
+	global $annual_dynamic_price;
+	global $monthly_dynamic_price;
+	global $both_dynamic_values;
+
     if (!is_product()){
         return;
     }
+
 	if( $product->is_type( 'simple' ) ){
+
+
         $productid = $product->get_id();
         $product_name = $product->get_name();
+
+
+		print_r(get_dynamic_price($productid));
 
         //Multiple Products add to cart
         $product_ids = $productid.',174739';
@@ -5684,13 +5938,25 @@ function productpage_sidebar_addtocart_shortcode(){
                 <div class="radio_section">
                     <div>
                         <div class="withdcleft">
-                            <input type="radio" class="withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub">
+                            <input type="radio" class="withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>">
                             <label>With DealClub</label>
                         </div>
-                        <div class="withdcright"><span class="dcpriceins"><?php echo "$" . get_dynamic_price( $product->get_id() ); ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
+                        <div class="withdcright"><span class="dcpriceins"><?php echo "$" . $both_dynamic_values[0]; ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
                         </div>
 
                     </div>
+
+					<div>
+                        <div class="montlydcleft">
+                            <input type="radio" class="withdcpricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>">
+                            <label>With Monthly DealClub</label>
+                        </div>
+                        <div class="montlydcleft"><span class="monthlypriceins"><?php echo "$" . $both_dynamic_values[1]; ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
+                        </div>
+
+                    </div>
+
+
                     <div style="clear: both;">
                     <div class="withoutdcleft">
                         <input type="radio" class="withoutdcpricerad" id="withoutdealclub" name="radiodealclub" value="withoutdealclub">
