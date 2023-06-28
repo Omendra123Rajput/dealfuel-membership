@@ -877,12 +877,10 @@ function remove_single_product_print_notices() {
 
 		$membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
 		$membership = $membership_type->post_parent;
-		// return $membership_type;
-		error_log('MEMEEMMEMEMEM');
-		error_log(print_r($membership,true));
+		return $membership;
+		// error_log('MEMEEMMEMEMEM');
+		// error_log(print_r($membership,true));
  }
-
- is_user_has_annual_or_monthly_memebership();
 
 /*
  *Check if user has active WooCommerce membership or not
@@ -5898,9 +5896,6 @@ function productpage_sidebar_addtocart_shortcode(){
         $productid = $product->get_id();
         $product_name = $product->get_name();
 
-
-		print_r(get_dynamic_price($productid));
-
         //Multiple Products add to cart
         $product_ids = $productid.',174739';
 
@@ -5934,11 +5929,16 @@ function productpage_sidebar_addtocart_shortcode(){
 
         if ( $product->get_sale_price() > 0  && get_dynamic_price( $product->get_id() ) >= 0 ) {
             ?>
+
+			<div class="df_show_discounted_price_dynamically">
+					<span class="df_show_price"><?php echo "$" . $both_dynamic_values[0]; ?></span>
+				</div>
             <form>
+
                 <div class="radio_section">
                     <div>
                         <div class="withdcleft">
-                            <input type="radio" class="withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>">
+                            <input type="radio" class="df_display_dynamic_price withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo "$" . $both_dynamic_values[0]; ?>">
                             <label>With DealClub</label>
                         </div>
                         <div class="withdcright"><span class="dcpriceins"><?php echo "$" . $both_dynamic_values[0]; ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
@@ -5948,10 +5948,10 @@ function productpage_sidebar_addtocart_shortcode(){
 
 					<div>
                         <div class="montlydcleft">
-                            <input type="radio" class="withdcpricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>">
+                            <input type="radio" class="df_display_dynamic_price withmonthlypricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo "$" . $both_dynamic_values[1]; ?>">
                             <label>With Monthly DealClub</label>
                         </div>
-                        <div class="montlydcleft"><span class="monthlypriceins"><?php echo "$" . $both_dynamic_values[1]; ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
+                        <div class="montlydcright"><span class="monthlypriceins"><?php echo "$" . $both_dynamic_values[1]; ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
                         </div>
 
                     </div>
@@ -5959,7 +5959,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
                     <div style="clear: both;">
                     <div class="withoutdcleft">
-                        <input type="radio" class="withoutdcpricerad" id="withoutdealclub" name="radiodealclub" value="withoutdealclub">
+                        <input type="radio" class="df_display_dynamic_price withoutdcpricerad" id="withoutdealclub" name="radiodealclub" value="withoutdealclub" data-price="<?php echo "$" . $product->get_sale_price(); ?>">
                         <label>Without DealClub</label>
                     </div>
                         <div class="withoutdcright"><span class="wodcpriceins"><?php echo "$" . $product->get_sale_price(); ?></span><span class="wodcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
@@ -5984,14 +5984,29 @@ function productpage_sidebar_addtocart_shortcode(){
             jQuery(document).ready(function(){
                 var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
                 var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
+				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
 
                 if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
-                    jQuery('.radio_section .withoutdcleft').addClass('disabled-wodc');
-                    jQuery('.radio_section .withoutdcright').addClass('disabled-wodc');
-                    jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_siwodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
-                    jQuery('.radio_section .withoutdcpricerad').attr('disabled',true);
+
+					if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+
+						jQuery('.radio_section .withoutdcleft').addClass('disabled-wodc');
+						jQuery('.radio_section .withoutdcright').addClass('disabled-wodc');
+						jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_siwodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
+						jQuery('.radio_section .withoutdcpricerad').attr('disabled',true);
+
+					} else {
+						jQuery('.radio_section .withoutdcleft').addClass('disabled-wodc');
+						jQuery('.radio_section .withoutdcright').addClass('disabled-wodc');
+						jQuery('.radio_section .montlydcleft').addClass('disabled-wodc');
+						jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_siwodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
+						jQuery('.radio_section .withoutdcpricerad').attr('disabled',true);
+						jQuery('.radio_section .withmonthlypricerad').attr('disabled',true);
+					}
+
                 }
                 jQuery('input[name="radiodealclub"]').click(function() {
+
                     var value = jQuery(this).val();
                     if(value == "withdealclub"){
                         jQuery('.sidc_addtocart_btn_sidebar').show();
@@ -6005,6 +6020,13 @@ function productpage_sidebar_addtocart_shortcode(){
                         jQuery('.siwodc_addtocart_btn_sidebar').show();
                         jQuery('.siwodc_buynow_btn_sidebar').show();
                     }
+
+					//display price in frontend on the basis of option selected.
+					var price = jQuery(this).data('price');
+
+					jQuery('.df_show_price').text(price);
+
+
                 });
             });
             </script>
