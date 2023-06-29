@@ -502,6 +502,8 @@ function load_the_details() {
 
 // }
 
+
+
 add_action('wp_footer','get_dynamic_price_annual_monthly');
 
 function get_dynamic_price_annual_monthly () {
@@ -509,74 +511,7 @@ function get_dynamic_price_annual_monthly () {
 	?>
 	<script>
 
-		alert('Ok wow!');
-
 		var ajaxurl="<?php echo admin_url( 'admin-ajax.php' ); ?>";
-		var nonce
-
-		jQuery(document).ready(function(){
-
-			function df_url_replace( url, ids) {
-				const queryString = url.split("?")[1]; // Extract the query string part of the URL
-				const keyValuePairs = queryString.split("&"); // Split the query string into key-value pairs
-				let modifiedUrl = url.split("?")[0]; // Get the URL before the query string
-				keyValuePairs.forEach(pair => {
-					const [key, value] = pair.split("=");
-					const modifiedValue = key === "add-to-cart" ? ids : value; // Replace the values with "12345" and "5678"
-					modifiedUrl += `?${key}=${modifiedValue}`;
-				});
-
-				return modifiedUrl;
-
-				jQuery('.' + target).attr(modifiedUrl)
-			}
-
-			jQuery('input[name="radiodealclub"]').click(function() {
-
-				var urlAddToCart = jQuery('.sidc_addtocart_btn_sidebar').attr('href')
-				console.log(urlAddToCart);
-				var urlBuyNow = jQuery('.sidc_buynow_btn_sidebar').attr('href')
-
-				// var testVar = df_url_replace(urlAddToCart,'1363172,361536');
-
-				// df_url_replace( urlAddToCart, '1363172,361536', 'sidc_addtocart_btn_sidebar' )
-				// df_url_replace( urlBuyNow, '1363172,361536', 'sidc_buynow_btn_sidebar' )
-
-				var value = jQuery(this).val();
-				var productID = jQuery(this).data('product-id');
-
-
-				if( value == 'withdealclub') {
-
-					console.log('inside with dealclub');
-					console.log(df_url_replace( urlAddToCart, '1363172,361536', 'sidc_addtocart_btn_sidebar' ));
-
-					var replacedAddToCartUrl = df_url_replace( urlAddToCart, '1363172,361536', 'sidc_addtocart_btn_sidebar' )
-					var replacedBuyNowUrl = df_url_replace( urlBuyNow, '1363172,361536', 'sidc_buynow_btn_sidebar' )
-
-					// jQuery('.sidc_addtocart_btn_sidebar').attr('href', replacedAddToCartUrl)
-					// jQuery('.sidc_buynow_btn_sidebar').attr('href', replacedBuyNowUrl)
-
-					jQuery('a.sidc_addtocart_btn_sidebar').attr('href', replacedAddToCartUrl);
-
-				}else if ( value == 'withmonthlydealclub' ){
-
-					console.log('inside monthly with dealclub');
-					console.log(df_url_replace( urlAddToCart, '12345,12345', 'sidc_addtocart_btn_sidebar' ));
-
-					var replacedAddToCartUrl = df_url_replace( urlAddToCart, '12345,12345', 'sidc_addtocart_btn_sidebar' )
-					var replacedBuyNowUrl= df_url_replace( urlBuyNow, '12345,12345', 'sidc_buynow_btn_sidebar' )
-
-					// jQuery('.sidc_addtocart_btn_sidebar').attr('href', replacedAddToCartUrl)
-					jQuery('a.sidc_addtocart_btn_sidebar').attr('href', replacedAddToCartUrl);
-					jQuery('.sidc_buynow_btn_sidebar').attr('href', replacedBuyNowUrl)
-
-				} else {
-					//
-
-				}
-
-
 
 				jQuery.ajax(
 				{
@@ -6076,13 +6011,28 @@ function productpage_sidebar_addtocart_shortcode(){
                         jQuery('.siwodc_addtocart_btn_sidebar').hide();
                         jQuery('.siwodc_buynow_btn_sidebar').hide();
                         jQuery('.sidc_buynow_btn_sidebar').show();
+						jQuery('.simc_addtocart_btn_sidebar').hide();
+                        jQuery('.simc_buynow_btn_sidebar').hide();
                     }
-                    else{
+					else if ( value == "withmonthlydealclub"){
+						jQuery('.sidc_addtocart_btn_sidebar').hide();
+                        jQuery('.sidc_buynow_btn_sidebar').hide();
+                        jQuery('.siwodc_addtocart_btn_sidebar').hide();
+                        jQuery('.siwodc_buynow_btn_sidebar').hide();
+						jQuery('.simc_addtocart_btn_sidebar').show();
+                        jQuery('.simc_buynow_btn_sidebar').show();
+
+					}
+                    else if ( value == "withoutdealclub" ){
                         jQuery('.sidc_addtocart_btn_sidebar').hide();
                         jQuery('.sidc_buynow_btn_sidebar').hide();
+						jQuery('.simc_addtocart_btn_sidebar').hide();
+                        jQuery('.simc_buynow_btn_sidebar').hide();
                         jQuery('.siwodc_addtocart_btn_sidebar').show();
                         jQuery('.siwodc_buynow_btn_sidebar').show();
-                    }
+                    }else {
+						//
+					}
 
 					//display price in frontend on the basis of option selected.
 					var price = jQuery(this).data('price');
@@ -6095,40 +6045,33 @@ function productpage_sidebar_addtocart_shortcode(){
             </script>
                         <?php
 
-					if ( $is_annual_or_monthly == 174761) {
+					if ( $is_annual_or_monthly == 174761) { //when membership is monthly
 
-						if ($check_radio_button == 'withdealclub') {
 
 						//Multiple Products add to cart
-						$product_ids = $productid.',174739';
 
-						$add_to_cart_url = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids, wc_get_cart_url() ) );
+						//product id for dc annual
+						$product_ids_annual = $productid.',174739';
+
+						$annual_add_to_cart_url = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_annual, wc_get_cart_url() ) );
+
 
 						?>
-                        <a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-                        <a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
+						<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_annual ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
-						<a href="<?php echo $add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-                        <a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="simc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
-
-                        <?php
+						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
 
-						}
-						else {
 
-							?>
-							<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-							<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
+						<a href="<?php echo $annual_add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 
-							<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-							<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="simc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 
+						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 
-							<?php
-
-						}
+						<?php
 
 
 
@@ -6148,104 +6091,37 @@ function productpage_sidebar_addtocart_shortcode(){
                     }
                     else {
 
-						/*
-
-
-						if ( $check_radio_button == 'withdealclub' ) {
-
 						//Multiple Products add to cart
-						$product_ids = $productid.',174739';
 
-						$add_to_cart_url = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids, wc_get_cart_url() ) );
+						//product id for dc annual
+						$product_ids_annual = $productid.',174739';
+
+						$annual_add_to_cart_url = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_annual, wc_get_cart_url() ) );
+
+						//product id for monthly
+
+						$product_ids_monthly = $productid.',174721';
+
+						$add_to_cart_url_monthly = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_monthly, wc_get_cart_url() ) );
+
+
 
 						?>
-                        <a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-                        <a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
+						<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_annual ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
-						<a href="<?php echo $add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-                        <a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_monthly ) ); ?>" class="simc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
-
-                        <?php
-
-						}
-
-						else if ( $check_radio_button == 'withmonthlydealclub' ) {
-
-								//Multiple Products add to cart
-								$product_ids = $productid.',174721';
-
-								$add_to_cart_url = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids, wc_get_cart_url() ) );
-
-								?>
-								<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-								<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-
-								<a href="<?php echo $add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-								<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-
-
-								<?php
-
-
-
-						}
-						else {
-
-							?>
-							<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-							<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
-
-							<a href="<?php echo $add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-							<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
-
-
-							<?php
-
-						} */
-
-						?>
-						<a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $product_ids ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid ) ); ?>" class="siwodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
-						<a href="<?php echo $add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+
+
+						<a href="<?php echo $annual_add_to_cart_url; ?>" class="sidc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+
+						<a style="display:none" href="<?php echo $add_to_cart_url_monthly; ?>" class="simc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+
 						<a style="display:none" href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="siwodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 
 						<?php
-
-
-
-
-
-						// jQuery('input[name="radiodealclub"]').click(function() {
-
-						// 	var value = jQuery(this).val();
-						// 	if(value == "withdealclub"){
-						// 		jQuery('.sidc_addtocart_btn_sidebar').show();
-						// 		jQuery('.siwodc_addtocart_btn_sidebar').hide();
-						// 		jQuery('.siwodc_buynow_btn_sidebar').hide();
-						// 		jQuery('.sidc_buynow_btn_sidebar').show();
-						// 	}
-						// 	else if ( value == 'withmonthlydealclub' ) {
-
-						// 	}
-						// 	else{
-						// 		jQuery('.sidc_addtocart_btn_sidebar').hide();
-						// 		jQuery('.sidc_buynow_btn_sidebar').hide();
-						// 		jQuery('.siwodc_addtocart_btn_sidebar').show();
-						// 		jQuery('.siwodc_buynow_btn_sidebar').show();
-						// 	}
-
-						// 	//display price in frontend on the basis of option selected.
-						// 	var price = jQuery(this).data('price');
-
-						// 	jQuery('.df_show_price').text(price);
-
-
-						// });
-
-
-
 
                     }
 
