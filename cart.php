@@ -35,94 +35,155 @@ do_action( 'woocommerce_before_cart' ); ?>
 			</tr>
 		</thead>
 		<tbody>
+
+
 		     <?php
 			//find out membership
   			$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
-			if(!is_dealclubmembership_in_cart()){
+
 				// error_log('dealclub membership is in cart');
 
-				if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || $is_annual_or_monthly==174761){
+					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) {
 
-					// error_log('I am inside cartttt');
+						error_log('I am inside cartttt');
 
 
-					//upsell annual dc
-					$product = wc_get_product( 174739 );
+						//upsell annual dc
+						$product = wc_get_product( 174739 );
 
-					?>
-						<td class="product-thumbnail monthly_deal">
-					   <?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
-					</td>
-					<td class="product-name-mem" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
-					   <?php
-						global $woocommerce;
+						$product_monthly = wc_get_product( 174721 );
 
-						$items                  = $woocommerce->cart->get_cart();
-						$cart_total_price_final = $woocommerce->cart->total;
-						$dealclub_savings       = 0;
-						$cw_discount = 0;
 
-						foreach ( $items as $item => $values ) {
+						?>
+							<tr class="hello again">
+							<td class="product-thumbnail monthly_deal">
+						<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
+							</td>
+						<td class="product-name-mem" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 
-							$pro_id = $values['product_id'];
-							$_product = wc_get_product( $pro_id );
+						<?php
+							global $woocommerce;
 
-							if($_product->is_type( 'simple' )){
+							$items                  = $woocommerce->cart->get_cart();
+							$cart_total_price_final = $woocommerce->cart->total;
+							$dealclub_savings       = 0;
+							$cw_discount = 0;
+							$cw_monthly_discount = 0;
 
-								if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthlyt price
+							foreach ( $items as $item => $values ) {
 
-									$sale_price = get_dynamic_price( $_product->get_id() )[1];
+								$pro_id = $values['product_id'];
+								$_product = wc_get_product( $pro_id );
+
+								if($_product->is_type( 'simple' )){
+
+									if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthlyt price
+
+										$sale_price = get_dynamic_price( $_product->get_id() )[1];
+
+									}
+									else { //ow annual price
+										$sale_price = get_dynamic_price( $_product->get_id() )[0];
+									}
+
+									$regular_price = $_product->get_sale_price();
+
+
+									$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
+									// $sale_price = get_dynamic_price( $_product->get_id() );
+									$discount = ($regular_price - $sale_price) * $values['quantity'];
+
+									$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
+
 
 								}
-								else { //ow annual price
-									$sale_price = get_dynamic_price( $_product->get_id() )[0];
+
+								if($_product->is_type( 'variable' )){
+									$var_id = $values['variation_id'];
+
+									$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
+									$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dc_price']  )) ) * $values['quantity'];
+
 								}
 
-								$regular_price = $_product->get_sale_price();
-								// $sale_price = get_dynamic_price( $_product->get_id() );
-								$discount = ($regular_price - $sale_price) * $values['quantity'];
-
+								$cw_discount += $discount;
+								$cw_monthly_discount += $discount_for_monthly;
 
 							}
 
-							if($_product->is_type( 'variable' )){
-								$var_id = $values['variation_id'];
-
-								$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
-								$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dc_price']  )) ) * $values['quantity'];
-
+						if($woocommerce->cart->total > 0){
+							echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_discount . ' more with DealClub!</p> %s :
+							<span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
 							}
-
-							$cw_discount += $discount;
-
+						else{
+							echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
+							<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
 						}
+						?>
 
-					   if($woocommerce->cart->total > 0){
-						   echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_discount . ' more with DealClub!</p> %s :
-						   <span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
-						   }
-					   else{
-						   echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-						   <span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
-					   }
-					   ?>
+						</td>
+						<td class="add-monthly-sub">
+							<div class="monthly-sub-button">
+								<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
+							</div>
+						</td>
 
-					</td>
-					<td class="add-monthly-sub">
-						<div class="monthly-sub-button">
-							<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
-						</div>
-					</td>
+					</tr>
+						<!-- /****************************************/ -->
+						<!-- /** Remove this comment once code is done */ -->
+						<!-- /** DO not show monthly upsell is user is already a monthly memeber or if user is a non dc but monthly is added to cart */ -->
+						<?php if(  !( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) ) && !check_if_monthly_is_in_cart() ): ?>
 
-					<?php
-			}
+						<tr class="monthly">
+								<td class="product-thumbnail monthly_deal">
+								<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product_monthly->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product_monthly->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
+									</td>
+								<td class="product-name-mem" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 
 
-			}
+
+						<?php
+
+
+
+								if($woocommerce->cart->total > 0){
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_monthly_discount . ' more with DealClub!</p> %s :
+									<span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+									}
+								else{
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
+									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+								}
+						?>
+
+								</td>
+								<td class="add-monthly-sub">
+									<div class="monthly-sub-button">
+										<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174721&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
+									</div>
+								</td>
+
+						</tr>
+
+						<?php endif ;?>
+						<!-- /********************************************** */ -->
+
+						<?php
+			  		}
+
+
+
 
 
 		     ?>
+
+
+
+
+
+
+
 			<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
 			<?php
