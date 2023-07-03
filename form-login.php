@@ -21,6 +21,7 @@ if ( is_user_logged_in() || 'no' === get_option( 'woocommerce_enable_checkout_lo
 	return;
 }
 $product = wc_get_product( 174739 );
+$product_monthly = wc_get_product( 174721 );
 
 global $woocommerce;
 
@@ -28,6 +29,7 @@ $items                  = $woocommerce->cart->get_cart();
 $cart_total_price_final = $woocommerce->cart->total;
 $dealclub_savings       = 0;
 $cw_discount = 0;
+$cw_monthly_discount = 0;
 
 foreach ( $items as $item => $values ) {
 
@@ -49,9 +51,9 @@ foreach ( $items as $item => $values ) {
 		}
 
 		// $sale_price = get_dynamic_price( $_product->get_id() );
-
+		$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
 		$discount = ($regular_price - $sale_price) * $values['quantity'];
-
+		$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
 
 	}
 
@@ -64,6 +66,7 @@ foreach ( $items as $item => $values ) {
 	}
 
 	$cw_discount += $discount;
+	$cw_monthly_discount += $discount_for_monthly;
 }
 ?>
 <?php if(!is_dealclubmembership_in_cart() && !is_user_an_active_member_wcm()){ ?>
@@ -73,6 +76,25 @@ foreach ( $items as $item => $values ) {
 		<div class = "deal_club_img"><?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?></div>
 		<div class = "deal_club_price"><h4>$<?php echo $product->get_price() ?>.00 <del>$99.00</del></h4><p>Discount price for a limited time</p></div>
 		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=174739&utm_source=checkout-page">Add Item</a>
+</div>
+<div class="plus_membership_benefits">
+	<h3> Benefits of Dealclub </h3>
+	<ul class = "benefits-text">
+		<li>15-25% Additional Discount Sitewide</li>
+		<li>100% Discount on Exclusive Deals</li>
+		<li>FREE Access to Masterclasses</li>
+		<li>Early & Extended Sales and Offers</li>
+	</ul>
+
+</div>
+</div>
+<!-- Monthly -->
+<div class="dcplan-section">
+	<h4 class="heading-checkout-table">Save $<?php echo $cw_monthly_discount ?> with Monthly Dealclub Membership</h4>
+	<div class="inner-section-divs">
+		<div class = "deal_club_img"><?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product_monthly->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product_monthly->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?></div>
+		<div class = "deal_club_price"><h4>$<?php echo $product_monthly->get_price() ?>.00 <del>$99.00</del></h4><p>Discount price for a limited time</p></div>
+		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=174721&utm_source=checkout-page">Add Item</a>
 </div>
 <div class="plus_membership_benefits">
 	<h3> Benefits of Dealclub </h3>

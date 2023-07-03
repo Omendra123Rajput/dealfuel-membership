@@ -447,61 +447,6 @@ function load_the_details() {
 		return $details;
 }
 
-/************ */
-// function get_dynamic_price( $postid ) {
-
-// 		$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
-
-// 		$min_price = array();
-// 		$i         = 0;
-// 	if ( is_array( $pricing_rule ) || is_object( $pricing_rule ) ) {
-// 		foreach ( $pricing_rule as $key => $item ) {
-
-// 			$min_price[ $i ] = $pricing_rule[ $key ]['rules']['1']['amount'];
-// 			$i++;
-
-// 		}
-// 	}
-// 	if ( empty( $min_price ) ) {
-// 		$dynamic_price = false;
-// 	} else {
-// 		$dynamic_price = min( $min_price );
-// 	}
-// 		return $dynamic_price;
-// }
-/************ */
-
-
-// add_action( 'wp_ajax_dynamic_price_check', 'dynamic_price_check' );
-// add_action( 'wp_ajax_nopriv_dynamic_price_check', 'dynamic_price_check' );
-
-// $annual_select = '';
-// $monthly_select = '';
-
-// function dynamic_price_check () {
-// 	// check_ajax_referer( 'radio_button_check', '_nonce' );
-
-// 	global $annual_select;
-// 	global $monthly_select;
-
-// 	error_log('TEJA TEJA ');
-// 	if(isset($_POST["value"])) {
-// 		$value_of_radio_box = ($_POST["value"]);
-// 	}
-
-// 	if( $value_of_radio_box == 'withdealclub'){
-// 		$annual_select =  'withdealclub';
-// 	}else {
-// 		$monthly_select = 'withmonthlydealclub';
-// 	}
-
-// 	error_log($annual_select);
-// 	error_log($monthly_select);
-
-// 	wp_send_json_success( );
-
-// }
-
 
 
 add_action('wp_footer','get_dynamic_price_annual_monthly');
@@ -962,43 +907,6 @@ function checkUserMembership() {
 }
 
 
-// add_action( 'woocommerce_before_calculate_totals', 'wwpa_simple_add_cart_price' );
-// function wwpa_simple_add_cart_price( $cart_object ) {
-
-// 	global $both_dynamic_values;
-// 	if ( ! is_array( is_dc_in_cart() ) || is_user_an_active_member_wcm() ) {
-// 		foreach ( $cart_object->cart_contents as $key => $value ) {
-// 			if ( $value['product_id'] == 174721 || $value['product_id'] == 174738 || $value['product_id'] == 174739 ) {
-// 				// dont modify prices here
-// 			} elseif ( empty( $value['variation'] ) ) {
-
-// 					$check_radio_button = $_SESSION['radio_button_value'];
-
-// 					if ($check_radio_button == 'withmonthlydealclub' ) {
-
-// 						$updated_dynamic_price_for_dc_members =  $both_dynamic_values[1];
-// 					}else{
-
-// 						$updated_dynamic_price_for_dc_members =   $both_dynamic_values[0];
-// 					}
-
-// 				  	$value['data']->set_price( $updated_dynamic_price_for_dc_members );
-
-// 			} else {
-
-// 				$variation_arr = get_post_meta( $value['product_id'], '_pricing_rules', 'true' );
-// 				foreach ( $variation_arr as $var_obj ) {
-// 					if ( $var_obj['variation_rules']['args']['variations'][0] == $value['variation_id'] ) {
-// 						$value['data']->set_price( $var_obj['rules'][1]['amount'] );
-// 						// $value['data']->set_price(55);
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
-
 add_action( 'woocommerce_before_calculate_totals', 'wwpa_simple_add_cart_price' );
 function wwpa_simple_add_cart_price( $cart_object ) {
 
@@ -1078,6 +986,33 @@ function check_if_monthly_is_in_cart() {
 
 
 }
+
+/**
+ * Add one membership at a time in cart
+ *
+*/
+
+function check_membership_add_to_cart() {
+    global $woocommerce;
+
+    $cart = $woocommerce->cart;
+    $membership_product_ids = array( 174739, 174721 ); // Replace with your membership product IDs
+
+    // Loop through cart items and check if there are already memberships in the cart
+    foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+        if ( in_array( $cart_item['product_id'], $membership_product_ids ) ) {
+            wc_add_notice( 'You can only purchase one membership at a time. Remove the existing membership from the cart then add other membership', 'error' );
+            break;
+        }
+    }
+}
+
+// add_action( 'woocommerce_add_to_cart_validation', 'check_membership_add_to_cart' );
+
+
+
+
+
 
 
 function is_dc_in_cart() {
