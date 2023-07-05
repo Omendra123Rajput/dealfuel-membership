@@ -906,6 +906,7 @@ function checkUserMembership() {
 	exit;
 }
 
+//modify cart prices here
 
 add_action( 'woocommerce_before_calculate_totals', 'wwpa_simple_add_cart_price' );
 function wwpa_simple_add_cart_price( $cart_object ) {
@@ -953,10 +954,118 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 
 			} else { //variation product
 
+
+				error_log('INSIDE VARIATION WWPA');
+
+				$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($value['product_id']);
+				$jsonResponse = json_encode($dynamic_pricearr);
+				$arrayResponse = json_decode($jsonResponse, true);
+
+				// Convert JSON response to array
+				$resultArray = [];
+				foreach ($arrayResponse as $productId => $productData) {
+					$resultArray[$productId] = $productData;
+				}
+
+				// Extract dynamic prices
+				$dynamicPrices = [];
+				foreach ($arrayResponse as $productId => $productData) {
+					$dynamicPrices[$productId] = [
+						"dynamic_price_array_annual" => $productData["dynamic_price_array_annual"],
+						"dynamic_price_array_monthly" => $productData["dynamic_price_array_monthly"]
+					];
+				}
+
+
+
 				$variation_arr = get_post_meta( $value['product_id'], '_pricing_rules', 'true' );
+
+
 				foreach ( $variation_arr as $var_obj ) {
-					if ( $var_obj['variation_rules']['args']['variations'][0] == $value['variation_id'] ) {
-						$value['data']->set_price( $var_obj['rules'][1]['amount'] );
+					if ( $var_obj['variation_rules']['args']['variations'][0] == $value['variation_id'] ) { //if our variation matches with cart's variation
+
+
+						if (array_key_exists($var_obj['variation_rules']['args']['variations'][0],$dynamicPrices))
+						{ //here we are checking if cart's variation exsits in our array where we have store dyanmic prices on the basis of variations
+							// so if the variation exsits we will extract its monthly and annual value from the array
+
+
+
+								if( $user_membership_type == 174765 ) { //if the membership is annaul then cart will have annual' price
+
+									$annual_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_annual'];
+									$value_without_dollar = str_replace('$', '', $annual_value);
+
+									$value['data']->set_price( $value_without_dollar );
+
+								} else if ( $user_membership_type == 174761 ) { //if user has monthly membership
+
+									if ( check_if_annual_is_in_cart() ) { //if annual is in cart then annual's price
+
+										$annual_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_annual'];
+										$value_without_dollar = str_replace('$', '', $annual_value);
+
+										$value['data']->set_price( $value_without_dollar );
+
+
+									} else {
+
+										$monthly_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_monthly'];
+										$value_without_dollar = str_replace('$', '', $monthly_value);
+
+										$value['data']->set_price( $value_without_dollar );
+
+
+
+									}
+
+								} else { // Non DC customers
+
+									if ( check_if_annual_is_in_cart() ) { //if annual is in cart then annual's price
+
+										$annual_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_annual'];
+										$value_without_dollar = str_replace('$', '', $annual_value);
+
+										$value['data']->set_price( $value_without_dollar );
+
+
+									} else if ( check_if_monthly_is_in_cart() ) { // if monthly is in cart
+
+										$monthly_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_monthly'];
+										$value_without_dollar = str_replace('$', '', $monthly_value);
+
+										$value['data']->set_price( $value_without_dollar );
+
+									} else {
+
+									}
+
+
+
+								}
+
+
+
+
+
+
+
+
+
+
+
+						}else{
+							error_log('WOOOOOOOOOOOOWW');
+						}
+
+
+
+
+
+						// $value['data']->set_price( $var_obj['rules'][1]['amount'] );
+
+
+
 						// $value['data']->set_price(55);
 					}
 				}
@@ -986,6 +1095,30 @@ function check_if_monthly_is_in_cart() {
 
 
 }
+
+
+/**
+ * Check if annual membership is added in cart.
+*/
+
+function check_if_annual_is_in_cart() {
+	global $woocommerce;
+	$items                 = $woocommerce->cart->get_cart();
+	$valueFound = false;
+	foreach ( $items as $item ) {
+
+		if ( $item['product_id'] == 174739 ) {
+			$valueFound = true;
+			break;
+		}
+
+	}
+
+	return $valueFound ;
+
+
+}
+
 
 /**
  * Add one membership at a time in cart
@@ -3761,15 +3894,33 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 	$pricing_rules = get_post_meta( $postid, '_pricing_rules', 'true' );
 	$prices = array();
 	$i      = 0;
+	error_log('Inside get_all_dynamic_prices_with_id_as_key');
+
 
 	if ( ! empty( $pricing_rules ) ) {
 		foreach ( $pricing_rules as $key => $item ) {
 
 			$variation_id_key = $pricing_rules[ $key ]['variation_rules']['args']['variations'][0];
+			$membership_type = $pricing_rules[ $key]['conditions'][1]['args']['memberships'][0];
 
 			$regular_price = (float)get_post_meta($variation_id_key, '_regular_price', true);
 			$sale_price    = (float)get_post_meta($variation_id_key, '_sale_price', true);
 			$dc_price    = (float)$pricing_rules[ $key ]['rules'][1]['amount'];
+
+			if($membership_type==174761 || $membership_type==174765){
+
+
+				if( $membership_type==174765 ){
+
+					$dynamic_price_array_annual = $pricing_rules[ $key ]['rules']['1']['amount'];
+
+				}else {
+
+					$dynamic_price_array_monthly = $pricing_rules[ $key ]['rules']['1']['amount'];
+
+				}
+
+			}
 
 			$price_difference = $sale_price - $plus_price;
 
@@ -3777,6 +3928,8 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 			$prices[ $variation_id_key ]['sale_price']    = "$" . number_format($sale_price,2 ,'.', '');
 			$prices[ $variation_id_key ]['dc_price']    = "$" . number_format($dc_price,2 ,'.', '');
 			$prices[ $variation_id_key ]['price_difference'] = number_format($price_difference,2 ,'.', '');
+			$prices[ $variation_id_key ]['dynamic_price_array_annual']    = "$" . number_format($dynamic_price_array_annual,2 ,'.', '');
+			$prices[ $variation_id_key ]['dynamic_price_array_monthly']    = "$" . number_format($dynamic_price_array_monthly,2 ,'.', '');
 			$i++;
 
 		}
@@ -6325,13 +6478,22 @@ function add_script_on_select_variation_value_change(){
 	if (!is_product()){
 			return;
 	}
+
+	error_log('OMI OMI');
+
+
 	$price = $product->get_price_html();
 	if ( $product->is_type('variable')) {
 
 		$product_id = $product->get_id();
+
 		$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($product->get_id());
 		$dynamic_price = json_encode($dynamic_pricearr);
-	$assoc_dynamic_price = array_values($dynamic_pricearr);
+		$assoc_dynamic_price = array_values($dynamic_pricearr);
+
+		// error_log('dynamic price');
+		// error_log(print_r($dynamic_price,true ));
+
 		?>
 
 		<div class="radio_sect_var">
@@ -6340,7 +6502,15 @@ function add_script_on_select_variation_value_change(){
 				    <input type="radio" id="varwithdealclub" checked name="varradiodealclub" value="varwithdealclub">
 				    <label>With DealClub</label>
 			    </div>
-				<div class="withdcright"><span class="dcpriceins"><?php echo "$" . get_dynamic_price( $product->get_id() ); ?></span><span class="dcpricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
+				<div class="withdcright"><span class="dcpriceins"><?php  echo "$" . get_dynamic_price( $product->get_id() );   ?></span><span class="dcpricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
+				</div>
+			</div>
+			<div style="clear: both;">
+				<div class="withmonthlyleft">
+						<input type="radio" id="varwithmonthlydealclub" class="varwithmonthlypricerad" name="varradiodealclub" value="varwithmonthlydealclub">
+						<label>With Monthly </label>
+					</div>
+					<div class="withmonthlyright"><span class="monthlypriceins"><?php echo "$" . get_dynamic_price( $product->get_id() ); ?></span><span class="monthlypricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
 				</div>
 			</div>
 			<div style="clear: both;">
@@ -6358,9 +6528,11 @@ function add_script_on_select_variation_value_change(){
 	</div>
 
 		  	    <a style="display:none" href="" class="dc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
+				<a style="display:none" href="" class="mc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 				<a style="display:none" href="" class="wodc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Add To Cart</a>
 
 				<a style="display:none" href="" class="dc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
+				<a style="display:none" href="" class="mc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 				<a style="display:none" href="" class="wodc_buynow_btn_sidebar single_add_to_cart_button button alt wp-element-button">Buy Now</a>
 
 
@@ -6384,12 +6556,24 @@ function add_script_on_select_variation_value_change(){
 							if(value == "varwithdealclub"){
 									jQuery('.dc_addtocart_btn_sidebar').show();
 									jQuery('.wodc_addtocart_btn_sidebar').hide();
+									jQuery('.mc_addtocart_btn_sidebar').hide();
+									jQuery('.mc_buynow_btn_sidebar').hide();
 									jQuery('.wodc_buynow_btn_sidebar').hide();
 									jQuery('.dc_buynow_btn_sidebar').show();
+							}
+							else if(value == "varwithmonthlydealclub"){
+									jQuery('.dc_addtocart_btn_sidebar').hide();
+									jQuery('.dc_buynow_btn_sidebar').hide();
+									jQuery('.wodc_addtocart_btn_sidebar').hide();
+									jQuery('.wodc_buynow_btn_sidebar').hide();
+									jQuery('.mc_addtocart_btn_sidebar').show();
+									jQuery('.mc_buynow_btn_sidebar').show();
 							}
 							else if(value == "varwithoutdealclub"){
 									jQuery('.dc_addtocart_btn_sidebar').hide();
 									jQuery('.dc_buynow_btn_sidebar').hide();
+									jQuery('.mc_addtocart_btn_sidebar').hide();
+									jQuery('.mc_buynow_btn_sidebar').hide();
 									jQuery('.wodc_addtocart_btn_sidebar').show();
 									jQuery('.wodc_buynow_btn_sidebar').show();
 							}
@@ -6397,12 +6581,20 @@ function add_script_on_select_variation_value_change(){
 					var dynamic_price = <?php echo $dynamic_price; ?>;
 					var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
 					var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
+					var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
+
+
 
 						jQuery('.single_variation_wrap').prepend(jQuery('.radio_sect_var'));
 						jQuery('.dc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
 						jQuery('.dc_addtocart_btn_sidebar').show();
 						jQuery('.dc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
 						jQuery('.dc_buynow_btn_sidebar').show();
+
+						jQuery('.mc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
+						jQuery('.mc_addtocart_btn_sidebar').show();
+						jQuery('.mc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
+						jQuery('.mc_buynow_btn_sidebar').show();
 
 
 
@@ -6423,20 +6615,25 @@ function add_script_on_select_variation_value_change(){
 					 else{
 						var inputvarval = jQuery('input.variation_id').val();
 					 }
-					//var inputvarval = jQuery('#mob_variation input.variation_id').val();
+						//var inputvarval = jQuery('#mob_variation input.variation_id').val();
 						 if( inputvarval != ''){
 							 if(is_dc_in_cart != 1) { // if DC not in cart
 
 									var var_ids = inputvarval+",174739";
+									var var_monthly_id = inputvarval+",174721";
 									jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
 									jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
+									jQuery('a.mc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_monthly_id);
+									jQuery('a.mc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_monthly_id);
 									jQuery('a.sticky_wodc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+inputvarval);
 									jQuery('a.sticky_dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
 									jQuery('.single_variation').remove();
 
 									//Update Radio buttons prices based on current selected values
-									jQuery('.dcpriceins').html(dynamic_price[inputvarval]['dc_price']);
+									jQuery('.dcpriceins').html(dynamic_price[inputvarval]['dynamic_price_array_annual']);
 									jQuery('.dcpricedel').html(dynamic_price[inputvarval]['regular_price']);
+									jQuery('.monthlypriceins').html(dynamic_price[inputvarval]['dynamic_price_array_monthly']);
+									jQuery('.monthlypricedel').html(dynamic_price[inputvarval]['regular_price']);
 									jQuery('.wodcpriceins').html(dynamic_price[inputvarval]['sale_price']);
 									jQuery('.wodcpricedel').html(dynamic_price[inputvarval]['regular_price']);
 
@@ -6456,11 +6653,45 @@ function add_script_on_select_variation_value_change(){
 
 								 var var_id = inputvarval;
 
-								 jQuery('.wodc_addtocart_btn_sidebar').remove();
+								 if( is_annual_or_monthly == 174761 ){ // if membership is monthly disable the without dc option
+
+									var var_ids = inputvarval+",174739";
+									var var_monthly_id = inputvarval;
+									jQuery('.radio_sect_var .withoutdcpricerad').attr('disabled',true);
+									//if monthly member then add annual when user buys with dc
+									jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
+									jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
+
+									//when with monthly is clicked on variation product should get added
+
+									jQuery('a.mc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_monthly_id);
+									jQuery('a.mc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_monthly_id);
+
+
+									}
+									else if ( is_annual_or_monthly == 174765 ) { //if membership is annual disable the without dc & with monthly option
+
+										jQuery('.radio_sect_var .varwithmonthlypricerad').attr('disabled',true);
+
+										var var_ids = inputvarval;
+
+										jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
+										jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
+
+
+									}
+
+									jQuery('.wodc_addtocart_btn_sidebar').remove();
+
+
 
 								 //Update Radio buttons prices based on current selected values
-								 jQuery('.dcpriceins').html(dynamic_price[var_id]['dc_price']);
+								 jQuery('.dcpriceins').html(dynamic_price[var_id]['dynamic_price_array_annual']);
 								 jQuery('.dcpricedel').html(dynamic_price[var_id]['regular_price']);
+
+								 jQuery('.monthlypriceins').html(dynamic_price[var_id]['dynamic_price_array_monthly']);
+								 jQuery('.monthlypricedel').html(dynamic_price[var_id]['regular_price']);
+
 								 jQuery('.wodcpriceins').html(dynamic_price[var_id]['sale_price']);
 								 jQuery('.wodcpricedel').html(dynamic_price[var_id]['regular_price']);
 
@@ -6476,8 +6707,9 @@ function add_script_on_select_variation_value_change(){
 									if(jQuery('.dc_buynow_btn_sidebar').length == 1){
 										jQuery('.dc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
 									}
-								 jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_id);
-								 jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_id);
+
+								//  jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_id);
+								//  jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_id);
 								 jQuery('.sticky_add_to_cart1 .sticky_addtocart_left.sticky_dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_id);
 
 

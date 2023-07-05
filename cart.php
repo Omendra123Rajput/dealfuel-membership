@@ -98,7 +98,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 
 								}
-
+								//here change for save amount for variable product
 								if($_product->is_type( 'variable' )){
 									$var_id = $values['variation_id'];
 
