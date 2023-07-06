@@ -6070,8 +6070,6 @@ function productpage_sidebar_addtocart_shortcode(){
     }
 
 	$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
-	$check_radio_button = $_SESSION['radio_button_value'];
-
 
 	if( $product->is_type( 'simple' ) ){
 
@@ -6737,7 +6735,17 @@ function add_script_on_select_variation_value_change(){
 												//
 											}
 
+											//add to cart and buy now button acc to monthly member
+											if( selectedValue != "varwithdealclub" ){
 
+											jQuery('.dc_addtocart_btn_sidebar ').hide();
+											jQuery('.dc_buynow_btn_sidebar ').hide();
+											jQuery('.wodc_buynow_btn_sidebar ').hide();
+											jQuery('.wodc_addtocart_btn_sidebar').hide();
+											jQuery('.mc_addtocart_btn_sidebar').show();
+											jQuery('.mc_buynow_btn_sidebar').show();
+
+											}
 
 									}
 										else if ( is_annual_or_monthly == 174765 ) { //if membership is annual disable the without dc & with monthly option
