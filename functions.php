@@ -507,17 +507,9 @@ function get_dynamic_price_annual_monthly () {
 add_action( 'wp_ajax_dynamic_price_check', 'get_dynamic_price' );
 add_action( 'wp_ajax_nopriv_dynamic_price_check', 'get_dynamic_price' );
 
-$annual_dynamic_price = '';
-$monthly_dynamic_price = '';
-$both_dynamic_values = '';
-
 
 function get_dynamic_price( $postid ) {
 
-
-	global $annual_dynamic_price;
-	global $monthly_dynamic_price;
-	global $both_dynamic_values;
 
 	error_log('TEJA TEJA ');
 
@@ -592,22 +584,6 @@ function get_dynamic_price( $postid ) {
 		}
 
 		return $both_dynamic_values;
-
-		// if ( $value_of_radio_box == '') {
-
-		// 	$annual_dynamic_price = $both_dynamic_values[0];
-		// 	return $annual_dynamic_price;
-
-		// }
-		// else if( $value_of_radio_box == 'withdealclub'){
-
-		// 	$annual_dynamic_price = $both_dynamic_values[0];
-		// 	return $annual_dynamic_price;
-
-		// }else {
-		// 	$monthly_dynamic_price = 	$both_dynamic_values[1];
-		// 	return $monthly_dynamic_price;
-		// }
 
 }
 
@@ -6088,9 +6064,6 @@ function assign_download_permission_for_guest_checkout( $order_id ) {
 add_shortcode('productpage_sidebar_addtocart','productpage_sidebar_addtocart_shortcode');
 function productpage_sidebar_addtocart_shortcode(){
     global $product;
-	global $annual_dynamic_price;
-	global $monthly_dynamic_price;
-	global $both_dynamic_values;
 
     if (!is_product()){
         return;
@@ -6098,6 +6071,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 	$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 	$check_radio_button = $_SESSION['radio_button_value'];
+
 
 	if( $product->is_type( 'simple' ) ){
 
@@ -6137,30 +6111,31 @@ function productpage_sidebar_addtocart_shortcode(){
 
 
         if ( $product->get_sale_price() > 0  && get_dynamic_price( $product->get_id() ) >= 0 ) {
+
             ?>
 
 			<div class="df_show_discounted_price_dynamically">
-					<span class="df_show_price"><?php echo "$" . $both_dynamic_values[0]; ?></span>
+					<span class="df_show_price"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span>
 				</div>
             <form>
 
                 <div class="radio_section">
                     <div>
                         <div class="withdcleft">
-                            <input type="radio" class="df_display_dynamic_price withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo $both_dynamic_values[0]; ?>">
+                            <input type="radio" class="df_display_dynamic_price withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo get_dynamic_price( $product->get_id())[0] ?>">
                             <label>With DealClub</label>
                         </div>
-                        <div class="withdcright"><span class="dcpriceins"><?php echo "$" . $both_dynamic_values[0]; ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
+                        <div class="withdcright"><span class="dcpriceins"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
                         </div>
 
                     </div>
 
 					<div>
                         <div class="montlydcleft">
-                            <input type="radio" class="df_display_dynamic_price withmonthlypricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo  $both_dynamic_values[1]; ?>">
+                            <input type="radio" class="df_display_dynamic_price withmonthlypricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo  get_dynamic_price( $product->get_id())[1] ?>">
                             <label>With Monthly DealClub</label>
                         </div>
-                        <div class="montlydcright"><span class="monthlypriceins"><?php echo "$" . $both_dynamic_values[1]; ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
+                        <div class="montlydcright"><span class="monthlypriceins"><?php echo "$" . get_dynamic_price( $product->get_id())[1] ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
                         </div>
 
                     </div>
@@ -6195,6 +6170,7 @@ function productpage_sidebar_addtocart_shortcode(){
                 var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
                 var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
 				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
+				var monthly_dynamic_price = <?php echo get_dynamic_price( $product->get_id() )[1]; ?>
 
                 if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
 
@@ -6204,6 +6180,23 @@ function productpage_sidebar_addtocart_shortcode(){
 						jQuery('.radio_section .withoutdcright').addClass('disabled-wodc');
 						jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_siwodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
 						jQuery('.radio_section .withoutdcpricerad').attr('disabled',true);
+
+						// if monthly member then monthly radio button should be checked by default
+
+						jQuery('.radio_section .withmonthlypricerad').attr('checked',true);
+
+						//change product price page acc to monthly
+						jQuery('.df_show_price').text(monthly_dynamic_price);
+
+						//hide and show add to cart and buy now button acc to monthly membership
+
+						jQuery('.sidc_addtocart_btn_sidebar ').hide();
+						jQuery('.sidc_buynow_btn_sidebar ').hide();
+						jQuery('.simc_addtocart_btn_sidebar ').show();
+						jQuery('.simc_buynow_btn_sidebar ').show();
+						jQuery('.siwodc_addtocart_btn_sidebar  ').hide();
+						jQuery('.siwodc_buynow_btn_sidebar ').hide();
+
 
 					} else {
 						jQuery('.radio_section .withoutdcleft').addClass('disabled-wodc');
