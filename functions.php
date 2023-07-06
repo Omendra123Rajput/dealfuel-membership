@@ -5574,11 +5574,21 @@ add_filter( 'woocommerce_get_price_html', 'df_change_product_price_html', 10, 2 
 
 function df_change_product_price_html( $price, $product ) {
 
+	$user_membership_type = is_user_has_annual_or_monthly_memebership();
+
 	if(!is_admin()){
 	global $woocommerce;
 
 	if ((is_user_an_active_member_wcm()) || ( $_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && get_dynamic_price( $product->get_id() ) != '' )) {
-		$updated_dynamic_price = get_dynamic_price( $product->get_id() );
+
+		if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
+			//if user's membership is annual or monthly then show annual's price
+
+			$updated_dynamic_price = get_dynamic_price( $product->get_id() )[0];
+		}else {//if user's memership is monthly,show monthly's price
+			$updated_dynamic_price = get_dynamic_price( $product->get_id() )[1];
+		}
+
 		if( '' == $updated_dynamic_price )
 		{
 		    return $price;
@@ -5594,27 +5604,40 @@ function df_change_product_price_html( $price, $product ) {
 		}
 		$price = '<p style="margin-top: 10px;" class="' . esc_attr( apply_filters( 'woocommerce_product_price_class', 'price' ) ) . '"><del>$' . $sale_price . '</del><ins>$' . $updated_dynamic_price . '</ins></p>';
 
-
 	}
-	if($_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && $product->is_type( 'variable' ) )
+	if( (is_user_an_active_member_wcm() && $product->is_type( 'variable' )  ) || ($_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && $product->is_type( 'variable' ) ))
 	{
+		error_log('level 2');
 		$variation_arr2 = get_post_meta( $product->get_id(), '_pricing_rules', 'true' );
 		foreach ( $variation_arr2 as $var_obj2 ) {
 			$var_amounts .= $var_obj2['rules'][1]['amount']."-";
 
 		}
+
 		$var_amount_arr = explode("-",$var_amounts);
 
+
 		if($var_amount_arr[0] != 0){
-			$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -2];
+
+			if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
+				//if user's membership is annual or monthly then show annual's price
+				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -2];
+
+			}else {//if user's memership is monthly,show monthly's price
+
+				$price_val = '$'.$var_amount_arr[1].'-'.'$'.$var_amount_arr[3];
+			}
+
 		}
 		else{
 			$price_val = '$'.$var_amount_arr[0];
 		}
+		error_log($price_val);
 		$price = '<p style="margin-top: 10px;" class="price"><span class="woocommerce-Price-amount amount"><bdi>'.$price_val.'</bdi></span></p>';
 
 	}
-return $price;
+
+	return $price;
 	}
 }
 add_action( 'woocommerce_variable_add_to_cart', 'df_update_price_with_variation_price' );
