@@ -906,7 +906,7 @@ function checkUserMembership() {
 	exit;
 }
 
-//modify cart prices accoding to different membership
+//modify cart prices accoding to different
 
 add_action( 'woocommerce_before_calculate_totals', 'wwpa_simple_add_cart_price' );
 function wwpa_simple_add_cart_price( $cart_object ) {
@@ -6614,9 +6614,9 @@ function add_script_on_select_variation_value_change(){
 						jQuery('.dc_buynow_btn_sidebar').show();
 
 						jQuery('.mc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
-						jQuery('.mc_addtocart_btn_sidebar').show();
+						jQuery('.mc_addtocart_btn_sidebar').hide();
 						jQuery('.mc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
-						jQuery('.mc_buynow_btn_sidebar').show();
+						jQuery('.mc_buynow_btn_sidebar').hide();
 
 
 
@@ -6641,8 +6641,11 @@ function add_script_on_select_variation_value_change(){
 						 if( inputvarval != ''){
 							 if(is_dc_in_cart != 1) { // if DC not in cart
 
+									var interval = inputvarval;
+									var selectedValue = jQuery('input[name="varradiodealclub"]:checked').val();
 									var var_ids = inputvarval+",174739";
 									var var_monthly_id = inputvarval+",174721";
+
 									jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
 									jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
 									jQuery('a.mc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_monthly_id);
@@ -6659,6 +6662,30 @@ function add_script_on_select_variation_value_change(){
 									jQuery('.wodcpriceins').html(dynamic_price[inputvarval]['sale_price']);
 									jQuery('.wodcpricedel').html(dynamic_price[inputvarval]['regular_price']);
 
+									//when user is non dc - then update the annual price by defualt in the product page
+									//accoding to the variation
+
+									jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_annual']);
+
+									//find out the value of radio button (Non DC )
+
+									var selectedValue = jQuery('input[name="varradiodealclub"]:checked').val();
+
+									// change the values acc to the option selected (Non DC )
+
+									if(selectedValue == "varwithdealclub"){
+										jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_annual']);
+
+									}
+									else if ( selectedValue == "varwithmonthlydealclub"){
+										jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_monthly']);
+									}
+									else if ( selectedValue == "varwithoutdealclub" ){
+										jQuery('.variation_show_price').html(dynamic_price[inputvarval]['sale_price']);
+									}else {
+										//
+									}
+
 
 									if (jQuery('.wodc_addtocart_btn_sidebar').length ==1 ) {
  								 		jQuery('.wodc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
@@ -6667,8 +6694,9 @@ function add_script_on_select_variation_value_change(){
  									if(jQuery('.wodc_buynow_btn_sidebar').length == 1){
  										jQuery('.wodc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .wodc_addtocart_btn_sidebar'));
  									}
- 								 jQuery('a.wodc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+inputvarval);
- 								 jQuery('a.wodc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+inputvarval);
+
+ 								 	jQuery('a.wodc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+inputvarval);
+ 								 	jQuery('a.wodc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+inputvarval);
 
 							 }
 								if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
@@ -6677,20 +6705,48 @@ function add_script_on_select_variation_value_change(){
 
 									if( is_annual_or_monthly == 174761 ){ // if membership is monthly disable the without dc option
 
-										var var_ids = inputvarval+",174739";
-										var var_monthly_id = inputvarval;
-										jQuery('.radio_sect_var .withoutdcpricerad').attr('disabled',true);
-										//if monthly member then add annual when user buys with dc
-										jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
-										jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
+											var var_ids = inputvarval+",174739";
+											var var_monthly_id = inputvarval;
+											jQuery('.radio_sect_var .withoutdcpricerad').attr('disabled',true);
+											//if monthly member then add annual when user buys with dc
+											jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
+											jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
 
-										//when with monthly is clicked on variation product should get added
+											//when with monthly is clicked on variation product should get added
 
-										jQuery('a.mc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_monthly_id);
-										jQuery('a.mc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_monthly_id);
+											jQuery('a.mc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_monthly_id);
+											jQuery('a.mc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_monthly_id);
+
+											// if monthly member then monthly radio button should be checked by default
+
+											jQuery('.radio_sect_var .varwithmonthlypricerad').attr('checked',true);
 
 
-										}
+											//update the value of price acc to monthly by default when membership is monthly
+											jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_monthly']);
+
+											//find out the value of radio button (Monthly )
+
+											var selectedValue = jQuery('input[name="varradiodealclub"]:checked').val();
+
+											// change the values acc to the option selected (Monthly )
+
+											if(selectedValue == "varwithdealclub"){
+												jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_annual']);
+
+											}
+											else if ( selectedValue == "varwithmonthlydealclub"){
+												jQuery('.variation_show_price').html(dynamic_price[inputvarval]['dynamic_price_array_monthly']);
+											}
+											else if ( selectedValue == "varwithoutdealclub" ){
+												jQuery('.variation_show_price').html(dynamic_price[inputvarval]['sale_price']);
+											}else {
+												//
+											}
+
+
+
+									}
 										else if ( is_annual_or_monthly == 174765 ) { //if membership is annual disable the without dc & with monthly option
 
 											jQuery('.radio_sect_var .varwithmonthlypricerad').attr('disabled',true);
@@ -6703,7 +6759,7 @@ function add_script_on_select_variation_value_change(){
 
 										}
 
-										jQuery('.wodc_addtocart_btn_sidebar').remove();
+									jQuery('.wodc_addtocart_btn_sidebar').remove();
 
 
 
@@ -6737,28 +6793,28 @@ function add_script_on_select_variation_value_change(){
 
 								}
 
-								//product page values changes on selection
+									//product page values changes on selection
 
-								jQuery('input[name="varradiodealclub"]').click(function() {
+									jQuery('input[name="varradiodealclub"]').click(function() {
 
-								var value = jQuery(this).val();
-								var var_id = inputvarval;
-								if(value == "varwithdealclub"){
-									jQuery('.variation_show_price').html(dynamic_price[var_id]['dynamic_price_array_annual']);
+									var value = jQuery(this).val();
+									var var_id = inputvarval;
+									if(value == "varwithdealclub"){
+										jQuery('.variation_show_price').html(dynamic_price[var_id]['dynamic_price_array_annual']);
 
-								}
-								else if ( value == "varwithmonthlydealclub"){
-									jQuery('.variation_show_price').html(dynamic_price[var_id]['dynamic_price_array_monthly']);
-								}
-								else if ( value == "varwithoutdealclub" ){
-									jQuery('.variation_show_price').html(dynamic_price[var_id]['sale_price']);
-								}else {
-									//
-								}
+									}
+									else if ( value == "varwithmonthlydealclub"){
+										jQuery('.variation_show_price').html(dynamic_price[var_id]['dynamic_price_array_monthly']);
+									}
+									else if ( value == "varwithoutdealclub" ){
+										jQuery('.variation_show_price').html(dynamic_price[var_id]['sale_price']);
+									}else {
+										//
+									}
 
 
 
-								});
+									});
 
 
 					 }
