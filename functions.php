@@ -7015,6 +7015,19 @@ function add_price_groups ( ) {
 				$monthly_price = $row[2];
 
 
+
+				//set price only upto 2 decimal points
+				$annual_price =  round($annual_price, 2);
+				$monthly_price =  round($monthly_price, 2);
+
+				$annual_commission = $row[3];
+				$monthly_commission = $row[4];
+
+				//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
+				$annaul_comm_meta_key = '_product_vendors_commission_'.$annual_price;
+				$monthly_comm_meta_key = '_product_vendors_commission_'.$monthly_price;
+
+
 				//annaul price group
 				$annaul_array = array(
 					'annaul' => array(
@@ -7103,7 +7116,12 @@ function add_price_groups ( ) {
 
 				$mergedArray = array_merge($annaul_array, $monthly_array);
 
+				//update the price groups in the db
 				update_post_meta($product_id, '_pricing_rules', $mergedArray);
+
+				//update the commisions for the product
+				update_post_meta($product_id, $annaul_comm_meta_key, $annual_commission );
+				update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );
 
 
 			}
