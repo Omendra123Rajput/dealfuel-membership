@@ -6965,6 +6965,183 @@ function dealfuel_rename_default_sorting_options($options){
 
 }
 
+/**
+ *
+ * Function to add dynamic price groups
+ *
+*/
+
+add_action('wp_footer','add_price_groups');
+
+function add_price_groups ( ) {
+
+	echo "Hello World";
+
+
+		// Call the function to read the CSV file and store the data in an array
+		$csv_data = read_csv_file();
+
+		// loop through the data and update price groups using product ID and annual,monthly price.
+		foreach ($csv_data as $row) {
+
+			if ( $row[0] == 'Product Id' ) { //do not include 1st row
+
+				continue;
+
+			} else {
+
+				//fetch values from the row
+				$product_id = $row[0];
+				$annual_price = $row[1];
+				$monthly_price = $row[2];
+
+
+				//annaul price group
+				$annaul_array = array(
+					'annaul' => array(
+						'conditions_type' => 'all',
+						'conditions' => array(
+							'1' => array(
+								'type' => 'apply_to',
+								'args' => array(
+									'applies_to' => 'membership',
+									'memberships' => array(
+										'0' => '174765'
+									)
+								)
+							)
+						),
+						'collector' => array(
+							'type' => 'product'
+						),
+						'mode' => 'continuous',
+						'date_from' => '',
+						'date_to' => '',
+						'rules' => array(
+							'1' => array(
+								'from' => '',
+								'to' => '',
+								'type' => 'fixed_price',
+								'amount' => '1015'
+							)
+						),
+						'blockrules' => array(
+							'1' => array(
+								'from' => '',
+								'adjust' => '',
+								'type' => 'fixed_adjustment',
+								'amount' => '',
+								'repeating' => 'no'
+							)
+						)
+					)
+				);
+
+				//monthly price group
+				$monthly_array = array(
+					'monthly' => array(
+						'conditions_type' => 'all',
+						'conditions' => array(
+							'1' => array(
+								'type' => 'apply_to',
+								'args' => array(
+									'applies_to' => 'membership',
+									'memberships' => array(
+										'0' => '174761'
+									)
+								)
+							)
+						),
+						'collector' => array(
+							'type' => 'product'
+						),
+						'mode' => 'continuous',
+						'date_from' => '',
+						'date_to' => '',
+						'rules' => array(
+							'1' => array(
+								'from' => '',
+								'to' => '',
+								'type' => 'fixed_price',
+								'amount' => '786'
+							)
+						),
+						'blockrules' => array(
+							'1' => array(
+								'from' => '',
+								'adjust' => '',
+								'type' => 'fixed_adjustment',
+								'amount' => '',
+								'repeating' => 'no'
+							)
+						)
+					)
+				);
+
+				$annaul_array['annaul']['rules']['1']['amount'] = $annual_price;
+				$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
+
+
+				$mergedArray = array_merge($annaul_array, $monthly_array);
+
+				update_post_meta($product_id, '_pricing_rules', $mergedArray);
+
+
+			}
+
+
+		}
+
+
+}
+
+
+
+/**
+ * get all the product id using category
+ */
+
+add_action('wp_footer','new_get_product_id');
+
+function new_get_product_id () {
+
+	$args = array(
+		'limit' => -1,
+		'status' => 'publish',
+		'return' => 'ids',
+		'category' => array( 'exclusive-masterclasses' ),
+	);
+	$products = wc_get_products( $args );
+
+	// print_r($products);
+
+}
+
+/**
+ * read csv file
+ *
+ */
+
+function read_csv_file() {
+		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/values.csv'; // Path to your CSV file
+
+		$data = array();
+
+		if (($handle = fopen($csv_file, "r")) !== false) {
+			while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+				$data[] = $row;
+			}
+			fclose($handle);
+		}
+
+		return $data;
+
+	}
+
+
+
+
+
 /* Added by Prasada - Checkout page new UI changes 2022 - start */
 add_action('wp_footer','add_checkout_accordion',10,5);
 function add_checkout_accordion(){
