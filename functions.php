@@ -555,9 +555,14 @@ function get_dynamic_price( $postid ) {
 
 					$dynamic_price_array [0] = $pricing_rule[ $key ]['rules']['1']['amount'];
 
+					//round the value of price upto 2 decimal points
+					$dynamic_price_array [0] = round($dynamic_price_array [0], 2);
+
 				}else {
 
 					$dynamic_price_array [1] = $pricing_rule[ $key ]['rules']['1']['amount'];
+					//round the value of price upto 2 decimal points
+					$dynamic_price_array [1] = round($dynamic_price_array [1], 2);
 
 				}
 
@@ -5557,11 +5562,15 @@ function df_change_product_price_html( $price, $product ) {
 
 	if ((is_user_an_active_member_wcm()) || ( $_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && get_dynamic_price( $product->get_id() ) != '' )) {
 
+		// display prices on shop page for simple products products
+
 		if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
 			//if user's membership is annual or monthly then show annual's price
 
 			$updated_dynamic_price = get_dynamic_price( $product->get_id() )[0];
+
 		}else {//if user's memership is monthly,show monthly's price
+
 			$updated_dynamic_price = get_dynamic_price( $product->get_id() )[1];
 		}
 
@@ -5582,8 +5591,8 @@ function df_change_product_price_html( $price, $product ) {
 
 	}
 	if( (is_user_an_active_member_wcm() && $product->is_type( 'variable' )  ) || ($_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && $product->is_type( 'variable' ) ))
-	{
-		error_log('level 2');
+	{	// display prices on shop page for variable products
+
 		$variation_arr2 = get_post_meta( $product->get_id(), '_pricing_rules', 'true' );
 		foreach ( $variation_arr2 as $var_obj2 ) {
 			$var_amounts .= $var_obj2['rules'][1]['amount']."-";
@@ -5593,22 +5602,32 @@ function df_change_product_price_html( $price, $product ) {
 		$var_amount_arr = explode("-",$var_amounts);
 
 
+		//round the values of the array upto 2 decimal points
+
+		foreach ($var_amount_arr as $key => $value) {
+			if (is_numeric($value)) {
+				$var_amount_arr[$key] = round($value, 2);
+			}
+		}
+
 		if($var_amount_arr[0] != 0){
 
 			if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
-				//if user's membership is annual or monthly then show annual's price
-				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -2];
+				//if user's membership is annual or quaterly then show annual's price
+				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -3];
 
 			}else {//if user's memership is monthly,show monthly's price
 
 				$price_val = '$'.$var_amount_arr[1].'-'.'$'.$var_amount_arr[3];
+
+
 			}
 
 		}
 		else{
 			$price_val = '$'.$var_amount_arr[0];
 		}
-		error_log($price_val);
+
 		$price = '<p style="margin-top: 10px;" class="price"><span class="woocommerce-Price-amount amount"><bdi>'.$price_val.'</bdi></span></p>';
 
 	}
