@@ -969,7 +969,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 
 
 
-								if( $user_membership_type == 174765 ) { //if the membership is annaul then cart will have annual' price
+								if( $user_membership_type == 174765 ) { //if the membership is annual then cart will have annual' price
 
 									$annual_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_annual'];
 									$value_without_dollar = str_replace('$', '', $annual_value);
@@ -3873,6 +3873,8 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 	$prices = array();
 	$i      = 0;
 
+	// error_log('Inside get_all_dynamic_prices_with_id_as_key ');
+	// error_log(print_r($pricing_rules,true));
 
 	if ( ! empty( $pricing_rules ) ) {
 		foreach ( $pricing_rules as $key => $item ) {
@@ -6990,12 +6992,9 @@ function dealfuel_rename_default_sorting_options($options){
  *
 */
 
-add_action('wp_footer','add_price_groups');
+// add_action('wp_footer','add_price_groups');
 
 function add_price_groups ( ) {
-
-	echo "Hello World";
-
 
 		// Call the function to read the CSV file and store the data in an array
 		$csv_data = read_csv_file();
@@ -7039,15 +7038,15 @@ function add_price_groups ( ) {
 
 
 
-				//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
-				$annaul_comm_meta_key = '_product_vendors_commission_'.$annual_price;
+				//meta keys for annual and monthly commisions. we will use keys to update the commision in database
+				$annual_comm_meta_key = '_product_vendors_commission_'.$annual_price;
 				$monthly_comm_meta_key = '_product_vendors_commission_'.$monthly_price;
 				$non_dc_comm_meta_key = '_product_vendors_commission_'.$sale_price;
 
 
-				//annaul price group
-				$annaul_array = array(
-					'annaul' => array(
+				//annual price group
+				$annual_array = array(
+					'annual' => array(
 						'conditions_type' => 'all',
 						'conditions' => array(
 							'1' => array(
@@ -7127,20 +7126,21 @@ function add_price_groups ( ) {
 					)
 				);
 
-				$annaul_array['annaul']['rules']['1']['amount'] = $annual_price;
+				$annual_array['annual']['rules']['1']['amount'] = $annual_price;
 				$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
 
 
-				$mergedArray = array_merge($annaul_array, $monthly_array);
+				$mergedArray = array_merge($annual_array, $monthly_array);
 
 				// update the price groups in the db
-				update_post_meta($product_id, '_pricing_rules', $mergedArray);
+
+				// update_post_meta($product_id, '_pricing_rules', $mergedArray);  //uncomment when use
 
 				// update the commisions for the product
 
-				update_post_meta($product_id, $non_dc_comm_meta_key, $non_dc_commission );
-				update_post_meta($product_id, $annaul_comm_meta_key, $annual_commission );
-				update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );
+				// update_post_meta($product_id, $non_dc_comm_meta_key, $non_dc_commission );   //uncomment when use
+				// update_post_meta($product_id, $annual_comm_meta_key, $annual_commission );   //uncomment when use
+				// update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );  //uncomment when use
 
 
 			}
@@ -7153,27 +7153,6 @@ function add_price_groups ( ) {
 }
 
 
-
-/**
- * get all the product id using category
- */
-
-add_action('wp_footer','new_get_product_id');
-
-function new_get_product_id () {
-
-	$args = array(
-		'limit' => -1,
-		'status' => 'publish',
-		'return' => 'ids',
-		'category' => array( 'exclusive-masterclasses' ),
-	);
-	$products = wc_get_products( $args );
-
-	// print_r($products);
-
-}
-
 /**
  * read csv file
  *
@@ -7181,9 +7160,12 @@ function new_get_product_id () {
 
 function read_csv_file() {
 
-		// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/values.csv'; // Path to your CSV file
 
-		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file
+		// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file - simple
+
+		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/variations.csv'; // Path to your CSV file - variable
+
+
 
 		$data = array();
 
@@ -7196,7 +7178,281 @@ function read_csv_file() {
 
 		return $data;
 
-	}
+}
+
+
+
+/**
+ * script for variation products
+ */
+
+add_action('wp_footer','add_price_groups_variation_products');
+
+function  add_price_groups_variation_products () {
+
+			// Call the function to read the CSV file and store the data in an array
+			$csv_data = read_csv_file();
+
+
+			// $parentID = 1376652;
+
+
+			foreach ($csv_data as $row) {
+
+				if ( $row[2] == 'Product ID' ) { //do not include 1st row
+
+					continue;
+
+				} else {
+
+					$parentID = $row[2];
+
+					$children = [];
+
+					// Find the children of the parent
+					foreach ($csv_data as $item) {
+					  if ($item[2] == $parentID) {
+						$children[] = $item[3];
+					  }
+					}
+
+					//array to store the price groups
+					$all_price_groups_variations = [];
+
+					// Find annual and monthly prices for each child
+					foreach ($csv_data as $item) {
+
+
+					  $childID = $item[3];
+
+					  if (in_array($childID, $children)) {
+
+						//price
+						$childAnnualPrice = $item[7];
+						$childMonthlyPrice = $item[6];
+
+
+						//commissions
+
+						$annual_commission = $item[10];
+						$monthly_commission = $item[9];
+
+						if ( $annual_commission == '' ){
+							$annual_commission = 0;
+						}
+
+						if ( $monthly_commission == '' ){
+							$monthly_commission = 0;
+						}
+
+						//set commission only upto 2 decimal points
+
+						$annual_commission =  round($annual_commission, 2);
+						$monthly_commission =  round($monthly_commission, 2);
+
+						//replace the % sign in commission
+
+						$annual_commission = str_replace('%', '', $annual_commission);
+						$monthly_commission = str_replace('%', '', $monthly_commission);
+
+						//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
+						$annaul_comm_meta_key = '_product_vendors_commission_'.$childAnnualPrice;
+						$monthly_comm_meta_key = '_product_vendors_commission_'.$childMonthlyPrice;
+
+						//uncomment when run the script
+
+						// update the commisions for the product
+
+						// update_post_meta($parentID, $annaul_comm_meta_key, $annual_commission );
+						// update_post_meta($parentID, $monthly_comm_meta_key, $monthly_commission );
+
+
+						//code for setting up the price groups
+
+						$variation = $childID;
+
+						$annual_price = $childAnnualPrice;
+						$monthly_price = $childMonthlyPrice;
+
+
+						//set price only upto 2 decimal points
+						$annual_price =  round($annual_price, 2);
+						$monthly_price =  round($monthly_price, 2);
+
+						//annual price group
+						$annual_array = array(
+							'annual' => array(
+								'conditions_type' => 'all',
+								'conditions' => array(
+									'1' => array(
+										'type' => 'apply_to',
+										'args' => array(
+											'applies_to' => 'membership',
+											'memberships' => array(
+												'0' => '174765'
+											)
+										)
+									)
+								),
+								'collector' => array(
+									'type' => 'product'
+								),
+								'variation_rules' => array (
+									'args' => array (
+										'type' => 'variations',
+										'variations' => array (
+											'0' => '1376668'
+										)
+									)
+								),
+								'mode' => 'continuous',
+								'date_from' => '',
+								'date_to' => '',
+								'rules' => array(
+									'1' => array(
+										'from' => '',
+										'to' => '',
+										'type' => 'fixed_price',
+										'amount' => '1015'
+									)
+								),
+								'blockrules' => array(
+									'1' => array(
+										'from' => '',
+										'adjust' => '',
+										'type' => 'fixed_adjustment',
+										'amount' => '',
+										'repeating' => 'no'
+									)
+								)
+							)
+						);
+
+						//monthly price group
+						$monthly_array = array(
+							'monthly' => array(
+								'conditions_type' => 'all',
+								'conditions' => array(
+									'1' => array(
+										'type' => 'apply_to',
+										'args' => array(
+											'applies_to' => 'membership',
+											'memberships' => array(
+												'0' => '174761'
+											)
+										)
+									)
+								),
+								'collector' => array(
+									'type' => 'product'
+								),
+								'variation_rules' => array (
+									'args' => array (
+										'type' => 'variations',
+										'variations' => array (
+											'0' => '1376668'
+										)
+									)
+								),
+								'mode' => 'continuous',
+								'date_from' => '',
+								'date_to' => '',
+								'rules' => array(
+									'1' => array(
+										'from' => '',
+										'to' => '',
+										'type' => 'fixed_price',
+										'amount' => '786'
+									)
+								),
+								'blockrules' => array(
+									'1' => array(
+										'from' => '',
+										'adjust' => '',
+										'type' => 'fixed_adjustment',
+										'amount' => '',
+										'repeating' => 'no'
+									)
+								)
+							)
+						);
+
+						$annual_array['annual']['rules']['1']['amount'] = $annual_price;
+						$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
+
+						//change variation here
+						$annual_array['annual']['variation_rules']['args']['variations'][0] = $variation;
+						$monthly_array['monthly']['variation_rules']['args']['variations'][0] = $variation;
+
+						//change array key acc to variation for annual array
+
+						$newKey_for_annual_array = 'annual_'.$variation;
+
+						$annual_array[$newKey_for_annual_array] = $annual_array['annual'];
+						unset($annual_array['annual']);
+
+						//change array key acc to variation for monthly array
+
+						$newKey_for_monthly_array = 'monthly_'.$variation;
+
+						$monthly_array[$newKey_for_monthly_array] = $monthly_array['monthly'];
+						unset($monthly_array['monthly']);
+
+
+						$mergedArray = array_merge($annual_array, $monthly_array);
+
+						array_push($all_price_groups_variations, $mergedArray);
+
+
+
+					  }
+
+
+
+					}
+
+					$final_price_groups_array = array();
+
+					foreach ($all_price_groups_variations as $subArray) {
+						foreach ($subArray as $key => $value) {
+							$final_price_groups_array[$key] = $value;
+						}
+					}
+
+					//uncomment when run the script
+
+					// update the price groups in the db
+					// update_post_meta($parentID, '_pricing_rules', $final_price_groups_array);
+
+
+
+				}
+
+
+			}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
