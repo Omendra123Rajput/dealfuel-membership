@@ -7003,16 +7003,17 @@ function add_price_groups ( ) {
 		// loop through the data and update price groups using product ID and annual,monthly price.
 		foreach ($csv_data as $row) {
 
-			if ( $row[0] == 'Product Id' ) { //do not include 1st row
+			if ( $row[1] == 'Product ID' ) { //do not include 1st row
 
 				continue;
 
 			} else {
 
-				//fetch values from the row
-				$product_id = $row[0];
-				$annual_price = $row[1];
-				$monthly_price = $row[2];
+				//fetch values from the row ( index which are given in row are according to the sheet)
+				$product_id = $row[1];
+				$annual_price = $row[7];
+				$monthly_price = $row[6];
+				$sale_price = $row[4];
 
 
 
@@ -7020,12 +7021,28 @@ function add_price_groups ( ) {
 				$annual_price =  round($annual_price, 2);
 				$monthly_price =  round($monthly_price, 2);
 
-				$annual_commission = $row[3];
-				$monthly_commission = $row[4];
+				$annual_commission = $row[10];
+				$monthly_commission = $row[9];
+				$non_dc_commission = $row[8];
+
+				//set commission only upto 2 decimal points
+
+				$annual_commission =  round($annual_commission, 2);
+				$monthly_commission =  round($monthly_commission, 2);
+				$non_dc_commission =  round($non_dc_commission, 2);
+
+				//replace the % sign in commission
+
+				$annual_commission = str_replace('%', '', $annual_commission);
+				$monthly_commission = str_replace('%', '', $monthly_commission);
+				$non_dc_commission = str_replace('%', '', $non_dc_commission);
+
+
 
 				//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
 				$annaul_comm_meta_key = '_product_vendors_commission_'.$annual_price;
 				$monthly_comm_meta_key = '_product_vendors_commission_'.$monthly_price;
+				$non_dc_comm_meta_key = '_product_vendors_commission_'.$sale_price;
 
 
 				//annaul price group
@@ -7116,10 +7133,12 @@ function add_price_groups ( ) {
 
 				$mergedArray = array_merge($annaul_array, $monthly_array);
 
-				//update the price groups in the db
+				// update the price groups in the db
 				update_post_meta($product_id, '_pricing_rules', $mergedArray);
 
-				//update the commisions for the product
+				// update the commisions for the product
+
+				update_post_meta($product_id, $non_dc_comm_meta_key, $non_dc_commission );
 				update_post_meta($product_id, $annaul_comm_meta_key, $annual_commission );
 				update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );
 
@@ -7129,6 +7148,7 @@ function add_price_groups ( ) {
 
 		}
 
+		echo 'Done';
 
 }
 
@@ -7160,7 +7180,10 @@ function new_get_product_id () {
  */
 
 function read_csv_file() {
-		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/values.csv'; // Path to your CSV file
+
+		// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/values.csv'; // Path to your CSV file
+
+		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file
 
 		$data = array();
 
