@@ -5159,6 +5159,7 @@ a.reset_variations:hover{
     line-height: 1.7;
 }
 .single-product .dc_addtocart_btn_sidebar,
+.single-product .mc_addtocart_btn_sidebar,
 .single-product .wodc_addtocart_btn_sidebar,
 .single-product .sidc_addtocart_btn_sidebar,
 .single-product .siwodc_addtocart_btn_sidebar,
@@ -5173,6 +5174,7 @@ a.reset_variations:hover{
     background-color: #D1472D !important;
 }
 .single-product .dc_buynow_btn_sidebar,
+.single-product .mc_buynow_btn_sidebar,
 .single-product .wodc_buynow_btn_sidebar,
 .single-product .sidc_buynow_btn_sidebar,
 .single-product .siwodc_buynow_btn_sidebar,
@@ -5189,7 +5191,7 @@ a.reset_variations:hover{
     color: #2E3739 !important;
 }
 #withdealclub,#withoutdealclub,#varwithdealclub,#varwithoutdealclub, #monthly_dc, #annually_dc,
-#rememberme, #moosend_subscribe_checkbox, #payment_method_paypal, #payment_method_stripe, #giftID, #withmonthlydealclub{
+#rememberme, #moosend_subscribe_checkbox, #payment_method_paypal, #payment_method_stripe, #giftID, #withmonthlydealclub, #varwithmonthlydealclub{
   accent-color: #D1472D;
 }
 .disabled-wodc{
@@ -5241,14 +5243,18 @@ a.reset_variations:hover{
   color: #2E3739 !important;
 }
 .single-product #elementor-library-2 .dc_addtocart_btn_sidebar.disabled,
+.single-product #elementor-library-2 .mc_addtocart_btn_sidebar.disabled,
 .single-product #elementor-library-2 .wodc_addtocart_btn_sidebar.disabled,
 .single-product #elementor-library-2 .sidc_addtocart_btn_sidebar.disabled,
+.single-product #elementor-library-2 .simc_addtocart_btn_sidebar.disabled,
 .single-product #elementor-library-2 .siwodc_addtocart_btn_sidebar.disabled{
   background-color: #F9C8BB !important;
 }
 .single-product #elementor-library-2 .dc_addtocart_btn_sidebar:hover,
+.single-product #elementor-library-2 .mc_addtocart_btn_sidebar:hover,
 .single-product #elementor-library-2 .wodc_addtocart_btn_sidebar:hover,
 .single-product #elementor-library-2 .sidc_addtocart_btn_sidebar:hover,
+.single-product #elementor-library-2 .simc_addtocart_btn_sidebar:hover,
 .single-product #elementor-library-2 .siwodc_addtocart_btn_sidebar:hover{
   background-color: #AE2500 !important;
 }
@@ -6411,13 +6417,17 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
   }
 
    .dc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   .mc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .wodc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .dc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   .mc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .wodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .siwodc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .siwodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .sidc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   .simc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .sidc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   .simc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    button.single_add_to_cart_button.button.alt{
     display: none !important;
    }
@@ -6425,8 +6435,10 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
    a.sticky_addtocart_left.siwodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_right.sticky_siwodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_left.sticky_sidc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   a.sticky_addtocart_left.sticky_simc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_right.wodc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_right.dc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
+   a.sticky_addtocart_right.mc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_left.sticky_dc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    a.sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button
    {
@@ -6547,8 +6559,10 @@ width: 100% !important;
 }
 
 .single-product #elementor-library-2 .dc_buynow_btn_sidebar:hover,
+.single-product #elementor-library-2 .mc_buynow_btn_sidebar:hover,
 .single-product #elementor-library-2 .wodc_buynow_btn_sidebar:hover,
 .single-product #elementor-library-2 .sidc_buynow_btn_sidebar:hover,
+.single-product #elementor-library-2 .simc_buynow_btn_sidebar:hover,
 .single-product #elementor-library-2 .siwodc_buynow_btn_sidebar:hover{
 background-color: #F9C8BB !important;
 }
@@ -7779,4 +7793,14 @@ margin-bottom : 0;
     text-decoration: line-through;
 	padding-left: 12px;
 
+}
+
+.variation_show_price {
+	color: #2E3739;
+	text-align: justify;
+	font-family: Metropolis-Regular;
+	font-size: 42px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 120%;
 }

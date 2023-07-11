@@ -6635,35 +6635,39 @@ function add_script_on_select_variation_value_change(){
 
 		?>
 
+		<div class="var_price">
+		<div class="df_show_discounted_price_dynamically">
+
+					<span class="variation_show_price"><?php echo $assoc_dynamic_price['0']['dynamic_price_array_annual']; ?></span>
+
+					<span class="df_price_del"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
+				</div>
+
+		</div>
 
 
 		<div class="radio_sect_var">
-			<div class="variation_show_discounted_price_dynamically">
-					<span class="variation_show_price"><?php echo $assoc_dynamic_price['0']['dynamic_price_array_annual']; ?></span>
-				</div>
+
 			<div>
 				<div class="withdcleft">
 				    <input type="radio" id="varwithdealclub" checked name="varradiodealclub" value="varwithdealclub">
-				    <label>With DealClub</label>
+				    <label class="var_annaul_text">25% OFF with $49/Year Membership</label>
 			    </div>
-				<div class="withdcright"><span class="dcpriceins"><?php  echo "$" . get_dynamic_price( $product->get_id() );   ?></span><span class="dcpricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
-				</div>
+
 			</div>
 			<div style="clear: both;">
 				<div class="withmonthlyleft">
 						<input type="radio" id="varwithmonthlydealclub" class="varwithmonthlypricerad" name="varradiodealclub" value="varwithmonthlydealclub">
-						<label>With Monthly </label>
+						<label class="var_monthly_text">10% OFF with $9/Month Membership</label>
 					</div>
-					<div class="withmonthlyright"><span class="monthlypriceins"><?php echo "$" . get_dynamic_price( $product->get_id() ); ?></span><span class="monthlypricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
-				</div>
+
 			</div>
 			<div style="clear: both;">
 			    <div class="withoutdcleft">
 			    	<input type="radio" class="withoutdcpricerad" id="varwithoutdealclub" name="varradiodealclub" value="varwithoutdealclub">
-			    	<label>Without DealClub</label>
+			    	<label class="var_non_dc_text">Buy at Deal Price</label>
 			    </div>
-				<div class="withoutdcright"><span class="wodcpriceins"><?php echo $assoc_dynamic_price['0']['sale_price'] ?></span><span class="wodcpricedel"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
-				</div>
+
 			</div>
 	</div>
 	<div class="sticky_add_to_cart1">
@@ -6684,6 +6688,8 @@ function add_script_on_select_variation_value_change(){
 				jQuery(document).ready(function(){
 					jQuery('#variation_div').show();
 					//onLoad show disabled radio buttons
+					var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
+					var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
 
 					jQuery('.radio_sect_var .withoutdcleft').addClass('disabled-wodc');
 					jQuery('.radio_sect_var .withoutdcright').addClass('disabled-wodc');
@@ -6721,7 +6727,121 @@ function add_script_on_select_variation_value_change(){
 									jQuery('.wodc_addtocart_btn_sidebar').show();
 									jQuery('.wodc_buynow_btn_sidebar').show();
 							}
-					});
+						});
+
+							//find out the which radio button is selected and make its text green
+							var selectedValue = jQuery('input[name="varradiodealclub"]:checked').val();
+
+							// change the values acc to the option selected (Non DC )
+
+							if(selectedValue == "varwithdealclub"){
+								jQuery('.var_annaul_text').css('color', 'green');
+								jQuery('.var_monthly_text').css('color', '#2E3739');
+								jQuery('.var_non_dc_text').css('color', '#2E3739');
+
+							}
+							else if ( selectedValue == "varwithmonthlydealclub"){
+								jQuery('.var_monthly_text').css('color', 'green');
+								jQuery('.var_annaul_text').css('color', '#2E3739');
+								jQuery('.var_non_dc_text').css('color', '#2E3739');
+							}
+							else if ( selectedValue == "varwithoutdealclub" ){
+								jQuery('.var_non_dc_text').css('color', 'green');
+								jQuery('.var_monthly_text').css('color', '#2E3739');
+								jQuery('.var_annaul_text').css('color', '#2E3739');
+							}else {
+								//
+							}
+
+							//change the text color of buttons on their selection for non dc and monthly
+
+							if( is_dc_active_member == 1 && is_annual_or_monthly == 174761 ){ // if membership is monthly
+
+								console.log('I am monthly');
+
+								jQuery('input[name="varradiodealclub"]').click(function() {
+
+									var value = jQuery(this).val();
+									console.log(value);
+
+									if(value == "varwithdealclub"){
+										jQuery('.var_annaul_text').css('color', 'green');
+										jQuery('.var_monthly_text').css('color', '#2E3739');
+										jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+									}
+									else if ( value == "varwithmonthlydealclub"){
+										jQuery('.var_monthly_text').css('color', 'green');
+										jQuery('.var_annaul_text').css('color', '#2E3739');
+										jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+
+									}
+									else {
+										//
+									}
+
+								});
+
+							}else { //for non dc
+
+								jQuery('input[name="varradiodealclub"]').click(function() {
+
+								var value = jQuery(this).val();
+								if(value == "varwithdealclub"){
+									jQuery('.var_annaul_text').css('color', 'green');
+									jQuery('.var_monthly_text').css('color', '#2E3739');
+									jQuery('.var_non_dc_text').css('color', '#2E3739');
+								}
+								else if ( value == "varwithmonthlydealclub"){
+									jQuery('.var_monthly_text').css('color', 'green');
+									jQuery('.var_annaul_text').css('color', '#2E3739');
+									jQuery('.var_non_dc_text').css('color', '#2E3739');
+
+								}
+								else if ( value == "varwithoutdealclub" ){
+									jQuery('.var_non_dc_text').css('color', 'green');
+									jQuery('.var_monthly_text').css('color', '#2E3739');
+									jQuery('.var_annaul_text').css('color', '#2E3739');
+								}else {
+									//
+								}
+
+								});
+
+
+							}
+
+
+							//hide buy with monthly and non dc text on product page
+							//acc to memebership - On defualt
+
+							if (  is_dc_active_member == 1 ) {
+
+								if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+
+									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+									jQuery('.var_monthly_text').css('color', 'green');
+									jQuery('.var_annaul_text').css('color', '#2E3739');
+
+								}else if (is_annual_or_monthly == 174765  ) { //if annaul
+
+									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+									jQuery('.var_monthly_text').css('color', '#9E9E98');//hide monthly this using color
+
+								}
+
+							}
+
+
+
+
+
+
+
+
+
+
+
+					/*************************************************************/
 					var dynamic_price = <?php echo $dynamic_price; ?>;
 					var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
 					var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
@@ -6740,6 +6860,10 @@ function add_script_on_select_variation_value_change(){
 						jQuery('.mc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
 						jQuery('.mc_buynow_btn_sidebar').hide();
 
+						//div added where price will get updated
+						jQuery('.variation_price').prepend(jQuery('.var_price'));
+
+
 
 
 					jQuery(document).on('found_variation', function( e, v ) {
@@ -6750,7 +6874,7 @@ function add_script_on_select_variation_value_change(){
 						jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar').removeClass('disabled wc-variation-selection-needed');
 						jQuery('.mo-disabled-wodc').click(function(){});
 
-					 jQuery('.single_variation_wrap .woocommerce-variation-price').hide();
+					 	jQuery('.single_variation_wrap .woocommerce-variation-price').hide();
 
 					 if(jQuery(window).width() < 768)
 					 {
