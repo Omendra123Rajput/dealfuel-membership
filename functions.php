@@ -6089,7 +6089,7 @@ function productpage_sidebar_addtocart_shortcode(){
     if (!is_product()){
         return;
     }
-
+	error_log('Hello World 3');
 	$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
 	if( $product->is_type( 'simple' ) ){
@@ -6134,7 +6134,7 @@ function productpage_sidebar_addtocart_shortcode(){
             ?>
 
 			<div class="df_show_discounted_price_dynamically">
-					<span class="df_show_price"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span>
+					<span class="df_show_price"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span><span class="df_price_del"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
 				</div>
             <form>
 
@@ -6142,31 +6142,23 @@ function productpage_sidebar_addtocart_shortcode(){
                     <div>
                         <div class="withdcleft">
                             <input type="radio" class="df_display_dynamic_price withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo get_dynamic_price( $product->get_id())[0] ?>">
-                            <label>With DealClub</label>
+                            <label class="annaul_text" >25% OFF with $49/Year Membership</label>
                         </div>
-                        <div class="withdcright"><span class="dcpriceins"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span><span class="dcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
-                        </div>
-
                     </div>
 
 					<div>
                         <div class="montlydcleft">
                             <input type="radio" class="df_display_dynamic_price withmonthlypricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo  get_dynamic_price( $product->get_id())[1] ?>">
-                            <label>With Monthly DealClub</label>
+                            <label class="monthly_text" >10% OFF with $9/Month Membership</label>
                         </div>
-                        <div class="montlydcright"><span class="monthlypriceins"><?php echo "$" . get_dynamic_price( $product->get_id())[1] ?></span><span class="monthlypricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
-                        </div>
-
                     </div>
 
 
                     <div style="clear: both;">
                     <div class="withoutdcleft">
                         <input type="radio" class="df_display_dynamic_price withoutdcpricerad" id="withoutdealclub" name="radiodealclub" value="withoutdealclub" data-price="<?php echo $product->get_sale_price(); ?>">
-                        <label>Without DealClub</label>
+                        <label class="non_dc_text">Buy at Deal Price</label>
                     </div>
-                        <div class="withoutdcright"><span class="wodcpriceins"><?php echo "$" . $product->get_sale_price(); ?></span><span class="wodcpricedel"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
-                        </div>
                     </div>
                 </div>
             </form>
@@ -6191,6 +6183,108 @@ function productpage_sidebar_addtocart_shortcode(){
 				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
 				var monthly_dynamic_price = <?php echo get_dynamic_price( $product->get_id() )[1]; ?>
 
+				//find out the which radio button is selected and make its text green
+				var selectedRadioButton = jQuery('input[name="radiodealclub"]:checked').val();
+
+				if ( selectedRadioButton == 'withdealclub' ) {
+
+					jQuery('.annaul_text').css('color', 'green');
+					jQuery('.monthly_text').css('color', '#2E3739');
+					jQuery('.non_dc_text').css('color', '#2E3739');
+
+				} else if (selectedRadioButton == 'withmonthlydealclub' ) {
+
+					jQuery('.monthly_text').css('color', 'green');
+					jQuery('.annaul_text').css('color', '#2E3739');
+					jQuery('.non_dc_text').css('color', '#2E3739');
+
+				} else if (selectedRadioButton == 'withoutdealclub' ) {
+					jQuery('.non_dc_text').css('color', 'green');
+					jQuery('.monthly_text').css('color', '#2E3739');
+					jQuery('.annaul_text').css('color', '#2E3739');
+
+				} else {
+					//
+
+				}
+
+				//change the text color of buttons on their selection for non dc and monthly
+
+				if( is_dc_active_member == 1 && is_annual_or_monthly == 174761 ){ // if membership is monthly
+
+					jQuery('input[name="radiodealclub"]').click(function() {
+
+					var value = jQuery(this).val();
+					if(value == "withdealclub"){
+						jQuery('.annaul_text').css('color', 'green');
+						jQuery('.monthly_text').css('color', '#2E3739');
+						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+					}
+					else if ( value == "withmonthlydealclub"){
+						jQuery('.monthly_text').css('color', 'green');
+						jQuery('.annaul_text').css('color', '#2E3739');
+						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+
+					}
+					else {
+						//
+					}
+
+					});
+
+				}else { //for non dc
+
+					jQuery('input[name="radiodealclub"]').click(function() {
+
+					var value = jQuery(this).val();
+					if(value == "withdealclub"){
+						jQuery('.annaul_text').css('color', 'green');
+						jQuery('.monthly_text').css('color', '#2E3739');
+						jQuery('.non_dc_text').css('color', '#2E3739');
+					}
+					else if ( value == "withmonthlydealclub"){
+						jQuery('.monthly_text').css('color', 'green');
+						jQuery('.annaul_text').css('color', '#2E3739');
+						jQuery('.non_dc_text').css('color', '#2E3739');
+
+					}
+					else if ( value == "withoutdealclub" ){
+						jQuery('.non_dc_text').css('color', 'green');
+						jQuery('.monthly_text').css('color', '#2E3739');
+						jQuery('.annaul_text').css('color', '#2E3739');
+					}else {
+						//
+					}
+
+					});
+
+
+				}
+
+
+
+
+				//hide buy with monthly and non dc text on product page
+				//acc to memebership - On defualt
+
+				if (  is_dc_active_member == 1 ) {
+
+					if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+
+						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+
+					}else if (is_annual_or_monthly == 174765  ) { //if annaul
+
+						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
+						jQuery('.monthly_text').css('color', '#9E9E98');//hide monthly this using color
+
+					}
+
+				}
+
+
+
+
                 if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
 
 					if( is_annual_or_monthly == 174761 ){ // if membership is monthly
@@ -6205,7 +6299,13 @@ function productpage_sidebar_addtocart_shortcode(){
 						jQuery('.radio_section .withmonthlypricerad').attr('checked',true);
 
 						//change product price page acc to monthly
-						jQuery('.df_show_price').text(monthly_dynamic_price);
+
+						if ( monthly_dynamic_price != 0 ) {
+							monthly_dynamic_price = parseFloat(monthly_dynamic_price).toFixed(2);
+						}
+
+						var updated_monthly_price = '$' + monthly_dynamic_price;
+						jQuery('.df_show_price').text(updated_monthly_price);
 
 						//hide and show add to cart and buy now button acc to monthly membership
 
@@ -6227,6 +6327,7 @@ function productpage_sidebar_addtocart_shortcode(){
 					}
 
                 }
+
                 jQuery('input[name="radiodealclub"]').click(function() {
 
                     var value = jQuery(this).val();
@@ -6261,11 +6362,20 @@ function productpage_sidebar_addtocart_shortcode(){
 					//display price in frontend on the basis of option selected.
 					var price = jQuery(this).data('price');
 
+					if ( price != 0 ) {
+						price = parseFloat(price).toFixed(2);
+					}
+
+
+					price = '$'+ price;
+
 					jQuery('.df_show_price').text(price);
 
 
                 });
+
             });
+
             </script>
                         <?php
 
@@ -7186,7 +7296,7 @@ function read_csv_file() {
  * script for variation products
  */
 
-add_action('wp_footer','add_price_groups_variation_products');
+// add_action('wp_footer','add_price_groups_variation_products');
 
 function  add_price_groups_variation_products () {
 
@@ -7433,27 +7543,6 @@ function  add_price_groups_variation_products () {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
