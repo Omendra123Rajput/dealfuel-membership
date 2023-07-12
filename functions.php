@@ -439,14 +439,15 @@ function load_the_details() {
 	$details['current_price'] = get_post_meta( $post->ID, 'current_price', true );
 
 	if ( is_numeric( $details['sale_price'] ) ) {
-		$details['totdiff'] = $details['regular_price'] - $details['sale_price'];} else {
-		$details['totdiff'] = $details['regular_price'];}
+		$details['totdiff'] = $details['regular_price'] - $details['sale_price'];
+	} else {
+		$details['totdiff'] = $details['regular_price'];
+	}
 
-		$details['percent'] = $details['totdiff'] * 100;
+	$details['percent'] = (float) $details['totdiff'] * 100;
 
-		return $details;
+	return $details;
 }
-
 
 
 add_action('wp_footer','get_dynamic_price_annual_monthly');
@@ -592,8 +593,6 @@ function get_dynamic_price( $postid ) {
 
 }
 
-
-
 // Thumbnail three column design
 function df_get_thumbnail_header( $shmink, $regularprice, $saleprice, $dealclub_price ) {
 	if ( $regularprice > 0 ) {
@@ -665,7 +664,6 @@ function df_get_thumbnail_header( $shmink, $regularprice, $saleprice, $dealclub_
 // Change 'add to cart' text on archive product page
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'button_add_to_cart_text' );
 function button_add_to_cart_text() {
-
 	 global $product;
 	if ( is_active_dealclub_member() ) {
 		   $updated_dynamic_price_for_dc_members = get_dynamic_price( $product->get_id() );
@@ -786,20 +784,17 @@ function remove_single_product_print_notices() {
 /**
  * Find out the type of user's memebrship
  */
+function is_user_has_annual_or_monthly_memebership ( ) {
+	global $wpdb;
+	// get any active user memberships (requires Memberships 1.4+)
+	if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+	}
+	$membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
+	$membership = $membership_type->post_parent;
+	return $membership;
+}
 
- function is_user_has_annual_or_monthly_memebership ( ) {
-
-		global $wpdb;
-		// get any active user memberships (requires Memberships 1.4+)
-		if ( empty( $user_id ) ) {
-
-				$user_id = get_current_user_id();
-		}
-
-		$membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
-		$membership = $membership_type->post_parent;
-		return $membership;
- }
 
 /*
  *Check if user has active WooCommerce membership or not
@@ -886,6 +881,7 @@ function checkUserMembership() {
 	}
 	exit;
 }
+
 
 //modify cart prices accoding to different
 
@@ -1052,6 +1048,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 	}
 }
 
+
 /**
  * Check if monthly membership is added in cart.
 */
@@ -1119,9 +1116,6 @@ function check_membership_add_to_cart() {
 }
 
 // add_action( 'woocommerce_add_to_cart_validation', 'check_membership_add_to_cart' );
-
-
-
 
 
 
@@ -1613,7 +1607,7 @@ function vendor_report() {
 
 				$product_id = $commission->product_id;
 
-				if ( ! in_array( $product_id, $dataReborn ) ) {
+				if ( ! in_array( $product_id, $dataReborn ?? []) ) {
 					$dataReborn[] = $product_id;
 				}
 
@@ -1641,10 +1635,10 @@ function vendor_report() {
 					$vendor_id_arr = array();
 					$terms         = get_the_terms( $product_id, 'wcpv_product_vendors' );
 
-					for ( $i = 0;$i < count( $terms );$i++ ) {
-
-						$vendor_id_arr[] = $terms[ $i ]->term_id;
-
+					if (is_array($terms)) {
+						for ($i = 0; $i < count($terms); $i++) {
+							$vendor_id_arr[] = $terms[$i]->term_id;
+						}
 					}
 
 					if ( $product_data_item->is_type( 'simple' ) && in_array( $vendor_id, $vendor_id_arr ) ) {
@@ -1946,7 +1940,7 @@ function get_vendor_report_data() {
 
 				$product_id = $commission->product_id;
 
-				if ( ! in_array( $product_id, $dataReborn ) ) {
+				if ( ! in_array( $product_id, $dataReborn ?? []) ) {
 					$dataReborn[] = $product_id;
 				}
 
@@ -1973,11 +1967,12 @@ function get_vendor_report_data() {
 
 					$vendor_id_arr = array();
 					$terms         = get_the_terms( $product_id, 'wcpv_product_vendors' );
+					if(!empty($terms)){
+						for ( $i = 0;$i < count( $terms );$i++ ) {
 
-					for ( $i = 0;$i < count( $terms );$i++ ) {
+							$vendor_id_arr[] = $terms[ $i ]->term_id;
 
-						$vendor_id_arr[] = $terms[ $i ]->term_id;
-
+						}
 					}
 
 					if ( $product_data_item->is_type( 'simple' ) && in_array( $vendor_id, $vendor_id_arr ) ) {
@@ -3791,6 +3786,11 @@ function df_product_vendor_add_variation_settings( $loop, $variation_data, $vari
 
 	$price = $variation_data['_sale_price'];
 
+	// Check if $price is an array and retrieve the first value
+    if ( is_array( $price ) ) {
+        $price = reset( $price );
+    }
+
 	$round = true;
 	$price = $round ? round( $price, 2 ) : $price;
 
@@ -3855,7 +3855,8 @@ function get_all_dynamic_prices( $postid ) {
 	if ( ! empty( $pricing_rules ) ) {
 		foreach ( $pricing_rules as $key => $item ) {
 
-			$prices[ $i ] = $pricing_rules[ $key ][ rules ][1][ amount ];
+			$prices[ $i ] = $pricing_rules[ $key ][ 'rules' ][1][ 'amount' ];
+
 
 			$i++;
 
@@ -3863,6 +3864,7 @@ function get_all_dynamic_prices( $postid ) {
 	}
 	return $prices;
 }
+
 
 /*
  * Function to get dynamicPrice/plusPrice with id as key and 2 digit decimal format.
@@ -3917,7 +3919,6 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 	}
 	return $prices;
 }
-
 add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
 
 function dealfuel_change_empty_cart_button_url() {
@@ -4301,6 +4302,7 @@ function action_woocommerce_order_refunded( $order_id, $refund_id ) {
 			}
 		}
 	}
+	update_vendor_commission_fee($order_id);
 }
 
 
@@ -4416,7 +4418,7 @@ function update_vendor_commission_fee( $order_id ) {
 			}
 
 			if ( $dynamic_commission ) {
-				$product_commission_amount = $item_subtotal * ( $dynamic_commission / 100 );
+				$product_commission_amount = $item_subtotal * ( floatval($dynamic_commission) / 100 );
 			} else {
 				$fixed_commission = get_post_meta( $item_data->get_product_id(), '_wcpv_product_commission', true );
 				if ( ! $fixed_commission ) {
@@ -4431,11 +4433,11 @@ function update_vendor_commission_fee( $order_id ) {
 			if ( $points_redeemed ) {
 
 				if ( $dynamic_commission ) {
-					$subtotal_fee              = $item_data->get_total() + ( $points_redeemed / 100 );  // subtotal
+					$subtotal_fee              = $item_data->get_total() + ( floatval($points_redeemed) / 100 );  // subtotal
 					$product_commission_amount = $item_data->get_subtotal() * ( $dynamic_commission / 100 );
 				} else {
-					$subtotal_fee     = $item_data->get_total() + ( $points_redeemed / 100 );
-					$fixed_commission = get_post_meta( $item_data->get_product_id(), '_wcpv_product_commission', true );
+					$subtotal_fee     = $item_data->get_total() + ( floatval($points_redeemed) / 100 );
+					$fixed_commission = intval( get_post_meta( $item_data->get_product_id(), '_wcpv_product_commission', true ) );
 					if ( ! $fixed_commission ) {
 						$fixed_commission = get_post_meta( $item_data->get_product_id(), '_product_vendors_commission', true );
 					}
@@ -4444,7 +4446,7 @@ function update_vendor_commission_fee( $order_id ) {
 					}
 				}
 
-				$subtotal_fee = $item_data->get_total() + ( $points_redeemed / 100 );
+				$subtotal_fee = $item_data->get_total() + ( floatval($points_redeemed) / 100 );
 
 				// $net_product_price = $subtotal - ($subtotal * 0.0375 + 0.3 ) ;
 
@@ -4461,7 +4463,7 @@ function update_vendor_commission_fee( $order_id ) {
 			if ( $dynamic_commission ) {
 				$half_processing = ( $processor_fee * $dynamic_commission ) / 100;
 			} else {
-				$half_processing = $processor_fee * ( $fixed_commission / 100 );
+				$half_processing = floatval($processor_fee) * floatval( floatval($fixed_commission) / 100 );
 			}
 
 			// $total_commission_amount = $product_commission_amount - ($processor_fee/2);
@@ -4808,29 +4810,27 @@ function custom_freebie_purchase_event_fb_pixel($order_id) {
 	echo "<script>fbq('trackCustom', '" . $event_name . "',{ content_type: '".$content_type."', content_ids: '".wp_json_encode( array_merge( ... $product_ids ) )."', content_name: '".wp_json_encode( $product_names )."', contents: '".wp_json_encode( $contents )."', value: '".$order->get_total()."', currency: '".get_woocommerce_currency()."'})</script>";
 }
 
-function is_dealclubmembership_in_cart() {
-
-
-		if (is_admin()){
-			return false;
-		}
+function is_dealclubmembership_in_cart(): bool {
+    if (is_admin()) {
+        return false;
+    }
 
     global $woocommerce;
+    if (is_null($woocommerce->cart)) {
+        wc_load_cart();
+    }
 
+    $items = $woocommerce->cart->get_cart();
 
-		if ( is_null( $woocommerce->cart ) ) {
-		    wc_load_cart();
-		}
-		$items = $woocommerce->cart->get_cart();
-
-    foreach ( $items as $item ) {
-        if ( $item['product_id'] == '174721' || $item['product_id'] == '174739' || $item['product_id'] == '174738' ) {
+    foreach ($items as $item) {
+        if ($item['product_id'] == '174721' || $item['product_id'] == '174739' || $item['product_id'] == '174738') {
             return true;
         }
     }
 
     return false;
 }
+
 /* Added to display read more tag for all blog posts */
 add_action('after_setup_theme','readmore_tag_func',10);
 
@@ -4972,8 +4972,8 @@ function get_current_page_url() {
 
     $pageURL = wp_get_referer();
 
-    if($_POST[form_fields][field_9755c9a]){
-	$DC_param = $_POST[form_fields][field_9755c9a];
+    if($_POST['form_fields']['field_9755c9a']){
+		$DC_param = $_POST['form_fields']['field_9755c9a'];
     	$pageURL = wp_get_referer() . '?add-to-cart=' . $DC_param;
     }
 	return $pageURL;
@@ -5562,7 +5562,7 @@ function df_change_product_price_html( $price, $product ) {
 	if(!is_admin()){
 	global $woocommerce;
 
-	if ((is_user_an_active_member_wcm()) || ( $_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && get_dynamic_price( $product->get_id() ) != '' )) {
+	if ((is_user_an_active_member_wcm()) || ( isset($_GET["utm_source"]) && $_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && get_dynamic_price( $product->get_id() ) != '' )) {
 
 		// display prices on shop page for simple products products
 
@@ -5592,7 +5592,7 @@ function df_change_product_price_html( $price, $product ) {
 		$price = '<p style="margin-top: 10px;" class="' . esc_attr( apply_filters( 'woocommerce_product_price_class', 'price' ) ) . '"><del>$' . $sale_price . '</del><ins>$' . $updated_dynamic_price . '</ins></p>';
 
 	}
-	if( (is_user_an_active_member_wcm() && $product->is_type( 'variable' )  ) || ($_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && $product->is_type( 'variable' ) ))
+	if( (is_user_an_active_member_wcm() && $product->is_type( 'variable' )  ) || (isset($_GET["utm_source"]) && $_GET["utm_source"] == "" && is_dealclubmembership_in_cart() && $product->is_type( 'variable' ) ))
 	{	// display prices on shop page for variable products
 
 		$variation_arr2 = get_post_meta( $product->get_id(), '_pricing_rules', 'true' );
@@ -5770,7 +5770,7 @@ function df_display_new_deal_on_archived_deal_page( $atts ) {
 
 function check_if_email_exists_moosend($email){
 
-  $request_uri = "https://api.moosend.com/v3/subscribers/e002e427-4fbb-4f07-8c1d-41bc4c3202b4/view.json?apikey=952f86eb-d549-4208-903a-da792c98030c&Email=".$email ;
+  $request_uri = "https://api.moosend.com/v3/subscribers/e002e427-4fbb-4f07-8c1d-41bc4c3202b4/view.json?apikey=776e1f08-b290-46e0-bb05-4d0e83eabc33&Email=".$email ;
   $request = wp_remote_get( $request_uri );
 
   if( is_wp_error( $request ) || '200' != wp_remote_retrieve_response_code( $request ) ){
@@ -5827,7 +5827,7 @@ function df_add_subscribers_in_moosend( $order_id ) {
       $last_name =  esc_attr( $_POST['billing_last_name'] );
       $last_name_string = "Last Name=".$last_name;
 
-      $request_uri = "https://api.moosend.com/v3/subscribers/e002e427-4fbb-4f07-8c1d-41bc4c3202b4/subscribe.json?apikey=952f86eb-d549-4208-903a-da792c98030c";
+      $request_uri = "https://api.moosend.com/v3/subscribers/e002e427-4fbb-4f07-8c1d-41bc4c3202b4/subscribe.json?apikey=776e1f08-b290-46e0-bb05-4d0e83eabc33";
       $wp_args['Email'] = $billing_email;
       $wp_args['CustomFields'] = array('Source=Checkout-Subscribe',$first_name_string,$last_name_string);
       $request = wp_remote_post( $request_uri,  array('body' => $wp_args));
@@ -6022,18 +6022,14 @@ if(!is_home() && !is_admin()){
 add_filter( 'woocommerce_add_to_cart_redirect', 'df_astra_custom_add_to_cart_redirect' );
 
 function df_astra_custom_add_to_cart_redirect( $url ) {
-
-	if($_REQUEST['utm_source'] == "checkout-page"){
-
-		$url = WC()->cart->get_checkout_url();
-
-	}else{
-
-	//	$url = WC()->cart->get_cart_url();
-
+	if (isset($array['utm_source'])) {
+		if($_REQUEST['utm_source'] == "checkout-page"){
+			$url = WC()->cart->get_checkout_url();
+		}else{
+		//	$url = WC()->cart->get_cart_url();
+		}
+		return $url;
 	}
-	return $url;
-
 }
 /*
  * Exclude freebie and expired deals category from Search result page
@@ -7083,11 +7079,13 @@ function add_script_on_select_variation_value_change(){
 
  }
 }
+
+
 /*
  * Redirect to cart page by removing arguments ( product ids given on single product page add to cart )
  */
 
-add_action('add_to_cart_redirect', 'df_add_to_cart_redirect_without_arg_in_url');
+ add_action('woocommerce_add_to_cart_redirect', 'df_add_to_cart_redirect_without_arg_in_url');
 
 function df_add_to_cart_redirect_without_arg_in_url($url = false) {
 
@@ -7220,6 +7218,8 @@ function dealfuel_rename_default_sorting_options($options){
 
 }
 
+
+
 /**
  *
  * Function to add dynamic price groups
@@ -7230,445 +7230,458 @@ function dealfuel_rename_default_sorting_options($options){
 
 function add_price_groups ( ) {
 
-		// Call the function to read the CSV file and store the data in an array
-		$csv_data = read_csv_file();
+	// Call the function to read the CSV file and store the data in an array
+	$csv_data = read_csv_file();
 
-		// loop through the data and update price groups using product ID and annual,monthly price.
-		foreach ($csv_data as $row) {
+	// loop through the data and update price groups using product ID and annual,monthly price.
+	foreach ($csv_data as $row) {
 
-			if ( $row[1] == 'Product ID' ) { //do not include 1st row
+		if ( $row[1] == 'Product ID' ) { //do not include 1st row
 
-				continue;
+			continue;
 
-			} else {
+		} else {
 
-				//fetch values from the row ( index which are given in row are according to the sheet)
-				$product_id = $row[1];
-				$annual_price = $row[7];
-				$monthly_price = $row[6];
-				$sale_price = $row[4];
-
-
-
-				//set price only upto 2 decimal points
-				$annual_price =  round($annual_price, 2);
-				$monthly_price =  round($monthly_price, 2);
-
-				$annual_commission = $row[10];
-				$monthly_commission = $row[9];
-				$non_dc_commission = $row[8];
-
-				//set commission only upto 2 decimal points
-
-				$annual_commission =  round($annual_commission, 2);
-				$monthly_commission =  round($monthly_commission, 2);
-				$non_dc_commission =  round($non_dc_commission, 2);
-
-				//replace the % sign in commission
-
-				$annual_commission = str_replace('%', '', $annual_commission);
-				$monthly_commission = str_replace('%', '', $monthly_commission);
-				$non_dc_commission = str_replace('%', '', $non_dc_commission);
+			//fetch values from the row ( index which are given in row are according to the sheet)
+			$product_id = $row[1];
+			$annual_price = $row[7];
+			$monthly_price = $row[6];
+			$sale_price = $row[4];
 
 
 
-				//meta keys for annual and monthly commisions. we will use keys to update the commision in database
-				$annual_comm_meta_key = '_product_vendors_commission_'.$annual_price;
-				$monthly_comm_meta_key = '_product_vendors_commission_'.$monthly_price;
-				$non_dc_comm_meta_key = '_product_vendors_commission_'.$sale_price;
+			//set price only upto 2 decimal points
+			$annual_price =  round($annual_price, 2);
+			$monthly_price =  round($monthly_price, 2);
+
+			$annual_commission = $row[10];
+			$monthly_commission = $row[9];
+			$non_dc_commission = $row[8];
 
 
-				//annual price group
-				$annual_array = array(
-					'annual' => array(
-						'conditions_type' => 'all',
-						'conditions' => array(
-							'1' => array(
-								'type' => 'apply_to',
-								'args' => array(
-									'applies_to' => 'membership',
-									'memberships' => array(
-										'0' => '174765'
-									)
+
+			//replace the % sign in commission
+
+			$annual_commission = str_replace('%', '', $annual_commission);
+			$monthly_commission = str_replace('%', '', $monthly_commission);
+			$non_dc_commission = str_replace('%', '', $non_dc_commission);
+
+			//set commission only upto 2 decimal points
+
+			$annual_commission =  round($annual_commission, 2);
+			$monthly_commission =  round($monthly_commission, 2);
+			$non_dc_commission =  round($non_dc_commission, 2);
+
+
+
+
+
+			//meta keys for annual and monthly commisions. we will use keys to update the commision in database
+			$annual_comm_meta_key = '_product_vendors_commission_'.$annual_price;
+			$monthly_comm_meta_key = '_product_vendors_commission_'.$monthly_price;
+			$non_dc_comm_meta_key = '_product_vendors_commission_'.$sale_price;
+
+
+			//annual price group
+			$annual_array = array(
+				'annual' => array(
+					'conditions_type' => 'all',
+					'conditions' => array(
+						'1' => array(
+							'type' => 'apply_to',
+							'args' => array(
+								'applies_to' => 'membership',
+								'memberships' => array(
+									'0' => '174765'
 								)
 							)
-						),
-						'collector' => array(
-							'type' => 'product'
-						),
-						'mode' => 'continuous',
-						'date_from' => '',
-						'date_to' => '',
-						'rules' => array(
-							'1' => array(
-								'from' => '',
-								'to' => '',
-								'type' => 'fixed_price',
-								'amount' => '1015'
-							)
-						),
-						'blockrules' => array(
-							'1' => array(
-								'from' => '',
-								'adjust' => '',
-								'type' => 'fixed_adjustment',
-								'amount' => '',
-								'repeating' => 'no'
-							)
+						)
+					),
+					'collector' => array(
+						'type' => 'product'
+					),
+					'mode' => 'continuous',
+					'date_from' => '',
+					'date_to' => '',
+					'rules' => array(
+						'1' => array(
+							'from' => '',
+							'to' => '',
+							'type' => 'fixed_price',
+							'amount' => '1015'
+						)
+					),
+					'blockrules' => array(
+						'1' => array(
+							'from' => '',
+							'adjust' => '',
+							'type' => 'fixed_adjustment',
+							'amount' => '',
+							'repeating' => 'no'
 						)
 					)
-				);
+				)
+			);
 
-				//monthly price group
-				$monthly_array = array(
-					'monthly' => array(
-						'conditions_type' => 'all',
-						'conditions' => array(
-							'1' => array(
-								'type' => 'apply_to',
-								'args' => array(
-									'applies_to' => 'membership',
-									'memberships' => array(
-										'0' => '174761'
-									)
+			//monthly price group
+			$monthly_array = array(
+				'monthly' => array(
+					'conditions_type' => 'all',
+					'conditions' => array(
+						'1' => array(
+							'type' => 'apply_to',
+							'args' => array(
+								'applies_to' => 'membership',
+								'memberships' => array(
+									'0' => '174761'
 								)
 							)
-						),
-						'collector' => array(
-							'type' => 'product'
-						),
-						'mode' => 'continuous',
-						'date_from' => '',
-						'date_to' => '',
-						'rules' => array(
-							'1' => array(
-								'from' => '',
-								'to' => '',
-								'type' => 'fixed_price',
-								'amount' => '786'
-							)
-						),
-						'blockrules' => array(
-							'1' => array(
-								'from' => '',
-								'adjust' => '',
-								'type' => 'fixed_adjustment',
-								'amount' => '',
-								'repeating' => 'no'
-							)
+						)
+					),
+					'collector' => array(
+						'type' => 'product'
+					),
+					'mode' => 'continuous',
+					'date_from' => '',
+					'date_to' => '',
+					'rules' => array(
+						'1' => array(
+							'from' => '',
+							'to' => '',
+							'type' => 'fixed_price',
+							'amount' => '786'
+						)
+					),
+					'blockrules' => array(
+						'1' => array(
+							'from' => '',
+							'adjust' => '',
+							'type' => 'fixed_adjustment',
+							'amount' => '',
+							'repeating' => 'no'
 						)
 					)
-				);
+				)
+			);
 
-				$annual_array['annual']['rules']['1']['amount'] = $annual_price;
-				$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
-
-
-				$mergedArray = array_merge($annual_array, $monthly_array);
-
-				// update the price groups in the db
-
-				// update_post_meta($product_id, '_pricing_rules', $mergedArray);  //uncomment when use
-
-				// update the commisions for the product
-
-				// update_post_meta($product_id, $non_dc_comm_meta_key, $non_dc_commission );   //uncomment when use
-				// update_post_meta($product_id, $annual_comm_meta_key, $annual_commission );   //uncomment when use
-				// update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );  //uncomment when use
+			$annual_array['annual']['rules']['1']['amount'] = $annual_price;
+			$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
 
 
-			}
+			$mergedArray = array_merge($annual_array, $monthly_array);
+
+			// update the price groups in the db
+
+			update_post_meta($product_id, '_pricing_rules', $mergedArray);  //uncomment when use
+
+			// update the commisions for the product
+
+			update_post_meta($product_id, $non_dc_comm_meta_key, $non_dc_commission );   //uncomment when use
+			update_post_meta($product_id, $annual_comm_meta_key, $annual_commission );   //uncomment when use
+			update_post_meta($product_id, $monthly_comm_meta_key, $monthly_commission );  //uncomment when use
 
 
 		}
 
-		echo 'Done';
+
+	}
+
+	echo 'Done';
 
 }
 
 
 /**
- * read csv file
- *
- */
+* read csv file
+*
+*/
 
 function read_csv_file() {
 
+	//change this url according to live site
 
-		// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file - simple
+	// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file - simple - for DF test site
 
-		$csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/variations.csv'; // Path to your CSV file - variable
+	// $csv_file = '/chroot/home/a335789e/1461794109.nxcli.io/html/wp-content/simple.csv'; // Path to your CSV file - simple - for DF Nexcess
+
+	// $csv_file = '/chroot/home/af57624e/59e4907299.nxcli.io/html/wp-content/variations.csv'; // Path to your CSV file - variable -for DF test
+
+	$csv_file = '/chroot/home/a335789e/1461794109.nxcli.io/html/wp-content/variations.csv'; // Path to your CSV file - variable - for DF Nexcess
 
 
+	$data = array();
 
-		$data = array();
-
-		if (($handle = fopen($csv_file, "r")) !== false) {
-			while (($row = fgetcsv($handle, 1000, ",")) !== false) {
-				$data[] = $row;
-			}
-			fclose($handle);
+	if (($handle = fopen($csv_file, "r")) !== false) {
+		while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+			$data[] = $row;
 		}
+		fclose($handle);
+	}
 
-		return $data;
+	return $data;
 
 }
 
 
 
 /**
- * script for variation products
- */
+* script for variation products
+*/
 
 // add_action('wp_footer','add_price_groups_variation_products');
 
 function  add_price_groups_variation_products () {
 
-			// Call the function to read the CSV file and store the data in an array
-			$csv_data = read_csv_file();
+		echo "HELLO WORLD";
+
+		// Call the function to read the CSV file and store the data in an array
+		$csv_data = read_csv_file();
 
 
-			// $parentID = 1376652;
+		// $parentID = 1376652;
 
 
-			foreach ($csv_data as $row) {
+		foreach ($csv_data as $row) {
 
-				if ( $row[2] == 'Product ID' ) { //do not include 1st row
+			if ( $row[2] == 'Product ID' ) { //do not include 1st row
 
-					continue;
+				continue;
 
-				} else {
+			} else {
 
-					$parentID = $row[2];
+				$parentID = $row[2];
 
-					$children = [];
+				$children = [];
 
-					// Find the children of the parent
-					foreach ($csv_data as $item) {
-					  if ($item[2] == $parentID) {
-						$children[] = $item[3];
-					  }
+				// Find the children of the parent
+				foreach ($csv_data as $item) {
+				  if ($item[2] == $parentID) {
+					$children[] = $item[3];
+				  }
+				}
+
+				//array to store the price groups
+				$all_price_groups_variations = [];
+
+				// Find annual and monthly prices for each child
+				foreach ($csv_data as $item) {
+
+
+				  $childID = $item[3];
+
+				  if (in_array($childID, $children)) {
+
+					//price
+					$childAnnualPrice = $item[7];
+					$childMonthlyPrice = $item[6];
+
+
+					//commissions
+
+					$annual_commission = $item[10];
+					$monthly_commission = $item[9];
+
+					if ( $annual_commission == '' ){
+						$annual_commission = 0;
 					}
 
-					//array to store the price groups
-					$all_price_groups_variations = [];
-
-					// Find annual and monthly prices for each child
-					foreach ($csv_data as $item) {
-
-
-					  $childID = $item[3];
-
-					  if (in_array($childID, $children)) {
-
-						//price
-						$childAnnualPrice = $item[7];
-						$childMonthlyPrice = $item[6];
-
-
-						//commissions
-
-						$annual_commission = $item[10];
-						$monthly_commission = $item[9];
-
-						if ( $annual_commission == '' ){
-							$annual_commission = 0;
-						}
-
-						if ( $monthly_commission == '' ){
-							$monthly_commission = 0;
-						}
-
-						//set commission only upto 2 decimal points
-
-						$annual_commission =  round($annual_commission, 2);
-						$monthly_commission =  round($monthly_commission, 2);
-
-						//replace the % sign in commission
-
-						$annual_commission = str_replace('%', '', $annual_commission);
-						$monthly_commission = str_replace('%', '', $monthly_commission);
-
-						//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
-						$annaul_comm_meta_key = '_product_vendors_commission_'.$childAnnualPrice;
-						$monthly_comm_meta_key = '_product_vendors_commission_'.$childMonthlyPrice;
-
-						//uncomment when run the script
-
-						// update the commisions for the product
-
-						// update_post_meta($parentID, $annaul_comm_meta_key, $annual_commission );
-						// update_post_meta($parentID, $monthly_comm_meta_key, $monthly_commission );
-
-
-						//code for setting up the price groups
-
-						$variation = $childID;
-
-						$annual_price = $childAnnualPrice;
-						$monthly_price = $childMonthlyPrice;
-
-
-						//set price only upto 2 decimal points
-						$annual_price =  round($annual_price, 2);
-						$monthly_price =  round($monthly_price, 2);
-
-						//annual price group
-						$annual_array = array(
-							'annual' => array(
-								'conditions_type' => 'all',
-								'conditions' => array(
-									'1' => array(
-										'type' => 'apply_to',
-										'args' => array(
-											'applies_to' => 'membership',
-											'memberships' => array(
-												'0' => '174765'
-											)
-										)
-									)
-								),
-								'collector' => array(
-									'type' => 'product'
-								),
-								'variation_rules' => array (
-									'args' => array (
-										'type' => 'variations',
-										'variations' => array (
-											'0' => '1376668'
-										)
-									)
-								),
-								'mode' => 'continuous',
-								'date_from' => '',
-								'date_to' => '',
-								'rules' => array(
-									'1' => array(
-										'from' => '',
-										'to' => '',
-										'type' => 'fixed_price',
-										'amount' => '1015'
-									)
-								),
-								'blockrules' => array(
-									'1' => array(
-										'from' => '',
-										'adjust' => '',
-										'type' => 'fixed_adjustment',
-										'amount' => '',
-										'repeating' => 'no'
-									)
-								)
-							)
-						);
-
-						//monthly price group
-						$monthly_array = array(
-							'monthly' => array(
-								'conditions_type' => 'all',
-								'conditions' => array(
-									'1' => array(
-										'type' => 'apply_to',
-										'args' => array(
-											'applies_to' => 'membership',
-											'memberships' => array(
-												'0' => '174761'
-											)
-										)
-									)
-								),
-								'collector' => array(
-									'type' => 'product'
-								),
-								'variation_rules' => array (
-									'args' => array (
-										'type' => 'variations',
-										'variations' => array (
-											'0' => '1376668'
-										)
-									)
-								),
-								'mode' => 'continuous',
-								'date_from' => '',
-								'date_to' => '',
-								'rules' => array(
-									'1' => array(
-										'from' => '',
-										'to' => '',
-										'type' => 'fixed_price',
-										'amount' => '786'
-									)
-								),
-								'blockrules' => array(
-									'1' => array(
-										'from' => '',
-										'adjust' => '',
-										'type' => 'fixed_adjustment',
-										'amount' => '',
-										'repeating' => 'no'
-									)
-								)
-							)
-						);
-
-						$annual_array['annual']['rules']['1']['amount'] = $annual_price;
-						$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
-
-						//change variation here
-						$annual_array['annual']['variation_rules']['args']['variations'][0] = $variation;
-						$monthly_array['monthly']['variation_rules']['args']['variations'][0] = $variation;
-
-						//change array key acc to variation for annual array
-
-						$newKey_for_annual_array = 'annual_'.$variation;
-
-						$annual_array[$newKey_for_annual_array] = $annual_array['annual'];
-						unset($annual_array['annual']);
-
-						//change array key acc to variation for monthly array
-
-						$newKey_for_monthly_array = 'monthly_'.$variation;
-
-						$monthly_array[$newKey_for_monthly_array] = $monthly_array['monthly'];
-						unset($monthly_array['monthly']);
-
-
-						$mergedArray = array_merge($annual_array, $monthly_array);
-
-						array_push($all_price_groups_variations, $mergedArray);
-
-
-
-					  }
-
-
-
+					if ( $monthly_commission == '' ){
+						$monthly_commission = 0;
 					}
 
-					$final_price_groups_array = array();
+					//replace the % sign in commission
 
-					foreach ($all_price_groups_variations as $subArray) {
-						foreach ($subArray as $key => $value) {
-							$final_price_groups_array[$key] = $value;
-						}
-					}
+					$annual_commission = str_replace('%', '', $annual_commission);
+					$monthly_commission = str_replace('%', '', $monthly_commission);
+
+					//set commission only upto 2 decimal points
+
+					$annual_commission =  round($annual_commission, 2);
+					$monthly_commission =  round($monthly_commission, 2);
+
+					//set annula and monthly price only upto 2 decimal points
+
+					$childAnnualPrice =  round($childAnnualPrice, 2);
+					$childMonthlyPrice =  round($childMonthlyPrice, 2);
+
+					//meta keys for annaul and monthly commisions. we will use keys to update the commision in database
+					$annaul_comm_meta_key = '_product_vendors_commission_'.$childAnnualPrice;
+					$monthly_comm_meta_key = '_product_vendors_commission_'.$childMonthlyPrice;
 
 					//uncomment when run the script
 
-					// update the price groups in the db
-					// update_post_meta($parentID, '_pricing_rules', $final_price_groups_array);
+					// update the commisions for the product
+
+					update_post_meta($parentID, $annaul_comm_meta_key, $annual_commission );
+					update_post_meta($parentID, $monthly_comm_meta_key, $monthly_commission );
+
+
+					//code for setting up the price groups
+
+					$variation = $childID;
+
+					$annual_price = $childAnnualPrice;
+					$monthly_price = $childMonthlyPrice;
+
+
+					//set price only upto 2 decimal points
+					$annual_price =  round($annual_price, 2);
+					$monthly_price =  round($monthly_price, 2);
+
+					//annual price group
+					$annual_array = array(
+						'annual' => array(
+							'conditions_type' => 'all',
+							'conditions' => array(
+								'1' => array(
+									'type' => 'apply_to',
+									'args' => array(
+										'applies_to' => 'membership',
+										'memberships' => array(
+											'0' => '174765'
+										)
+									)
+								)
+							),
+							'collector' => array(
+								'type' => 'product'
+							),
+							'variation_rules' => array (
+								'args' => array (
+									'type' => 'variations',
+									'variations' => array (
+										'0' => '1376668'
+									)
+								)
+							),
+							'mode' => 'continuous',
+							'date_from' => '',
+							'date_to' => '',
+							'rules' => array(
+								'1' => array(
+									'from' => '',
+									'to' => '',
+									'type' => 'fixed_price',
+									'amount' => '1015'
+								)
+							),
+							'blockrules' => array(
+								'1' => array(
+									'from' => '',
+									'adjust' => '',
+									'type' => 'fixed_adjustment',
+									'amount' => '',
+									'repeating' => 'no'
+								)
+							)
+						)
+					);
+
+					//monthly price group
+					$monthly_array = array(
+						'monthly' => array(
+							'conditions_type' => 'all',
+							'conditions' => array(
+								'1' => array(
+									'type' => 'apply_to',
+									'args' => array(
+										'applies_to' => 'membership',
+										'memberships' => array(
+											'0' => '174761'
+										)
+									)
+								)
+							),
+							'collector' => array(
+								'type' => 'product'
+							),
+							'variation_rules' => array (
+								'args' => array (
+									'type' => 'variations',
+									'variations' => array (
+										'0' => '1376668'
+									)
+								)
+							),
+							'mode' => 'continuous',
+							'date_from' => '',
+							'date_to' => '',
+							'rules' => array(
+								'1' => array(
+									'from' => '',
+									'to' => '',
+									'type' => 'fixed_price',
+									'amount' => '786'
+								)
+							),
+							'blockrules' => array(
+								'1' => array(
+									'from' => '',
+									'adjust' => '',
+									'type' => 'fixed_adjustment',
+									'amount' => '',
+									'repeating' => 'no'
+								)
+							)
+						)
+					);
+
+					$annual_array['annual']['rules']['1']['amount'] = $annual_price;
+					$monthly_array['monthly']['rules']['1']['amount'] = $monthly_price;
+
+					//change variation here
+					$annual_array['annual']['variation_rules']['args']['variations'][0] = $variation;
+					$monthly_array['monthly']['variation_rules']['args']['variations'][0] = $variation;
+
+					//change array key acc to variation for annual array
+
+					$newKey_for_annual_array = 'annual_'.$variation;
+
+					$annual_array[$newKey_for_annual_array] = $annual_array['annual'];
+					unset($annual_array['annual']);
+
+					//change array key acc to variation for monthly array
+
+					$newKey_for_monthly_array = 'monthly_'.$variation;
+
+					$monthly_array[$newKey_for_monthly_array] = $monthly_array['monthly'];
+					unset($monthly_array['monthly']);
+
+
+					$mergedArray = array_merge($annual_array, $monthly_array);
+
+					array_push($all_price_groups_variations, $mergedArray);
+
+
+
+				  }
 
 
 
 				}
 
+				$final_price_groups_array = array();
+
+				foreach ($all_price_groups_variations as $subArray) {
+					foreach ($subArray as $key => $value) {
+						$final_price_groups_array[$key] = $value;
+					}
+				}
+
+				//uncomment when run the script
+
+				// update the price groups in the db
+				update_post_meta($parentID, '_pricing_rules', $final_price_groups_array);
+
+
 
 			}
 
 
+		}
+
+		echo "Done";
 }
-
-
 
 
 /* Added by Prasada - Checkout page new UI changes 2022 - start */
@@ -7928,105 +7941,6 @@ function wc_check_confirm_password_matches_checkout( $posted ) {
     }
 }
 
-/*
- * Shortcode to display BestSeller deals for last 6 months
- */
-add_shortcode( 'df_best_seller_deals', 'df_best_seller_deals' );
-
-/**
- * Function to Shortcode to display BestSeller deals for last 6 months
- *
- * @param array $atts attributes array.
- */
-function df_best_seller_deals( $atts ) {
-
-		$args    = shortcode_atts(
-			array(
-				'limit'   => 30,
-				'columns' => 3,
-			),
-			$atts
-		);
-		$limit   = (int) $args['limit'];
-		$columns = (int) $args['columns'];
-
-	$transient = get_transient( 'bestseller_product_id_string' );
-
-	if ( ! empty( $transient ) ) {
-
-				$product_ids_string = $transient;
-	} else {
-
-				global $wpdb;
-
-				$limit        = 100;
-				$limit_clause = intval( $limit ) <= 0 ? '' : 'LIMIT ' . intval( $limit );
-				$curent_month = date( 'Y-m-01 00:00:00' );
-
-				$results = $wpdb->get_results(
-					"
-					 SELECT p.ID,p.post_title as product_name, ( SELECT meta_value from {$wpdb->prefix}postmeta pm WHERE pm.post_id = p.ID AND pm.meta_key = '_sale_price') as product_price, COUNT(oim2.meta_value) as count
-					 FROM {$wpdb->prefix}posts p
-					 INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta oim
-							 ON p.ID = oim.meta_value
-					 INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta oim2
-							 ON oim.order_item_id = oim2.order_item_id
-					 INNER JOIN {$wpdb->prefix}woocommerce_order_items oi
-							 ON oim.order_item_id = oi.order_item_id
-					 INNER JOIN {$wpdb->prefix}posts as o
-							 ON o.ID = oi.order_id
-					 WHERE p.post_type = 'product'
-					 AND p.post_status = 'publish'
-					 AND o.post_status IN ('wc-processing','wc-completed')
-					 AND o.post_date >= DATE_SUB(now(), INTERVAL 6 MONTH)
-					 AND oim.meta_key = '_product_id'
-					 AND oim2.meta_key = '_qty'
-					 GROUP BY p.ID
-					 ORDER BY COUNT(oim2.meta_value) + 0 DESC
-					 Limit 100 " ); // db call ok; no-cache ok.
-
-				$bestseller_product_array = array();
-		foreach ( $results as $key => $val ) {
-
-			if ( ( $val->product_price >= 1 ) && ( ! ( has_term( array( 'free', 'expired-deals' ), 'product_cat', $val->ID ) ) ) ) {
-
-					// Query to find line total ( Payment excluding coupon code) for perticular product in last 6 months.
-					$result_total = $wpdb->get_results( $wpdb->prepare(
-						"SELECT wp_woocommerce_order_items.order_id , ( SELECT wp_posts.post_date FROM wp_posts WHERE wp_posts.ID =  wp_woocommerce_order_items.order_id ) AS order_date,
-						   ( SELECT wp_woocommerce_order_itemmeta.meta_value FROM wp_woocommerce_order_itemmeta WHERE  wp_woocommerce_order_itemmeta.meta_key = '_line_total' AND wp_woocommerce_order_itemmeta.order_item_id = wp_woocommerce_order_items.order_item_id ) AS line_total
-						 	FROM wp_woocommerce_order_items
-						 LEFT JOIN wp_woocommerce_order_itemmeta
-						 	ON ( wp_woocommerce_order_itemmeta.order_item_id = wp_woocommerce_order_items.order_item_id AND wp_woocommerce_order_itemmeta.meta_key =  '_product_id' )
-						 LEFT JOIN wp_posts
-						   ON wp_woocommerce_order_items.order_id = wp_posts.ID
-						 WHERE
-						   wp_woocommerce_order_items.order_item_type = 'line_item' AND
-						   wp_posts.post_date >= DATE_SUB(now(), INTERVAL 6 MONTH) AND
-						   wp_posts.post_status = 'wc-completed' AND
-						   wp_woocommerce_order_itemmeta.meta_key =  '_product_id' AND
-						   wp_woocommerce_order_itemmeta.meta_value =  %d
-							 ",
-					$val->ID )); // db call ok; no-cache ok.
-
-						$product_revenue = 0;
-				foreach ( $result_total as $key1 => $val1 ) {
-					$product_revenue = $product_revenue + $val1->line_total;
-
-				}
-							$bestseller_product_array[ $val->ID ] = $product_revenue;
-
-			}
-		}//foreach loop for outer query.
-				arsort( $bestseller_product_array );
-				$bestseller_product_array = array_slice( $bestseller_product_array, 0, 6, true );
-				$product_ids_array        = array_keys( $bestseller_product_array );
-				$product_ids_string = implode( ',', $product_ids_array );
-				set_transient( 'bestseller_product_id_string', $product_ids_string, 604800 );
-	}//Else condition for transient.
-
-				return do_shortcode( "[products ids='$product_ids_string' orderby='post__in' columns='3' ]" );
-
-}
 
 add_action('wp_head','homepage_add_product_slider_js');
 function homepage_add_product_slider_js(){
@@ -8579,52 +8493,53 @@ if(is_checkout()){
 
 	add_action("wp_head","select_default_variation_product");
 
-	function select_default_variation_product(){
-		if(is_product()){
-		global $wpdb;
-		global $product;
-		$var_p_ids = $product->get_children();
-		$gross_rev = [];
-		foreach ($var_p_ids as $var_id) {
-			$gross_revenue = (float) $wpdb->get_var( $wpdb->prepare("
-			SELECT SUM(product_gross_revenue)
-			FROM {$wpdb->prefix}wc_order_product_lookup
-			WHERE variation_id = %d
-			",$var_id ) );
+	function select_default_variation_product() {
+		if (is_product()) {
+			global $wpdb, $product;
+			$var_p_ids = $product->get_children();
+			$gross_rev = [];
 
-			$gross_rev[$var_id] = $gross_revenue;
+			foreach ($var_p_ids as $var_id) {
+				$gross_revenue = (float) $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT SUM(product_gross_revenue)
+						FROM {$wpdb->prefix}wc_order_product_lookup
+						WHERE variation_id = %d",
+						$var_id
+					)
+				);
+
+				$gross_rev[$var_id] = $gross_revenue;
+			}
+
+			if (!empty($gross_rev)) {
+				$max_of_var = max($gross_rev);
+				$key = array_search($max_of_var, $gross_rev);
+				$size = sizeof(wc_get_product($key)->attributes);
+				$keys = array_keys(wc_get_product($key)->attributes);
+				$select = wc_get_product($key)->attributes[$keys[0]];
+
+				if ($max_of_var != 0) {
+					?>
+					<script>
+						jQuery(document).ready(function($) {
+							$(".single-product .variations .value select option[value='<?php echo $select; ?>']").prop("selected", true);
+						});
+					</script>
+					<?php
+				} else {
+					?>
+					<script>
+						jQuery(document).ready(function($) {
+							$(".single-product .variations .value select option:nth-child(2)").prop("selected", true);
+						});
+					</script>
+					<?php
+				}
+			}
 		}
-		if(!empty($gross_rev)) {
-
-			$max_of_var = max($gross_rev);
-		}
-		$key = array_search($max_of_var, $gross_rev);
-		$size = sizeof(wc_get_product( $key )->attributes);
-		$keys = array_keys( wc_get_product( $key )->attributes );
-		$select = wc_get_product( $key )->attributes[$keys[0]];
-
-		if( $max_of_var != 0){
-			?>
-			<script>
-				jQuery(document).ready(function(){
-					jQuery(".single-product .variations .value select option[value='<?php echo $select ?>']").prop("selected", true);
-				});
-			</script>
-			<?php
-		}else{
-
-			?>
-			<script>
-				jQuery(document).ready(function(){
-					jQuery(".single-product .variations .value select option:nth-child(2)").prop("selected", true);
-				});
-			</script>
-			<?php
-		}
-
-		}
-
 	}
+
 
 	/**
 	 * Hide the credit point section from woocommerce checkout when coupon is applied.
@@ -8646,5 +8561,110 @@ if(is_checkout()){
 			<?php
 		}
 	}
+
+
+
+	/**
+	 * Shortcode to show carousal based on formula for bestselling deals.
+	 */
+
+	 function df_best_seller_deals(){
+
+		$transient = get_transient( 'bestsell_product_id_string' );
+
+		if ( ! empty( $transient ) ) {
+
+			$product_ids_string = $transient;
+		} else {
+
+
+		$args = array(
+			'status' => 'publish', // Only fetch published products
+			'limit' => -1, // Retrieve all products
+			'stock_status' => 'instock', // Only fetch products that are in stock
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'product_cat', // Specify the taxonomy (category)
+					'field' => 'slug', // Use 'slug' or 'term_id' depending on the identifier you want to exclude categories by
+					'terms' => array('freebies','exclusive-masterclasses','dealclub-special'), // Replace with the slugs or term IDs of the categories you want to exclude
+					'operator' => 'NOT IN' // Exclude the specified categories
+				)
+			)
+		);
+
+		$products = wc_get_products($args);
+		$product_ids = wp_list_pluck($products, 'id');
+
+		$gross_rev_gen = array();
+		foreach ($product_ids as $id){
+
+			global $wpdb;
+
+			$start_date = strtotime('-3 months'); // Calculate the start date (3 months ago) in Unix timestamp
+			$end_date = current_time('timestamp'); // Get the current date in Unix timestamp
+
+			$query = $wpdb->prepare("
+				SELECT SUM(meta_value) AS quantity
+				FROM {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta
+				INNER JOIN {$wpdb->prefix}woocommerce_order_items AS items ON itemmeta.order_item_id = items.order_item_id
+				INNER JOIN {$wpdb->prefix}posts AS posts ON items.order_id = posts.ID
+				WHERE itemmeta.meta_key = '_qty'
+				AND items.order_item_type = 'line_item'
+				AND itemmeta.order_item_id IN (
+					SELECT order_item_id
+					FROM {$wpdb->prefix}woocommerce_order_itemmeta
+					WHERE meta_key = '_product_id'
+					AND meta_value = %d
+				)
+				AND posts.post_type = 'shop_order'
+				AND posts.post_status = 'wc-completed'
+				AND posts.post_date >= %s
+				AND posts.post_date <= %s
+			", $id, date('Y-m-d H:i:s', $start_date), date('Y-m-d H:i:s', $end_date));
+
+			$product_sold_count = $wpdb->get_var($query);
+
+
+			$query2 = $wpdb->prepare("
+			SELECT SUM(meta_value) AS revenue
+			FROM {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta
+			INNER JOIN {$wpdb->prefix}woocommerce_order_items AS items ON itemmeta.order_item_id = items.order_item_id
+			INNER JOIN {$wpdb->prefix}posts AS posts ON items.order_id = posts.ID
+			WHERE itemmeta.meta_key = '_line_total'
+			AND items.order_item_type = 'line_item'
+			AND itemmeta.order_item_id IN (
+				SELECT order_item_id
+				FROM {$wpdb->prefix}woocommerce_order_itemmeta
+				WHERE meta_key = '_product_id'
+				AND meta_value = %d
+			)
+			AND posts.post_type = 'shop_order'
+			AND posts.post_status IN ('wc-completed', 'wc-processing')
+			AND posts.post_date >= %s
+			AND posts.post_date <= %s
+			", $id, date('Y-m-d H:i:s', $start_date), date('Y-m-d H:i:s', $end_date));
+
+			$gross_revenue = $wpdb->get_var($query2);
+
+			$formulated_value = ($gross_revenue/90) * ($product_sold_count / 90);
+			$gross_rev_gen[$id] = number_format($formulated_value,2);
+
+
+		}
+		$sorted_array = arsort($gross_rev_gen);
+
+
+		$final_array = array_slice($gross_rev_gen,0,7,true);
+
+		$product_ids_array = array_keys( $final_array );
+		$product_ids_string = implode( ',', $product_ids_array );
+		set_transient( 'bestsell_product_id_string', $product_ids_string, 604800 );
+	}
+		 return do_shortcode( "[products ids='$product_ids_string' orderby='post__in' columns='3' ]" );
+
+	}
+
+	add_shortcode( 'df_best_seller_deals', 'df_best_seller_deals' );
+
 
 ?>
