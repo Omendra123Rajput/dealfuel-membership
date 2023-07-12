@@ -6154,7 +6154,7 @@ function productpage_sidebar_addtocart_shortcode(){
 				//find out the which radio button is selected and make its text green
 				var selectedRadioButton = jQuery('input[name="radiodealclub"]:checked').val();
 
-				if ( selectedRadioButton == 'withdealclub' ) {
+				if ( selectedRadioButton == 'withdealclub' && is_annual_or_monthly == 174765 ) {
 
 					jQuery('.annaul_text').css('color', 'green');
 					jQuery('.monthly_text').css('color', '#2E3739');
@@ -6167,7 +6167,7 @@ function productpage_sidebar_addtocart_shortcode(){
 					jQuery('.non_dc_text').css('color', '#2E3739');
 
 				} else if (selectedRadioButton == 'withoutdealclub' ) {
-					jQuery('.non_dc_text').css('color', 'green');
+
 					jQuery('.monthly_text').css('color', '#2E3739');
 					jQuery('.annaul_text').css('color', '#2E3739');
 
@@ -6184,8 +6184,8 @@ function productpage_sidebar_addtocart_shortcode(){
 
 					var value = jQuery(this).val();
 					if(value == "withdealclub"){
-						jQuery('.annaul_text').css('color', 'green');
-						jQuery('.monthly_text').css('color', '#2E3739');
+						jQuery('.annaul_text').css('color', '#2E3739');
+						jQuery('.monthly_text').css('color', 'green');
 						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 					}
 					else if ( value == "withmonthlydealclub"){
@@ -6200,37 +6200,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 					});
 
-				}else { //for non dc
-
-					jQuery('input[name="radiodealclub"]').click(function() {
-
-					var value = jQuery(this).val();
-					if(value == "withdealclub"){
-						jQuery('.annaul_text').css('color', 'green');
-						jQuery('.monthly_text').css('color', '#2E3739');
-						jQuery('.non_dc_text').css('color', '#2E3739');
-					}
-					else if ( value == "withmonthlydealclub"){
-						jQuery('.monthly_text').css('color', 'green');
-						jQuery('.annaul_text').css('color', '#2E3739');
-						jQuery('.non_dc_text').css('color', '#2E3739');
-
-					}
-					else if ( value == "withoutdealclub" ){
-						jQuery('.non_dc_text').css('color', 'green');
-						jQuery('.monthly_text').css('color', '#2E3739');
-						jQuery('.annaul_text').css('color', '#2E3739');
-					}else {
-						//
-					}
-
-					});
-
-
 				}
-
-
-
 
 				//hide buy with monthly and non dc text on product page
 				//acc to memebership - On defualt
