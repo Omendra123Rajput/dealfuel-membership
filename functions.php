@@ -891,7 +891,6 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 	$user_membership_type = is_user_has_annual_or_monthly_memebership();
 	$is_dc_in_cart = is_dealclubmembership_in_cart();
 
-
 	if ( ! is_array( is_dc_in_cart() ) || is_user_an_active_member_wcm() ) {
 
 		foreach ( $cart_object->cart_contents as $key => $value ) {
@@ -950,8 +949,6 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 					];
 				}
 
-
-
 				$variation_arr = get_post_meta( $value['product_id'], '_pricing_rules', 'true' );
 
 
@@ -961,9 +958,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 
 						if (array_key_exists($var_obj['variation_rules']['args']['variations'][0],$dynamicPrices))
 						{ //here we are checking if cart's variation exsits in our array where we have store dyanmic prices on the basis of variations
-							// so if the variation exsits we will extract its monthly and annual value from the array
-
-
+						// so if the variation exsits we will extract its monthly and annual value from the array
 
 								if( $user_membership_type == 174765 ) { //if the membership is annual then cart will have annual' price
 
@@ -1014,31 +1009,12 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 										//do nothing
 									}
 
-
-
 								}
-
-
-
-
-
-
-
-
-
-
 
 						}else{
 							error_log('WOOOOOOOOOOOOWW');
 						}
-
-
-
-
-
 						// $value['data']->set_price( $var_obj['rules'][1]['amount'] );
-
-
 
 						// $value['data']->set_price(55);
 					}
@@ -1131,9 +1107,9 @@ function is_dc_in_cart() {
 
 	foreach ( $items as $item ) {
 
-		if ( $item['product_id'] == 174721 || $item['product_id'] == 174738 || $item['product_id'] == 174739 ) {
-			$plan = $item['data']->product_custom_fields['_sku'][0];
-		}
+		if ( in_array( $item['product_id'], array( 174721, 174738, 174739 ) ) ) {
+            $plan = $item['data']->get_sku();
+        }
 		if ( empty( $item['variation'] ) ) { // when product is simple product
 
 			if( $user_membership_type == 174761 ) { //if membership is monthly then add monthly price to the cart which is stored at index 1 in get_dynamic_price
@@ -1163,11 +1139,7 @@ function is_dc_in_cart() {
 		}
 	}
 
-	if ( ! isset( $plan ) ) {
-		return $ret_arr;
-	} else {
-		return $plan;
-	}
+	return isset( $plan ) ? $plan : $ret_arr;
 }
 
 function get_product_dealclub_variation_price( $product ) {
