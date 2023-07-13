@@ -6672,7 +6672,7 @@ function add_script_on_select_variation_value_change(){
 
 							// change the values acc to the option selected (Non DC )
 
-							if(selectedValue == "varwithdealclub"){
+							if( selectedValue == "varwithdealclub" && is_annual_or_monthly == 174765 ){
 								jQuery('.var_annaul_text').css('color', 'green');
 								jQuery('.var_monthly_text').css('color', '#2E3739');
 								jQuery('.var_non_dc_text').css('color', '#2E3739');
@@ -6684,7 +6684,6 @@ function add_script_on_select_variation_value_change(){
 								jQuery('.var_non_dc_text').css('color', '#2E3739');
 							}
 							else if ( selectedValue == "varwithoutdealclub" ){
-								jQuery('.var_non_dc_text').css('color', 'green');
 								jQuery('.var_monthly_text').css('color', '#2E3739');
 								jQuery('.var_annaul_text').css('color', '#2E3739');
 							}else {
@@ -6700,11 +6699,10 @@ function add_script_on_select_variation_value_change(){
 								jQuery('input[name="varradiodealclub"]').click(function() {
 
 									var value = jQuery(this).val();
-									console.log(value);
 
 									if(value == "varwithdealclub"){
-										jQuery('.var_annaul_text').css('color', 'green');
-										jQuery('.var_monthly_text').css('color', '#2E3739');
+										jQuery('.var_annaul_text').css('color', '#2E3739');
+										jQuery('.var_monthly_text').css('color', 'green');
 										jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									}
 									else if ( value == "varwithmonthlydealclub"){
@@ -6721,31 +6719,6 @@ function add_script_on_select_variation_value_change(){
 
 							}else { //for non dc
 
-								jQuery('input[name="varradiodealclub"]').click(function() {
-
-								var value = jQuery(this).val();
-								if(value == "varwithdealclub"){
-									jQuery('.var_annaul_text').css('color', 'green');
-									jQuery('.var_monthly_text').css('color', '#2E3739');
-									jQuery('.var_non_dc_text').css('color', '#2E3739');
-								}
-								else if ( value == "varwithmonthlydealclub"){
-									jQuery('.var_monthly_text').css('color', 'green');
-									jQuery('.var_annaul_text').css('color', '#2E3739');
-									jQuery('.var_non_dc_text').css('color', '#2E3739');
-
-								}
-								else if ( value == "varwithoutdealclub" ){
-									jQuery('.var_non_dc_text').css('color', 'green');
-									jQuery('.var_monthly_text').css('color', '#2E3739');
-									jQuery('.var_annaul_text').css('color', '#2E3739');
-								}else {
-									//
-								}
-
-								});
-
-
 							}
 
 
@@ -6758,7 +6731,6 @@ function add_script_on_select_variation_value_change(){
 
 									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									jQuery('.var_monthly_text').css('color', 'green');
-									jQuery('.var_annaul_text').css('color', '#2E3739');
 
 								}else if (is_annual_or_monthly == 174765  ) { //if annaul
 
@@ -6768,16 +6740,6 @@ function add_script_on_select_variation_value_change(){
 								}
 
 							}
-
-
-
-
-
-
-
-
-
-
 
 					/*************************************************************/
 					var dynamic_price = <?php echo $dynamic_price; ?>;
