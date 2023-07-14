@@ -6429,7 +6429,7 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
    .sidc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    .simc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
    button.single_add_to_cart_button.button.alt{
-    display: none !important;
+    /* display: none !important; */  /*unhide add to cart and buy now for mobile*/
    }
 
    a.sticky_addtocart_left.siwodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
@@ -6450,6 +6450,7 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
     text-align: center;
     padding: 20px 0 20px 0;
     margin: 0;
+	background-color: #d8532f;
    }
 
    a.sticky_addtocart_left .dcpriceins{
@@ -6471,9 +6472,9 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
     color: #fff;
    }
 
-   div.withdcleft, div.withdcright, div.withoutdcleft, div.withoutdcright {
+   /* div.withdcleft, div.withdcright, div.withoutdcleft, div.withoutdcright {
     display: none !important;
-   }
+   } */
 
    div.sticky_add_to_cart1{
       position: fixed;
