@@ -11,14 +11,14 @@ Version: 0.1
 
 @font-face {
     font-family: Metropolis-Regular;
-    src: url(https://www.dealfuel.com/wp-content/themes/astra-child/fonts/Metropolis-Regular.woff);
+    src: url(https://1461794109.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Regular.woff);
     font-weight: normal;
     font-display: swap;
     }
 
     @font-face {
     font-family: Metropolis-Bold;
-    src: url(https://www.dealfuel.com/wp-content/themes/astra-child/fonts/Metropolis-Bold.woff);
+    src: url(https://1461794109.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Bold.woff);
     font-weight: normal;
     font-display: swap;
     }
@@ -1156,7 +1156,7 @@ Version: 0.1
     }
 
     .most-popular {
-        background-image: url(https://www.dealfuel.com/wp-content/themes/dealfuel2015/images/POPULAR-BAND1.png);
+        background-image: url(https://1461794109.nxcli.io/wp-content/themes/dealfuel2015/images/POPULAR-BAND1.png);
         background-repeat: no-repeat;
         z-index: 9999;
     }
@@ -6488,6 +6488,7 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
       cursor: pointer;
       display:inline-flex;
       width: 100vw;
+	  left: 0px;
 
     }
 
@@ -7804,4 +7805,22 @@ margin-bottom : 0;
 	font-style: normal;
 	font-weight: 600;
 	line-height: 120%;
+}
+
+#simple_scroll_to_top span {
+	color: #FFF;
+	font-family: Metropolis-Regular;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+}
+
+#scroll_to_top span {
+	color: #FFF;
+	font-family: Metropolis-Regular;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
 }
