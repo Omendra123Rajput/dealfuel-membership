@@ -790,7 +790,9 @@ function is_user_has_annual_or_monthly_memebership ( ) {
 	if ( empty( $user_id ) ) {
 			$user_id = get_current_user_id();
 	}
-	$membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
+	// $membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
+	$membership_type =	$wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id . " AND post_status = 'wcm-active'" );
+
 	$membership = $membership_type->post_parent;
 	return $membership;
 }
@@ -6145,7 +6147,6 @@ function productpage_sidebar_addtocart_shortcode(){
 				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
 				var monthly_dynamic_price = <?php echo get_dynamic_price( $product->get_id() )[1]; ?>
 
-
 				// jQuery for scroll to top
 					jQuery("#simple_scroll_to_top").click(function() {
 					var targetDiv = jQuery("#dealpage-details-sc");
@@ -8634,6 +8635,99 @@ if(is_checkout()){
 	}
 
 	add_shortcode( 'df_best_seller_deals', 'df_best_seller_deals' );
+
+/**
+ * Get users's membership id
+*/
+
+function get_user_membership_id( $user_id ) {
+    if ( function_exists( 'wc_memberships_get_user_active_memberships' ) ) {
+        $memberships = wc_memberships_get_user_active_memberships( $user_id );
+        if ( ! empty( $memberships ) ) {
+            // Assuming the user has only one active membership.
+            $membership = reset( $memberships );
+            return $membership->get_plan_id();
+        }
+    }
+    return false; // Membership ID not found or error occurred.
+}
+
+
+// add_action( 'woocommerce_thankyou', 'df_cancel_previous_active_subscription',10,1 );
+
+function df_cancel_previous_active_subscription($order_id) {
+
+
+	    // Retrieve the order object
+		$order = wc_get_order($order_id);
+
+		// Retrieve the order items
+		$items = $order->get_items();
+
+		// Loop through the order items
+		foreach ($items as $item) {
+			$product_id = $item->get_product_id();
+
+			if ( $product_id == 174739  ) {
+				break;
+			}
+
+		}
+
+		$product_id == 174739;
+
+		$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
+
+
+		if ( $product_id &&  $is_annual_or_monthly == 174761 ) { //only upgrade when user was a monthly and had annual product in the order history
+
+				//cancel user's subscription
+				$no_of_loops = 0;
+				$user_id = get_current_user_id();
+
+				// Get all customer subscriptions
+				$args = array(
+					'subscription_status'       => 'active',
+					'subscriptions_per_page'    => -1,
+					'customer_id'               => $user_id,
+					'orderby'                   => 'ID',
+					'order'                     => 'DESC'
+				);
+				$subscriptions = wcs_get_subscriptions($args);
+
+				// Going through each current customer subscriptions
+				foreach ( $subscriptions as $subscription ) {
+					$no_of_loops = $no_of_loops + 1;
+
+					if ($no_of_loops > 1){
+						$subscription->update_status( 'cancelled' );
+					}
+				}
+
+				//cancel user's active monthly membership
+
+				$membership_id = get_user_membership_id($user_id);
+
+				if ( $membership_id == 174761  ) {
+
+					$membership = wc_memberships_get_user_membership($user_id, $membership_id);
+
+					if ( $membership ) {
+
+						$membership->cancel_membership();
+
+					}
+
+				}
+
+
+
+		}
+
+
+}
+
+
 
 
 ?>
