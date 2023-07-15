@@ -8653,9 +8653,13 @@ function get_user_membership_id( $user_id ) {
 }
 
 
-// add_action( 'woocommerce_thankyou', 'df_cancel_previous_active_subscription',10,1 );
+/**
+ * Membership upgrade from monthly to annual
+ */
 
-function df_cancel_previous_active_subscription($order_id) {
+add_action( 'woocommerce_thankyou', 'df_membership_upgrade',10,1 );
+
+function df_membership_upgrade($order_id) {
 
 
 	    // Retrieve the order object
@@ -8681,6 +8685,11 @@ function df_cancel_previous_active_subscription($order_id) {
 
 		if ( $product_id &&  $is_annual_or_monthly == 174761 ) { //only upgrade when user was a monthly and had annual product in the order history
 
+				//before cancelling the monthly subscription reward the credit points to the user
+
+				update_points_after_membership_upgrade();
+
+				// after updating the points proceed with cancelltion
 				//cancel user's subscription
 				$no_of_loops = 0;
 				$user_id = get_current_user_id();
@@ -8726,6 +8735,125 @@ function df_cancel_previous_active_subscription($order_id) {
 
 
 }
+
+/**
+ * Update credit points of the user after membership upgrade
+ */
+
+function update_points_after_membership_upgrade ( ) {
+
+	//First find out the credit points to rewarded
+
+	// Get the user ID
+	$user_id = get_current_user_id();
+
+	// Get the membership object for the user
+
+	$membership_id = get_user_membership_id($user_id);
+
+	$membership = wc_memberships_get_user_membership($user_id,$membership_id );
+
+	if ( $membership ) {
+		// Get the membership activation date
+		$activation_date = $membership->get_start_date();
+
+		// Create DateTime objects for the activation date and current date
+		$activation_date = new DateTime($activation_date);
+		$current_date = new DateTime();
+
+		// Calculate the number of days since activation
+		$days_passed = $activation_date->diff($current_date)->days;
+
+		// Extract the month of activation
+		$activation_month = $activation_date->format('F'); // 'F' returns the full month name
+
+		$no_of_day_in_the_month_of_activation = getDaysInMonth($activation_month);
+
+
+		//formula for credit points to be rewared
+
+		$monthly_member_amount = 9;
+
+		$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
+
+		//final points to be rewarded
+		$credit_points_to_be_rewared = round($credit_points_to_be_rewared);
+
+
+	}
+
+	//values will be insertd in the db
+
+	global $wpdb;
+
+	$current_datetime = current_time('mysql'); // Get the current date and time in MySQL format
+
+	//get the value of credit points from db
+	$users_credit_points =	$wpdb->get_row( "SELECT points FROM `wp_wc_points_rewards_user_points` WHERE user_id=" . $user_id . " " );
+
+	if ( $users_credit_points ) {
+
+		$points = $users_credit_points->points;
+
+		// credit points formula goes here...............
+
+		 $new_points = $points + $credit_points_to_be_rewared;
+
+		 // Prepare the data to update the points in the database
+		 $data = array(
+			 'points' => $new_points,
+			 'points_balance' => $new_points,
+			 'date' => $current_datetime
+		 );
+
+		 // Specify the condition for the update query
+		 $where = array(
+			 'user_id' => $user_id
+		 );
+
+		 // Update the points in the database
+
+		 $wpdb->update('wp_wc_points_rewards_user_points', $data, $where);
+
+	}else {
+
+		    // User does not have an entry, insert new values
+
+			$new_points = $credit_points_to_be_rewared; //give credit to the user
+
+			$data = array(
+				'user_id' => $user_id,
+				'points' => $new_points ,
+				'points_balance' => $new_points ,
+				'date' => $current_datetime
+			);
+
+			// Insert the new entry into the database
+
+			$wpdb->insert('wp_wc_points_rewards_user_points', $data);
+		}
+
+}
+
+/**
+ * Function to get no of days in the given month
+ */
+
+function getDaysInMonth($month) {
+    // Convert the month argument to lowercase
+    $month = strtolower($month);
+
+    // Create a DateTime object for the given month
+    $date = DateTime::createFromFormat('F', $month);
+
+    // Get the number of days in the month
+    $days_in_month = $date->format('t');
+
+    return $days_in_month;
+}
+
+
+
 
 
 
