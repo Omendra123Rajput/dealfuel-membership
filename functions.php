@@ -8672,18 +8672,17 @@ function df_membership_upgrade($order_id) {
 		foreach ($items as $item) {
 			$product_id = $item->get_product_id();
 
-			if ( $product_id == 174739  ) {
+			if ( $product_id == 174739  ) {//check if annual is purchased
+				$product_id == 174739;
 				break;
 			}
 
 		}
 
-		$product_id == 174739;
-
 		$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
 
-		if ( $product_id &&  $is_annual_or_monthly == 174761 ) { //only upgrade when user was a monthly and had annual product in the order history
+		if ( $product_id == 174739 &&  $is_annual_or_monthly == 174761 ) { //only upgrade when user was a monthly and had annual product in the order history
 
 				//before cancelling the monthly subscription reward the credit points to the user
 
