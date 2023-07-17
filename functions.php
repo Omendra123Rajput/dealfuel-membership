@@ -6114,6 +6114,14 @@ function productpage_sidebar_addtocart_shortcode(){
                             <input type="radio" class="df_display_dynamic_price withdcpricerad" id="withdealclub" checked name="radiodealclub" value="withdealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo get_dynamic_price( $product->get_id())[0] ?>">
                             <label class="annaul_text" >25% OFF with $49/Year Membership</label>
                         </div>
+
+						<div style="display:none" class="tooltip" id="tooltip">
+
+								<div class="tooltip-arrow"></div>
+  								<div class="tooltip-content"><span class="tooltip_msg"> You will be upgraded to $49/Year Annual Membership </span></div>
+
+						</div>
+
                     </div>
 
 					<div>
@@ -6142,6 +6150,8 @@ function productpage_sidebar_addtocart_shortcode(){
             <script>
             jQuery(document).ready(function(){
 
+				console.log("LEVEL 1");
+
                 var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
                 var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
 				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
@@ -6157,6 +6167,21 @@ function productpage_sidebar_addtocart_shortcode(){
 
 
 				});
+
+
+					//tooltip for annual upsell when user in monthly member
+
+					if ( is_annual_or_monthly == 174761  ) {
+
+						jQuery('.withdcleft').click(function() {
+						jQuery('.tooltip ').show();
+						});
+
+						jQuery('.montlydcleft').click(function() {
+						jQuery('.tooltip ').hide();
+						});
+
+					}
 
 				//find out the which radio button is selected and make its text green
 				var selectedRadioButton = jQuery('input[name="radiodealclub"]:checked').val();
@@ -8661,7 +8686,6 @@ add_action( 'woocommerce_thankyou', 'df_membership_upgrade',10,1 );
 
 function df_membership_upgrade($order_id) {
 
-
 	    // Retrieve the order object
 		$order = wc_get_order($order_id);
 
@@ -8716,9 +8740,7 @@ function df_membership_upgrade($order_id) {
 
 				$membership_id = get_user_membership_id($user_id);
 
-				if ( $membership_id == 174761  ) {
-
-					$membership = wc_memberships_get_user_membership($user_id, $membership_id);
+				$membership = wc_memberships_get_user_membership($user_id, $membership_id);
 
 					if ( $membership ) {
 
@@ -8726,12 +8748,7 @@ function df_membership_upgrade($order_id) {
 
 					}
 
-				}
-
-
-
 		}
-
 
 }
 
@@ -8776,7 +8793,7 @@ function update_points_after_membership_upgrade ( ) {
 		$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
 
 		//final points to be rewarded
-		$credit_points_to_be_rewared = round($credit_points_to_be_rewared);
+		$credit_points_to_be_rewared = round($credit_points_to_be_rewared)*100;
 
 
 	}

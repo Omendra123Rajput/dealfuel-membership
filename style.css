@@ -7824,3 +7824,80 @@ margin-bottom : 0;
 	font-weight: 600;
 	line-height: normal;
 }
+
+
+.tooltip {
+	/* display: none; */
+	position: absolute;
+	background: #2E3739;
+	padding: 5px;
+	border-radius: 4px;
+	top: 48px;
+    left: 27px;
+    right: 137px;
+	box-shadow: rgba(0, 0, 0, 0.31) 0px 0px 10px 5px;
+  }
+
+  .tooltip-arrow {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	top: 57%;
+	left: -5px;
+	margin-top: -5px;
+  }
+
+  .tooltip-arrow::before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #2E3739;
+	transform: rotate(45deg);
+	transform-origin: 0 0;
+	right: -5px;
+	top: -5px;
+	z-index: -1;
+  }
+
+  /* Additional styles to position the tooltip properly */
+  .tooltip.right {
+	left: 100%;
+	top: 50%;
+	transform: translate(10px, -50%);
+  }
+
+  .tooltip.right .tooltip-arrow {
+	left: auto;
+	right: -5px;
+  }
+
+.tooltip-content {
+    color: #FFF;
+    font-family: Metropolis-Regular;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5;
+    padding: 1px;
+}
+
+@media (max-width: 480px) {
+
+	.tooltip {
+		top: 69px;
+		left: 46px;
+		right: 93px;
+	  }
+
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+
+	.tooltip {
+		top: 48px;
+		left: 27px;
+		right: -7px;
+	  }
+
+}
