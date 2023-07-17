@@ -6168,7 +6168,6 @@ function productpage_sidebar_addtocart_shortcode(){
 
 				});
 
-
 					//tooltip for annual upsell when user in monthly member
 
 					if ( is_annual_or_monthly == 174761  ) {

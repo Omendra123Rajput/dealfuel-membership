@@ -40,6 +40,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 		     <?php
 			//find out membership
   			$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
+			$testvar = 13.4;
 
 
 				// error_log('dealclub membership is in cart');
@@ -124,10 +125,63 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 						</td>
 						<td class="add-monthly-sub">
-							<div class="monthly-sub-button">
+							<div class="monthly-sub-button tooltip_class">
 								<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
+
+								<div class="cart_tooltip">
+								<div class="cart-tooltip-text">
+
+									<div class="red_rectangle">
+									<div class="df_cart_close_tooltip" id="df_cart_close_tooltip">
+										<svg class="tooltip-close-btn" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+										<path d="M7.64199 12.3584L12.3587 7.64175M12.3587 12.3584L7.64199 7.64175M7.50033 18.3334H12.5003C16.667 18.3334 18.3337 16.6667 18.3337 12.5001V7.50008C18.3337 3.33341 16.667 1.66675 12.5003 1.66675H7.50033C3.33366 1.66675 1.66699 3.33341 1.66699 7.50008V12.5001C1.66699 16.6667 3.33366 18.3334 7.50033 18.3334Z" stroke="black" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</div>
+
+									<div class="normal_message">
+									Your current $9/Mo Plan will be <b>upgraded to $49/Yr Plan.</b>
+									<br>
+									<br>
+									The exclusive benefits of the Annual Plan will be unlocked right away.
+									</div>
+									<div class="line"></div>
+									<div class="upgrade_message">
+									Also, <?php echo '$'.$testvar?> will be credited as equivalent credits to your DealFuel account, in lieu of the remaining days of your monthly membership.
+									</div>
+
+									<div class="tooltip-pointer">
+
+									</div>
+
+									<div>
+
+								</div>
+								</div>
+
 							</div>
+
+
 						</td>
+
+						<script>
+
+							//cart tooltip
+
+								jQuery(document).ready(function() {
+									jQuery('.tooltip_class .offer_btn-2').click(function() {
+										jQuery('.cart-tooltip-text').css('display','block');
+										// setTimeout(function() {
+										// 	jQuery('.tooltip-text').removeClass('active');
+										// 	}, 10000);
+									});
+
+									jQuery('#df_cart_close_tooltip').click(function() {
+											jQuery('.cart-tooltip-text').css('display','none');
+										});
+
+								});
+
+							</script>
 
 					</tr>
 						<!-- /****************************************/ -->
