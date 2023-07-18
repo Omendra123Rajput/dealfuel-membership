@@ -40,10 +40,8 @@ do_action( 'woocommerce_before_cart' ); ?>
 		     <?php
 			//find out membership
   			$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
+
 			$testvar = 13.4;
-
-
-				// error_log('dealclub membership is in cart');
 
 					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) {
 
@@ -128,7 +126,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 							<div class="monthly-sub-button tooltip_class">
 								<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 
-								<div class="cart_tooltip">
+								<!-- <a  href="javascript:void(0);" class="offer_btn-2" > Add Item </a> -->
+
+
+
+								<div class="cart_tooltip show_hide_tooltip">
 								<div class="cart-tooltip-text">
 
 									<div class="red_rectangle">
@@ -168,16 +170,41 @@ do_action( 'woocommerce_before_cart' ); ?>
 							//cart tooltip
 
 								jQuery(document).ready(function() {
-									jQuery('.tooltip_class .offer_btn-2').click(function() {
-										jQuery('.cart-tooltip-text').css('display','block');
-										// setTimeout(function() {
-										// 	jQuery('.tooltip-text').removeClass('active');
-										// 	}, 10000);
-									});
 
-									jQuery('#df_cart_close_tooltip').click(function() {
-											jQuery('.cart-tooltip-text').css('display','none');
+									console.log("I am just cart");
+
+
+									// var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
+									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly ?>";
+
+									console.log(is_annual_or_monthly);
+
+										//tooltip for annual upsell when user in monthly member
+
+									if ( is_annual_or_monthly == 174761  ) {
+
+										console.log('I am Monthly cart');
+
+										// jQuery('.cart_tooltip').css('display','block');
+										jQuery('.cart_tooltip').removeClass('show_hide_tooltip');
+
+										jQuery('.tooltip_class .offer_btn-2').click(function() {
+											jQuery('.cart-tooltip-text').css('display','block');
+											// setTimeout(function() {
+											// 	jQuery('.tooltip-text').removeClass('active');
+											// 	}, 10000);
 										});
+
+										jQuery('#df_cart_close_tooltip').click(function() {
+												jQuery('.cart-tooltip-text').css('display','none');
+											});
+
+									}else{
+										console.log('I am Annaul cart');
+
+										jQuery('.cart_tooltip').css('display','none');
+
+									}
 
 								});
 
@@ -203,7 +230,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								if($woocommerce->cart->total > 0){
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_monthly_discount . ' more with DealClub!</p> %s :
-									<span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+									<span class = "text-dark"><del>$19.00</del> $9.00/Month</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
 									}
 								else{
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
