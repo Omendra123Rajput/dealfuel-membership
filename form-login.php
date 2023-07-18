@@ -93,8 +93,8 @@ foreach ( $items as $item => $values ) {
 	<h4 class="heading-checkout-table">Save $<?php echo $cw_monthly_discount ?> with Monthly Dealclub Membership</h4>
 	<div class="inner-section-divs">
 		<div class = "deal_club_img"><?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product_monthly->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product_monthly->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?></div>
-		<div class = "deal_club_price"><h4>$<?php echo $product_monthly->get_price() ?>.00 <del>$99.00</del></h4><p>Discount price for a limited time</p></div>
-		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=174721&utm_source=checkout-page">Add Item</a>
+		<div class = "deal_club_price"><h4>$<?php echo $product_monthly->get_price() ?>.00 <del>$19.00</del></h4><p>Discount price for a limited time</p></div>
+		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button checkout_add_item_monthly" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=174721&utm_source=checkout-page">Add Item</a>
 </div>
 <div class="plus_membership_benefits">
 	<h3> Benefits of Dealclub </h3>

@@ -38,15 +38,50 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 
 		     <?php
-			//find out membership
-  			$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
+					//find out membership
+  					$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
-			$testvar = 13.4;
+					//rewardpoints
+
+					// Get the user ID
+					$user_id = get_current_user_id();
+
+					// Get the membership object for the user
+
+					$membership_id = get_user_membership_id($user_id);
+
+					$membership = wc_memberships_get_user_membership($user_id,$membership_id );
+
+					if ( $membership ) {
+						// Get the membership activation date
+						$activation_date = $membership->get_start_date();
+
+						// Create DateTime objects for the activation date and current date
+						$activation_date = new DateTime($activation_date);
+						$current_date = new DateTime();
+
+						// Calculate the number of days since activation
+						$days_passed = $activation_date->diff($current_date)->days;
+
+						// Extract the month of activation
+						$activation_month = $activation_date->format('F'); // 'F' returns the full month name
+
+						$no_of_day_in_the_month_of_activation = getDaysInMonth($activation_month);
+
+
+						//formula for credit points to be rewared
+
+						$monthly_member_amount = 9;
+
+						$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
+
+						//final points to be rewarded
+						$credit_points_to_be_rewared = round($credit_points_to_be_rewared,1);
+
+					}
+
 
 					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) {
-
-						error_log('I am inside cartttt');
-
 
 						//upsell annual dc
 						$product = wc_get_product( 174739 );
@@ -90,7 +125,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 
 									$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
-									// $sale_price = get_dynamic_price( $_product->get_id() );
 									$discount = ($regular_price - $sale_price) * $values['quantity'];
 
 									$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
@@ -148,7 +182,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									</div>
 									<div class="line"></div>
 									<div class="upgrade_message">
-									Also, <?php echo '$'.$testvar?> will be credited as equivalent credits to your DealFuel account, in lieu of the remaining days of your monthly membership.
+									Also, <?php echo '$'.$credit_points_to_be_rewared?> will be credited as equivalent credits to your DealFuel account, in lieu of the remaining days of your monthly membership.
 									</div>
 
 									<div class="tooltip-pointer">
@@ -200,7 +234,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 											});
 
 									}else{
-										console.log('I am Annaul cart');
+										console.log('I am Annaul cart or NON DC');
 
 										jQuery('.cart_tooltip').css('display','none');
 
@@ -220,7 +254,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 								<td class="product-thumbnail monthly_deal">
 								<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product_monthly->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product_monthly->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
 									</td>
-								<td class="product-name-mem" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
+								<td class="product-name-mem monthly_product_name" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 
 
 
@@ -240,7 +274,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								</td>
 								<td class="add-monthly-sub">
-									<div class="monthly-sub-button">
+									<div class="monthly-sub-button monthly_add_item_button">
 										<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174721&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 									</div>
 								</td>

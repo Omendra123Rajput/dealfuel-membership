@@ -167,10 +167,10 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 							if(is_dealclubmembership_in_cart()){
 									$total_discount_plus = $total_sale_price - $total_dyanamic_price;
 							}
-						else{
+							else{
 									$cart_contents_total = WC()->cart->get_cart_contents_total();
 									$total_discount_plus = $cart_contents_total - $total_dyanamic_price;
-						}
+								}
 
         $saved_amt = $total_sale_price - $cart_contents_total;
       ?>
