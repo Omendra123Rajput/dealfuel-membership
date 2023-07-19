@@ -177,7 +177,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 
 
-<div class="join-dc-save">
+<div style="display:none" class="join-dc-save">
 	<?php echo "You Just Saved $" . $saved_amt." With DealClub Membership"; ?>
 </div>
 

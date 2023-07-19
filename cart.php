@@ -90,7 +90,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 
 						?>
-							<tr class="hello again">
+							<tr class="annual_upsell">
 							<td class="product-thumbnail monthly_deal">
 						<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
 							</td>
@@ -160,10 +160,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 							<div class="monthly-sub-button tooltip_class">
 								<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 
-								<!-- <a  href="javascript:void(0);" class="offer_btn-2" > Add Item </a> -->
-
-
-
 								<div class="cart_tooltip show_hide_tooltip">
 								<div class="cart-tooltip-text">
 
@@ -205,28 +201,16 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								jQuery(document).ready(function() {
 
-									console.log("I am just cart");
-
-
-									// var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
 									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly ?>";
 
-									console.log(is_annual_or_monthly);
-
-										//tooltip for annual upsell when user in monthly member
+									//tooltip for annual upsell when user in monthly member
 
 									if ( is_annual_or_monthly == 174761  ) {
 
-										console.log('I am Monthly cart');
-
-										// jQuery('.cart_tooltip').css('display','block');
 										jQuery('.cart_tooltip').removeClass('show_hide_tooltip');
 
 										jQuery('.tooltip_class .offer_btn-2').click(function() {
 											jQuery('.cart-tooltip-text').css('display','block');
-											// setTimeout(function() {
-											// 	jQuery('.tooltip-text').removeClass('active');
-											// 	}, 10000);
 										});
 
 										jQuery('#df_cart_close_tooltip').click(function() {
@@ -234,7 +218,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 											});
 
 									}else{
-										console.log('I am Annaul cart or NON DC');
 
 										jQuery('.cart_tooltip').css('display','none');
 
@@ -245,8 +228,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 							</script>
 
 					</tr>
-						<!-- /****************************************/ -->
-						<!-- /** Remove this comment once code is done */ -->
+
 						<!-- /** DO not show monthly upsell is user is already a monthly memeber or if user is a non dc but monthly is added to cart */ -->
 						<?php if(  !( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) ) && !check_if_monthly_is_in_cart() ): ?>
 
@@ -256,11 +238,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									</td>
 								<td class="product-name-mem monthly_product_name" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 
-
-
 						<?php
-
-
 
 								if($woocommerce->cart->total > 0){
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_monthly_discount . ' more with DealClub!</p> %s :
@@ -288,16 +266,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 			  		}
 
 
-
-
-
 		     ?>
-
-
-
-
-
-
 
 			<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 

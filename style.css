@@ -7763,6 +7763,9 @@ margin-bottom : 0;
 
 /*Changes made by Vaibhav for cart page and checkout page issues - End*/
 
+
+/*Price styling on Product page*/
+
 .df_show_discounted_price_dynamically {
 	display: flex;
 	justify-content: center;
@@ -7809,6 +7812,9 @@ margin-bottom : 0;
 	line-height: 120%;
 }
 
+/*Scroll to top on mobile*/
+
+
 #simple_scroll_to_top span {
 	color: #FFF;
 	font-family: Metropolis-Regular;
@@ -7827,6 +7833,9 @@ margin-bottom : 0;
 	line-height: normal;
 }
 
+/*
+*Desktop tooltip for product page
+*/
 
 .tooltip {
 	/* display: none; */
@@ -8009,7 +8018,7 @@ margin-bottom : 0;
   }
 
 
-  /*for mobile*/
+  /*for mobile Tooltip*/
 
   @media (max-width: 480px) {
 
@@ -8046,12 +8055,8 @@ margin-bottom : 0;
 	  }
 
 	  .upgrade_message{
-
 		width: 222px;
-		/* height: 69px; */
 		margin-top: -43px;
-
-
 	  }
 
 	  .red_rectangle{
@@ -8085,10 +8090,12 @@ margin-bottom : 0;
   .dc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
   .mc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
   .wodc_buynow_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button{
-   /* display: none !important; */  /*unhide add to cart and buy now for mobile*/
    left: -8px;
   }
 
+  /*
+  * Upsell Styling for mobile
+  */
 
   @media screen and (max-width: 767px){
 

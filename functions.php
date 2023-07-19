@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 @ini_set( 'post_max_size', '164M' );
 @ini_set( 'max_execution_time', '300' );
 
-if (session_status() == PHP_SESSION_NONE) {
-	session_start();
- }
 
 if ( ! function_exists( 'chld_thm_cfg_locale_css' ) ) :
 	function chld_thm_cfg_locale_css( $uri ) {
@@ -449,87 +446,11 @@ function load_the_details() {
 	return $details;
 }
 
-
-add_action('wp_footer','get_dynamic_price_annual_monthly');
-
-function get_dynamic_price_annual_monthly () {
-
-
-	?>
-		<script>
-
-		var ajaxurl="<?php echo admin_url( 'admin-ajax.php' ); ?>";
-
-
-		jQuery(document).ready(function(){
-
-			jQuery('input[name="radiodealclub"]').click(function() {
-
-
-				var value = jQuery(this).val();
-				var productID = jQuery(this).data('product-id');
-				var memebrshipPrice = jQuery(this).data('price');
-
-				jQuery.ajax(
-				{
-					type: 'POST',
-					url: ajaxurl,
-					data:
-					{
-						action: 'dynamic_price_check',
-						value,
-						product_id: productID,
-						memebrship_price: memebrshipPrice,
-
-					},
-					success: function success( data )
-					{
-						console.log(data);
-					},
-					error: function (error) {
-						console.log(error);
-					}
-				});
-
-			});
-
-
-		});
-
-		</script>
-
-	<?php
-
-
-}
-
-
-
-add_action( 'wp_ajax_dynamic_price_check', 'get_dynamic_price' );
-add_action( 'wp_ajax_nopriv_dynamic_price_check', 'get_dynamic_price' );
-
+/**
+ * Get Dynamic Price of the products for Annual and monthly
+ */
 
 function get_dynamic_price( $postid ) {
-
-
-	error_log('TEJA TEJA ');
-
-	// getting pricing from radio button selection
-
-	if(isset($_POST["memebrship_price"])){
-
-		$price= $_POST["memebrship_price"];
-		$_SESSION['dynamic_membership_price'] = $_POST["memebrship_price"];
-
-	}
-
-	// getting product id
-
-	if(isset($_POST["product_id"])){
-
-		$postid = $_POST["product_id"];
-
-	}
 
 	$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
 
@@ -581,13 +502,6 @@ function get_dynamic_price( $postid ) {
 		}
 
 		$both_dynamic_values = $dynamic_price ;
-
-		$value_of_radio_box = 'withdealclub';
-
-		if(isset($_POST["value"])) {
-			$value_of_radio_box = $_POST["value"];
-			$_SESSION['radio_button_value'] = $_POST["value"];
-		}
 
 		return $both_dynamic_values;
 
@@ -1014,7 +928,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 								}
 
 						}else{
-							error_log('WOOOOOOOOOOOOWW');
+
 						}
 						// $value['data']->set_price( $var_obj['rules'][1]['amount'] );
 
@@ -3849,9 +3763,6 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 	$prices = array();
 	$i      = 0;
 
-	// error_log('Inside get_all_dynamic_prices_with_id_as_key ');
-	// error_log(print_r($pricing_rules,true));
-
 	if ( ! empty( $pricing_rules ) ) {
 		foreach ( $pricing_rules as $key => $item ) {
 
@@ -6059,7 +5970,7 @@ function productpage_sidebar_addtocart_shortcode(){
     if (!is_product()){
         return;
     }
-	error_log('Hello World 3');
+
 	$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
 	if( $product->is_type( 'simple' ) ){
@@ -6149,8 +6060,6 @@ function productpage_sidebar_addtocart_shortcode(){
             </div>
             <script>
             jQuery(document).ready(function(){
-
-				console.log("LEVEL 1");
 
                 var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
                 var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
@@ -6619,9 +6528,6 @@ function add_script_on_select_variation_value_change(){
 		$dynamic_price = json_encode($dynamic_pricearr);
 		$assoc_dynamic_price = array_values($dynamic_pricearr);
 
-		error_log(print_r($dynamic_pricearr,true));
-
-
 		?>
 
 		<div class="var_price">
@@ -6674,6 +6580,7 @@ function add_script_on_select_variation_value_change(){
 
 			<script>
 				jQuery(document).ready(function(){
+
 					jQuery('#variation_div').show();
 					//onLoad show disabled radio buttons
 					var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
@@ -6702,6 +6609,7 @@ function add_script_on_select_variation_value_change(){
 
 
 					jQuery('.woocommerce-variation-add-to-cart .single_add_to_cart_button').hide();
+
 					jQuery('input[name="varradiodealclub"]').click(function() {
 							var value = jQuery(this).val();
 							if(value == "varwithdealclub"){
@@ -6792,12 +6700,14 @@ function add_script_on_select_variation_value_change(){
 
 									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									jQuery('.var_monthly_text').css('color', 'green');
+									jQuery('.var_monthly_text').html('10% Extra Discount Applied (Monthly Membership)');//Change text acc to monthly
+									jQuery('.var_monthly_text').css('letter-spacing','-1px');
 
 								}else if (is_annual_or_monthly == 174765  ) { //if annaul
 
 									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									jQuery('.var_monthly_text').css('color', '#9E9E98');//hide monthly this using color
-
+									jQuery('.var_annaul_text').html('25% Extra Discount Applied (Annual Membership)');//Change text acc to monthly
 								}
 
 							}
@@ -6846,8 +6756,13 @@ function add_script_on_select_variation_value_change(){
 
 							}
 
-							console.log('VARIATION IDDD');
-							console.log(inputvarval);
+
+							jQuery('input[name="varradiodealclub"]').click(function() {
+								// Uncheck previously checked radio button
+								jQuery('input[name="varradiodealclub"]').not(this).prop('checked', false);
+							});
+
+
 
 							//var inputvarval = jQuery('#mob_variation input.variation_id').val();
 						 	if( inputvarval != ''){
