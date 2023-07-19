@@ -5985,6 +5985,8 @@ function productpage_sidebar_addtocart_shortcode(){
         $productid = $product->get_id();
         $product_name = $product->get_name();
 
+		error_log( $productid );
+
         //Multiple Products add to cart
         $product_ids = $productid.',174739';
 
@@ -6010,6 +6012,23 @@ function productpage_sidebar_addtocart_shortcode(){
                     <span class='dcpriceins membership'><?php echo '  $'.$product->get_sale_price(); ?></span><br><span class='membership'>Download Now</span></a>
                 </div>
                 <a href="<?php echo esc_url_raw( add_query_arg( 'add-to-cart', $productid, wc_get_cart_url() ) ); ?>" class="sidc_addtocart_btn_sidebar single_add_to_cart_button button alt wp-element-button">Download Now</a>
+
+				<script>
+
+						jQuery(document).ready(function() {
+
+								var isProductFreebie = "<?php echo is_product_in_category( 'freebies' ); ?>";
+
+								if ( isProductFreebie ) {
+
+									jQuery(".elementor-1359135 .elementor-element.elementor-element-7437ecf").css('width','100%');
+
+
+								}
+
+						});
+
+				</script>
 
                 <?php
 
@@ -6488,13 +6507,67 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 			return;
 	}
 
+	$productid = $product->get_id();
+
+	if ( $productid == 174721 || $productid == 174739  ) {
+
+		?>
+		<script>
+			jQuery(document).ready(function(){
+
+				jQuery(".elementor-1359135 .elementor-element.elementor-element-7437ecf").css('width','100%');
+
+				jQuery('#variation_div').hide();
+
+				jQuery('#variable-sidebar-div').hide();
+
+				var screenWidth = jQuery(window).width();
+				if (screenWidth >= 768) {
+				// Hide the elements for tablet and desktop
+
+				jQuery('#dealpage-details-sc .df_show_discounted_price_dynamically').hide();
+				jQuery('#dealpage-details-sc form').hide();
+
+				jQuery('#dealpage-details-sc a').hide();
+
+				jQuery('#tab-title-description a').show();
+				jQuery('#tab-title-reviews a').show();
+
+				jQuery('#df-related-products a').show();
+
+				}
+
+			});
+
+		</script>
+		<?php
+	}
+
+
 	if(is_product() && $product->is_type('simple')){
 
 		?>
 		<script>
 			jQuery(document).ready(function(){
+
 				jQuery('#variation_div').hide();
+
 				jQuery('#variable-sidebar-div').hide();
+
+				var screenWidth = jQuery(window).width();
+				if (screenWidth >= 768) {
+				// Hide the elements for tablet and desktop
+				jQuery('#dealpage-details-sc .df_show_discounted_price_dynamically').hide();
+				jQuery('#dealpage-details-sc form').hide();
+
+				jQuery('#dealpage-details-sc a').hide();
+
+				jQuery('#tab-title-description a').show();
+				jQuery('#tab-title-reviews a').show();
+
+				jQuery('#df-related-products a').show();
+
+				}
 
 			});
 
@@ -6507,7 +6580,18 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 		?>
 		<script>
 			jQuery(document).ready(function(){
-				jQuery('#dealpage-details-sc').hide();
+				jQuery("#dealpage-details-sc").css('display','none');
+
+				var screenWidth = jQuery(window).width();
+				if (screenWidth >= 768) {
+				// Hide the elements for tablet and desktop
+				jQuery("#variable-sidebar-div").css('display','none');
+
+				} else {
+				// Show the elements for mobile
+				// jQuery("#dealpage-details-sc").show();
+				}
+
 			});
 
 		</script>
@@ -8879,6 +8963,26 @@ function check_cart_for_duplicate_products($passed, $product_id, $quantity) {
 }
 
 
+
+function is_product_in_category( $category_slug ) {
+	 if ( is_product() ) {
+		 global $post;
+
+	  // Get the product categories
+	 $product_categories = get_the_terms( $post->ID, 'product_cat' );
+
+	 // If product categories exist
+	 if ( $product_categories && ! is_wp_error( $product_categories ) ) {
+	 foreach ( $product_categories as $category ) {
+	 if ( $category->slug === $category_slug ) {
+	 return true;
+	 }
+	 }
+	 }
+	 }
+
+	 return false;
+	}
 
 
 
