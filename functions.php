@@ -8850,6 +8850,33 @@ function getDaysInMonth($month) {
 }
 
 
+add_filter('woocommerce_add_to_cart_validation', 'check_cart_for_duplicate_products', 10, 3);
+
+/**
+ * Validation to add only one memberhsip to the cart at a time
+ */
+
+function check_cart_for_duplicate_products($passed, $product_id, $quantity) {
+    // Check if the product being added has the IDs 174721 or 174739
+
+    if (in_array($product_id, array(174721, 174739))) {
+
+        // Check if the cart already contains the same product IDs
+        $cart = WC()->cart->get_cart();
+
+        foreach ($cart as $cart_item_key => $cart_item) {
+            if (in_array($cart_item['product_id'], array(174721, 174739))) {
+
+                // Display an error message and prevent adding the product to the cart
+                wc_add_notice(__('You have already added a memebership. Please remove membership from the cart to add new Membership', 'membership-text'), 'error');
+                $passed = false;
+                break;
+            }
+        }
+    }
+
+    return $passed;
+}
 
 
 
