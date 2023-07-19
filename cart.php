@@ -110,9 +110,13 @@ do_action( 'woocommerce_before_cart' ); ?>
 								$pro_id = $values['product_id'];
 								$_product = wc_get_product( $pro_id );
 
+								if( $pro_id == 174721 ){
+									continue;
+								}
+
 								if($_product->is_type( 'simple' )){
 
-									if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthlyt price
+									if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
 
 										$sale_price = get_dynamic_price( $_product->get_id() )[1];
 
@@ -123,11 +127,25 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									$regular_price = $_product->get_sale_price();
 
-
 									$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
 									$discount = ($regular_price - $sale_price) * $values['quantity'];
 
 									$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
+
+									if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
+
+										// $sale_price = get_dynamic_price( $_product->get_id() )[1];
+										$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
+
+									}
+
+									if ( check_if_monthly_is_in_cart() ) {
+
+										$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
+
+										$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
+
+									}
 
 
 								}

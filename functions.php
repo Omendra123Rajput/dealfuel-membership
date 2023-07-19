@@ -5497,16 +5497,22 @@ function df_change_product_price_html( $price, $product ) {
 			}
 		}
 
+		// Remove empty values if any
+		$var_amount_arr = array_filter($var_amount_arr);
+
+		// Sort in ascending order
+		sort($var_amount_arr);
+
 		if($var_amount_arr[0] != 0){
 
 			if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
+
 				//if user's membership is annual or quaterly then show annual's price
-				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -3];
+				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -2];
 
 			}else {//if user's memership is monthly,show monthly's price
 
-				$price_val = '$'.$var_amount_arr[1].'-'.'$'.$var_amount_arr[3];
-
+				$price_val = '$'.$var_amount_arr[1].'-'.'$'.$var_amount_arr[count($var_amount_arr) -1];
 
 			}
 
@@ -6081,7 +6087,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 					if ( is_annual_or_monthly == 174761  ) {
 
-						jQuery('.withdcleft').click(function() {
+						jQuery('.df_display_dynamic_price').click(function() {
 						jQuery('.tooltip ').show();
 						});
 

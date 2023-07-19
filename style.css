@@ -7631,7 +7631,7 @@ margin-bottom : 0;
 	}
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub{
 		left: 11em;
-		top: 12.8%;
+		top: 180px;
 		position: absolute !important;
 	}
 	.woocommerce-checkout .dcplan-section .inner-section-divs{
@@ -7641,7 +7641,7 @@ margin-bottom : 0;
 		margin-left: 0px !important;
 		position: absolute;
 		height: 40px;
-		top: 9.8%;
+		top: 280px;
 		left: 12%;
 		border-radius: 5px;
 		padding-top: 10px;
@@ -8104,10 +8104,10 @@ margin-bottom : 0;
 	}
 
 	.monthly_add_item_button{
-		margin-top: 155px !important;
+		margin-top: 160px !important;
 	}
 
 	.checkout_add_item_monthly{
-		top: 24.4% !important;
+		top: 700px !important;
 	}
 }
