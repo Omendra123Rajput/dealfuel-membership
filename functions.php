@@ -5985,8 +5985,6 @@ function productpage_sidebar_addtocart_shortcode(){
         $productid = $product->get_id();
         $product_name = $product->get_name();
 
-		error_log( $productid );
-
         //Multiple Products add to cart
         $product_ids = $productid.',174739';
 
@@ -6021,8 +6019,11 @@ function productpage_sidebar_addtocart_shortcode(){
 
 								if ( isProductFreebie ) {
 
+									jQuery('#dealpage-details-sc .elementor-widget-container').show();
+
 									jQuery(".elementor-1359135 .elementor-element.elementor-element-7437ecf").css('width','100%');
 
+									jQuery('#dealpage-details-sc form').hide();
 
 								}
 
@@ -6548,27 +6549,30 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 
 		?>
 		<script>
+
+			var isProductFreebie = "<?php echo is_product_in_category( 'freebies' ); ?>";
+
 			jQuery(document).ready(function(){
 
 				jQuery('#variation_div').hide();
 
 				jQuery('#variable-sidebar-div').hide();
 
-				var screenWidth = jQuery(window).width();
-				if (screenWidth >= 768) {
-				// Hide the elements for tablet and desktop
-				jQuery('#dealpage-details-sc .df_show_discounted_price_dynamically').hide();
-				jQuery('#dealpage-details-sc form').hide();
+				if ( !isProductFreebie ) { //if not freebie
 
-				jQuery('#dealpage-details-sc a').hide();
+					var screenWidth = jQuery(window).width();
 
-				jQuery('#tab-title-description a').show();
-				jQuery('#tab-title-reviews a').show();
+					if (screenWidth >= 768) {
+					// Hide the elements for tablet and desktop
+					jQuery('#dealpage-details-sc .df_show_discounted_price_dynamically').hide();
+					jQuery('#dealpage-details-sc form').hide();
+					jQuery('#dealpage-details-sc .elementor-widget-container').hide();
+					jQuery('#tab-title-description a').show();
+					jQuery('#tab-title-reviews a').show();
+					jQuery('#df-related-products a').show();
 
-				jQuery('#df-related-products a').show();
-
+					}
 				}
-
 			});
 
 		</script>
@@ -6580,6 +6584,7 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 		?>
 		<script>
 			jQuery(document).ready(function(){
+
 				jQuery("#dealpage-details-sc").css('display','none');
 
 				var screenWidth = jQuery(window).width();
