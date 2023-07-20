@@ -8261,6 +8261,10 @@ if(is_checkout()){
 
 	add_shortcode( 'df_best_seller_deals', 'df_best_seller_deals' );
 
+
+/** Added by Omendra - DF Memebership - Start */
+
+
 /**
  * Get users's membership id
 */
@@ -8525,6 +8529,7 @@ function is_product_in_category( $category_slug ) {
 	 return false;
 	}
 
+/** Added by Omendra - DF Memebership - END */
 
 
 ?>
