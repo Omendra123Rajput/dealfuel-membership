@@ -704,7 +704,7 @@ function is_user_has_annual_or_monthly_memebership ( ) {
 	if ( empty( $user_id ) ) {
 			$user_id = get_current_user_id();
 	}
-	// $membership_type = $wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id );
+
 	$membership_type =	$wpdb->get_row( "SELECT post_parent FROM `wp_posts` WHERE post_author=" . $user_id . " AND post_status = 'wcm-active'" );
 
 	$membership = $membership_type->post_parent;
@@ -930,8 +930,6 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 						}else{
 
 						}
-						// $value['data']->set_price( $var_obj['rules'][1]['amount'] );
-
 						// $value['data']->set_price(55);
 					}
 				}
@@ -1006,10 +1004,6 @@ function check_membership_add_to_cart() {
         }
     }
 }
-
-// add_action( 'woocommerce_add_to_cart_validation', 'check_membership_add_to_cart' );
-
-
 
 
 function is_dc_in_cart() {
@@ -6592,9 +6586,6 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 				// Hide the elements for tablet and desktop
 				jQuery("#variable-sidebar-div").css('display','none');
 
-				} else {
-				// Show the elements for mobile
-				// jQuery("#dealpage-details-sc").show();
 				}
 
 			});
@@ -7069,11 +7060,6 @@ function add_script_on_select_variation_value_change(){
 											if(jQuery('.dc_buynow_btn_sidebar').length == 1){
 												jQuery('.dc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
 											}
-
-										//  jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_id);
-										//  jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_id);
-										// jQuery('.sticky_add_to_cart1 .sticky_addtocart_left.sticky_dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_id);
-
 
 									}
 
@@ -8477,11 +8463,12 @@ function getDaysInMonth($month) {
 }
 
 
-add_filter('woocommerce_add_to_cart_validation', 'check_cart_for_duplicate_products', 10, 3);
 
 /**
  * Validation to add only one memberhsip to the cart at a time
  */
+
+add_filter('woocommerce_add_to_cart_validation', 'check_cart_for_duplicate_products', 10, 3);
 
 function check_cart_for_duplicate_products($passed, $product_id, $quantity) {
     // Check if the product being added has the IDs 174721 or 174739
