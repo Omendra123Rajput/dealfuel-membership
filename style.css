@@ -5410,7 +5410,7 @@ a.reset_variations:hover{
         padding: 0 1.2em!important;
     margin-top: 44px!important;
 }
-.add-monthly-sub{
+.add-monthly-sub,.add-monthly-button{
     /*changed by Vaibhav on Dec 13*/
     position: relative;
     left: 15em;
@@ -5611,13 +5611,13 @@ a.reset_variations:hover{
      .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents thead {
          display: block!important;
      }
-    .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub{
+    .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button{
         position:inherit!important;
         border-top-style: none!important;
         padding-top: 0px!important;
         padding-left: 84px!important;
     }
-    .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub:before{
+    .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub:before,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button:before{
         display:none!important;
     }
     .woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .monthly_deal{
@@ -7617,7 +7617,7 @@ margin-bottom : 0;
 	.woocommerce-cart-form .woocommerce-cart-form__contents tbody tr:first-child{
 		display: flex;
 	}
-	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub{
+	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button{
 		padding-left: 0px!important;
 	}
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .monthly_deal {
@@ -7629,7 +7629,8 @@ margin-bottom : 0;
 		/* top: 52px !important; */
 		top: 52px;
 	}
-	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub{
+	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button
+	{
 		left: 11em;
 		top: 180px;
 		position: absolute !important;
@@ -7659,7 +7660,7 @@ margin-bottom : 0;
 	.woocommerce-checkout #custom_customer_details .checkout-leftdiv{
 		margin: 0px 10px 20px 10px;
 	}
-	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub{
+	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-button{
 		margin-top: -9px;
 		width: 40% !important;
 	}
@@ -8104,7 +8105,8 @@ margin-bottom : 0;
 	}
 
 	.monthly_add_item_button{
-		margin-top: 160px !important;
+		margin-top: 165px;
+		margin-left: -80px;
 	}
 
 	.checkout_add_item_monthly{

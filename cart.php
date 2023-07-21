@@ -12,7 +12,7 @@
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 3.8.0
+ * @version 7.4.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -35,8 +35,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 			</tr>
 		</thead>
 		<tbody>
-
-
 		     <?php
 					//find out membership
   					$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
@@ -105,7 +103,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 							$cw_discount = 0;
 							$cw_monthly_discount = 0;
 
-							foreach ( $items as $item => $values ) {
+                                foreach ( $items as $item => $values ) {
 
 								$pro_id = $values['product_id'];
 								$_product = wc_get_product( $pro_id );
@@ -178,22 +176,22 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 
 
-								}
+                                    }
 
 								$cw_discount += $discount;
 								$cw_monthly_discount += $discount_for_monthly;
 
-							}
+                                }
 
-						if($woocommerce->cart->total > 0){
-							echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_discount . ' more with DealClub!</p> %s :
-							<span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
-							}
-						else{
-							echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-							<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
-						}
-						?>
+			                   if($woocommerce->cart->total > 0){
+    			                   echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save $'. $cw_discount . ' more with DealClub!</p> %s :
+    			                   <span class = "text-dark"><del>$99.00</del> $49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
+    			                   }
+			                   else{
+			                       echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
+    			                   <span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
+			                   }
+			                   ?>
 
 						</td>
 						<td class="add-monthly-sub">
@@ -286,12 +284,12 @@ do_action( 'woocommerce_before_cart' ); ?>
 									}
 								else{
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+									<span class = "text-dark">$9.00/Month</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
 								}
 						?>
 
 								</td>
-								<td class="add-monthly-sub">
+								<td class="add-monthly-button" >
 									<div class="monthly-sub-button monthly_add_item_button">
 										<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174721&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 									</div>
@@ -384,13 +382,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 						?>
 						</td>
 
-
 						<td class="product-subtotal" data-title="<?php esc_attr_e( 'Subtotal', 'woocommerce' ); ?>">
 							<?php
 								echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // PHPCS: XSS ok.
 							?>
 						</td>
-
 						<td class="product-remove">
 							<?php
 								echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

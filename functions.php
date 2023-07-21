@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 @ini_set( 'post_max_size', '164M' );
 @ini_set( 'max_execution_time', '300' );
 
-
 if ( ! function_exists( 'chld_thm_cfg_locale_css' ) ) :
 	function chld_thm_cfg_locale_css( $uri ) {
 		if ( empty( $uri ) && is_rtl() && file_exists( get_template_directory() . '/rtl.css' ) ) {
@@ -452,7 +451,7 @@ function load_the_details() {
 
 function get_dynamic_price( $postid ) {
 
-	$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
+		$pricing_rule = get_post_meta( $postid, '_pricing_rules', 'true' );
 
 	$min_price = array();
 	$i         = 0;
@@ -808,9 +807,7 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 	$is_dc_in_cart = is_dealclubmembership_in_cart();
 
 	if ( ! is_array( is_dc_in_cart() ) || is_user_an_active_member_wcm() ) {
-
 		foreach ( $cart_object->cart_contents as $key => $value ) {
-
 			if ( $value['product_id'] == 174721 || $value['product_id'] == 174738 || $value['product_id'] == 174739 ) {
 				// dont modify prices here
 
@@ -866,8 +863,6 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 				}
 
 				$variation_arr = get_post_meta( $value['product_id'], '_pricing_rules', 'true' );
-
-
 				foreach ( $variation_arr as $var_obj ) {
 					if ( $var_obj['variation_rules']['args']['variations'][0] == $value['variation_id'] ) { //if our variation matches with cart's variation
 
@@ -1015,9 +1010,8 @@ function is_dc_in_cart() {
 	$user_membership_type = is_user_has_annual_or_monthly_memebership();
 
 
-	foreach ( $items as $item ) {
-
-		if ( in_array( $item['product_id'], array( 174721, 174738, 174739 ) ) ) {
+    foreach ( $items as $item ) {
+        if ( in_array( $item['product_id'], array( 174721, 174738, 174739 ) ) ) {
             $plan = $item['data']->get_sku();
         }
 		if ( empty( $item['variation'] ) ) { // when product is simple product
@@ -1049,7 +1043,7 @@ function is_dc_in_cart() {
 		}
 	}
 
-	return isset( $plan ) ? $plan : $ret_arr;
+    return isset( $plan ) ? $plan : $ret_arr;
 }
 
 function get_product_dealclub_variation_price( $product ) {
@@ -3747,7 +3741,6 @@ function get_all_dynamic_prices( $postid ) {
 	return $prices;
 }
 
-
 /*
  * Function to get dynamicPrice/plusPrice with id as key and 2 digit decimal format.
  */
@@ -3798,6 +3791,7 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 	}
 	return $prices;
 }
+
 add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
 
 function dealfuel_change_empty_cart_button_url() {
@@ -5431,9 +5425,7 @@ function wc_empty_cart_redirect_url() {
 add_filter( 'woocommerce_return_to_shop_redirect', 'wc_empty_cart_redirect_url' );
 
 /* Added to display DC prices only on Deal Pages if DealClub is in cart - By Prasada */
-
 add_filter( 'woocommerce_get_price_html', 'df_change_product_price_html', 10, 2 );
-
 function df_change_product_price_html( $price, $product ) {
 
 	$user_membership_type = is_user_has_annual_or_monthly_memebership();
@@ -5479,7 +5471,6 @@ function df_change_product_price_html( $price, $product ) {
 			$var_amounts .= $var_obj2['rules'][1]['amount']."-";
 
 		}
-
 		$var_amount_arr = explode("-",$var_amounts);
 
 
@@ -5514,12 +5505,10 @@ function df_change_product_price_html( $price, $product ) {
 		else{
 			$price_val = '$'.$var_amount_arr[0];
 		}
-
 		$price = '<p style="margin-top: 10px;" class="price"><span class="woocommerce-Price-amount amount"><bdi>'.$price_val.'</bdi></span></p>';
 
 	}
-
-	return $price;
+return $price;
 	}
 }
 add_action( 'woocommerce_variable_add_to_cart', 'df_update_price_with_variation_price' );
@@ -5966,7 +5955,6 @@ function assign_download_permission_for_guest_checkout( $order_id ) {
 add_shortcode('productpage_sidebar_addtocart','productpage_sidebar_addtocart_shortcode');
 function productpage_sidebar_addtocart_shortcode(){
     global $product;
-
     if (!is_product()){
         return;
     }
@@ -5974,8 +5962,6 @@ function productpage_sidebar_addtocart_shortcode(){
 	$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
 	if( $product->is_type( 'simple' ) ){
-
-
         $productid = $product->get_id();
         $product_name = $product->get_name();
 
@@ -6031,14 +6017,12 @@ function productpage_sidebar_addtocart_shortcode(){
 
 
         if ( $product->get_sale_price() > 0  && get_dynamic_price( $product->get_id() ) >= 0 ) {
-
             ?>
 
 			<div class="df_show_discounted_price_dynamically">
 					<span class="df_show_price"><?php echo "$" . get_dynamic_price( $product->get_id())[0] ?></span><span class="df_price_del"><?php echo "$".number_format($product->get_regular_price(),2); ?></span>
 				</div>
             <form>
-
                 <div class="radio_section">
                     <div>
                         <div class="withdcleft">
@@ -6080,7 +6064,6 @@ function productpage_sidebar_addtocart_shortcode(){
             </div>
             <script>
             jQuery(document).ready(function(){
-
                 var is_dc_in_cart = "<?php echo is_dealclubmembership_in_cart(); ?>";
                 var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
 				var is_annual_or_monthly = "<?php echo is_user_has_annual_or_monthly_memebership(); ?>";
@@ -6230,7 +6213,6 @@ function productpage_sidebar_addtocart_shortcode(){
                 }
 
                 jQuery('input[name="radiodealclub"]').click(function() {
-
                     var value = jQuery(this).val();
                     if(value == "withdealclub"){
                         jQuery('.sidc_addtocart_btn_sidebar').show();
@@ -6274,9 +6256,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 
                 });
-
             });
-
             </script>
                         <?php
 
@@ -6566,6 +6546,16 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 					jQuery('#df-related-products a').show();
 
 					}
+				}else{
+
+					var screenWidth = jQuery(window).width();
+
+					if (screenWidth < 768) {
+
+						jQuery('#dealpage-details-sc form').show();
+
+					}
+
 				}
 			});
 
@@ -6603,17 +6593,13 @@ function add_script_on_select_variation_value_change(){
 	if (!is_product()){
 			return;
 	}
-
 	$price = $product->get_price_html();
-
 	if ( $product->is_type('variable')) {
 
 		$product_id = $product->get_id();
-
 		$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($product->get_id());
 		$dynamic_price = json_encode($dynamic_pricearr);
-		$assoc_dynamic_price = array_values($dynamic_pricearr);
-
+	$assoc_dynamic_price = array_values($dynamic_pricearr);
 		?>
 
 		<div class="var_price">
@@ -6628,7 +6614,6 @@ function add_script_on_select_variation_value_change(){
 
 
 		<div class="radio_sect_var">
-
 			<div>
 				<div class="withdcleft">
 				    <input type="radio" id="varwithdealclub" checked name="varradiodealclub" value="varwithdealclub">
@@ -6666,7 +6651,6 @@ function add_script_on_select_variation_value_change(){
 
 			<script>
 				jQuery(document).ready(function(){
-
 					jQuery('#variation_div').show();
 					//onLoad show disabled radio buttons
 					var is_dc_active_member = "<?php echo is_user_an_active_member_wcm(); ?>";
@@ -6695,7 +6679,6 @@ function add_script_on_select_variation_value_change(){
 
 
 					jQuery('.woocommerce-variation-add-to-cart .single_add_to_cart_button').hide();
-
 					jQuery('input[name="varradiodealclub"]').click(function() {
 							var value = jQuery(this).val();
 							if(value == "varwithdealclub"){
@@ -6822,15 +6805,15 @@ function add_script_on_select_variation_value_change(){
 
 
 
-						jQuery(document).on('found_variation', function( e, v ) {
-							jQuery('.radio_sect_var .withoutdcpricerad').prop('disabled',false);
-							jQuery('.radio_sect_var .withoutdcleft').removeClass('disabled-wodc');
-							jQuery('.radio_sect_var .withoutdcright').removeClass('disabled-wodc');
-							jQuery('.sticky_add_to_cart1 .sticky_addtocart_left.sticky_dc_buynow_btn_sidebar').removeClass('disabled wc-variation-selection-needed');
-							jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar').removeClass('disabled wc-variation-selection-needed');
-							jQuery('.mo-disabled-wodc').click(function(){});
+					jQuery(document).on('found_variation', function( e, v ) {
+						jQuery('.radio_sect_var .withoutdcpricerad').prop('disabled',false);
+						jQuery('.radio_sect_var .withoutdcleft').removeClass('disabled-wodc');
+						jQuery('.radio_sect_var .withoutdcright').removeClass('disabled-wodc');
+						jQuery('.sticky_add_to_cart1 .sticky_addtocart_left.sticky_dc_buynow_btn_sidebar').removeClass('disabled wc-variation-selection-needed');
+						jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar').removeClass('disabled wc-variation-selection-needed');
+						jQuery('.mo-disabled-wodc').click(function(){});
 
-							jQuery('.single_variation_wrap .woocommerce-variation-price').hide();
+					 jQuery('.single_variation_wrap .woocommerce-variation-price').hide();
 
 							if(jQuery(window).width() < 768)
 							{
@@ -6899,22 +6882,20 @@ function add_script_on_select_variation_value_change(){
 											}
 
 
-											if (jQuery('.wodc_addtocart_btn_sidebar').length ==1 ) {
-												jQuery('.wodc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
-											}
+									if (jQuery('.wodc_addtocart_btn_sidebar').length ==1 ) {
+ 								 		jQuery('.wodc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
+ 							 		}
 
-											if(jQuery('.wodc_buynow_btn_sidebar').length == 1){
-												jQuery('.wodc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .wodc_addtocart_btn_sidebar'));
-											}
+ 									if(jQuery('.wodc_buynow_btn_sidebar').length == 1){
+ 										jQuery('.wodc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .wodc_addtocart_btn_sidebar'));
+ 									}
+ 								 jQuery('a.wodc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+inputvarval);
+ 								 jQuery('a.wodc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+inputvarval);
 
-											jQuery('a.wodc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+inputvarval);
-											jQuery('a.wodc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+inputvarval);
+							 }
+							 if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
 
-									}
-
-									if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
-
-										var var_id = inputvarval;
+								 var var_id = inputvarval;
 
 										if( is_annual_or_monthly == 174761 ){ // if membership is monthly disable the without dc option
 
@@ -7048,14 +7029,14 @@ function add_script_on_select_variation_value_change(){
 											jQuery('.wodcpriceins').html(dynamic_price[var_id]['sale_price']);
 											jQuery('.wodcpricedel').html(dynamic_price[var_id]['regular_price']);
 
-											jQuery('.radio_sect_var .withoutdcleft').addClass('disabled-wodc');
-											jQuery('.radio_sect_var .withoutdcright').addClass('disabled-wodc');
-											jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
-											jQuery('.radio_sect_var #varwithoutdealclub').attr('disabled',true);
+								 jQuery('.radio_sect_var .withoutdcleft').addClass('disabled-wodc');
+								 jQuery('.radio_sect_var .withoutdcright').addClass('disabled-wodc');
+								 jQuery('.sticky_add_to_cart1 .sticky_addtocart_right.sticky_wodc_buynow_btn_sidebar').addClass('disabled wc-variation-selection-needed');
+								 jQuery('.radio_sect_var #varwithoutdealclub').attr('disabled',true);
 
-											if (jQuery('.dc_addtocart_btn_sidebar').length ==1 ) {
-												jQuery('.dc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
-											}
+								 if (jQuery('.dc_addtocart_btn_sidebar').length ==1 ) {
+								 		jQuery('.dc_addtocart_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .radio_sect_var'));
+							 		}
 
 											if(jQuery('.dc_buynow_btn_sidebar').length == 1){
 												jQuery('.dc_buynow_btn_sidebar').insertAfter(jQuery('.single_variation_wrap .dc_addtocart_btn_sidebar'));
@@ -7097,8 +7078,6 @@ function add_script_on_select_variation_value_change(){
 
  }
 }
-
-
 /*
  * Redirect to cart page by removing arguments ( product ids given on single product page add to cart )
  */
@@ -7558,35 +7537,6 @@ function homepage_add_product_slider_js(){
         ]
       });
 	  jQuery('#test_masterclass .products').slick({ //add CSS class of target
-        dots: false,
-        autoplay: false,
-        speed: 900,
-        autoplaySpeed: 2000,
-        centerMode: false,
-        centerPadding: '40px',
-        slidesToShow: 1,
-        responsive: [
-          {
-            breakpoint: 768,
-            settings: {
-              arrows: false,
-              centerMode: true,
-              centerPadding: '40px',
-              slidesToShow: 3
-            }
-          },
-          {
-            breakpoint: 480,
-            settings: {
-              arrows: false,
-              centerMode: true,
-              centerPadding: '40px',
-              slidesToShow: 1
-            }
-          }
-        ]
-      });
-	  jQuery('#dealclub_carousal .products').slick({ //add CSS class of target
         dots: false,
         autoplay: false,
         speed: 900,
