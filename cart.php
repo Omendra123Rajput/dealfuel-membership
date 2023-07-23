@@ -78,102 +78,101 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					}
 
-					/******************************/ //for annual memeber
+
+					/*****Calculate save discount amount*/
+
+
+					global $woocommerce;
+
+					$items                  = $woocommerce->cart->get_cart();
+					$cart_total_price_final = $woocommerce->cart->total;
+					$dealclub_savings       = 0;
+					$cw_discount = 0;
+					$cw_monthly_discount = 0;
+
+						foreach ( $items as $item => $values ) {
+
+						$pro_id = $values['product_id'];
+						$_product = wc_get_product( $pro_id );
+
+						if( $pro_id == 174721 ){
+							continue;
+						}
+
+						if($_product->is_type( 'simple' )){
+
+							if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
+
+								$sale_price = get_dynamic_price( $_product->get_id() )[1];
+
+							}
+							else { //ow annual price
+								$sale_price = get_dynamic_price( $_product->get_id() )[0];
+							}
+
+							$regular_price = $_product->get_sale_price();
+
+							$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
+
+							$discount = ($regular_price - $sale_price) * $values['quantity'];
+
+							$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
+
+							if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
+
+								// $sale_price = get_dynamic_price( $_product->get_id() )[1];
+								$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
+
+							}
+
+							if ( check_if_monthly_is_in_cart() ) {
+
+								$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
+
+								$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
+
+							}
+
+
+						}
+						//here change for save amount for variable product
+						if($_product->is_type( 'variable' )){
+							$var_id = $values['variation_id'];
+
+							$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
+
+							// print_r($dynamic_pricearr);
+
+							$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
+
+							$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
+
+							if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
+
+								$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
+
+							}
+
+							if ( check_if_monthly_is_in_cart() ) {
+
+								$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
+
+								$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
+
+							}
+
+
+
+							}
+
+						$cw_discount += $discount;
+						$cw_monthly_discount += $discount_for_monthly;
+
+						}
+
+					//for annual memeber show save msg
 
 					if( $is_annual_or_monthly==174765 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
-
-							/*********/
-								//find out saving
-
-								global $woocommerce;
-
-								$items                  = $woocommerce->cart->get_cart();
-								$cart_total_price_final = $woocommerce->cart->total;
-								$dealclub_savings       = 0;
-								$cw_discount = 0;
-								$cw_monthly_discount = 0;
-
-									foreach ( $items as $item => $values ) {
-
-									$pro_id = $values['product_id'];
-									$_product = wc_get_product( $pro_id );
-
-									if( $pro_id == 174721 ){
-										continue;
-									}
-
-									if($_product->is_type( 'simple' )){
-
-										if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
-
-											$sale_price = get_dynamic_price( $_product->get_id() )[1];
-
-										}
-										else { //ow annual price
-											$sale_price = get_dynamic_price( $_product->get_id() )[0];
-										}
-
-										$regular_price = $_product->get_sale_price();
-
-										$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
-
-										$discount = ($regular_price - $sale_price) * $values['quantity'];
-
-										$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
-
-										if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-											// $sale_price = get_dynamic_price( $_product->get_id() )[1];
-											$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
-
-										}
-
-										if ( check_if_monthly_is_in_cart() ) {
-
-											$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-											$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
-
-										}
-
-
-									}
-									//here change for save amount for variable product
-									if($_product->is_type( 'variable' )){
-										$var_id = $values['variation_id'];
-
-										$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
-
-										// print_r($dynamic_pricearr);
-
-										$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
-
-										if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-											$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										}
-
-										if ( check_if_monthly_is_in_cart() ) {
-
-											$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-											$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										}
-
-
-
-										}
-
-									$cw_discount += $discount;
-									$cw_monthly_discount += $discount_for_monthly;
-
-									}
-
-								/********/
 
 								?>
 									<!-- /Show saving msg for annual member -->
@@ -196,8 +195,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					}
 
-					/*********************/
-
+					//annual upsell
 
 					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
@@ -210,99 +208,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 						?>
 
 							<?php
-
-								/*********/
-								//find out saving
-
-								global $woocommerce;
-
-								$items                  = $woocommerce->cart->get_cart();
-								$cart_total_price_final = $woocommerce->cart->total;
-								$dealclub_savings       = 0;
-								$cw_discount = 0;
-								$cw_monthly_discount = 0;
-
-									foreach ( $items as $item => $values ) {
-
-									$pro_id = $values['product_id'];
-									$_product = wc_get_product( $pro_id );
-
-									if( $pro_id == 174721 ){
-										continue;
-									}
-
-									if($_product->is_type( 'simple' )){
-
-										if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
-
-											$sale_price = get_dynamic_price( $_product->get_id() )[1];
-
-										}
-										else { //ow annual price
-											$sale_price = get_dynamic_price( $_product->get_id() )[0];
-										}
-
-										$regular_price = $_product->get_sale_price();
-
-										$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
-
-										$discount = ($regular_price - $sale_price) * $values['quantity'];
-
-										$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
-
-										if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-											// $sale_price = get_dynamic_price( $_product->get_id() )[1];
-											$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
-
-										}
-
-										if ( check_if_monthly_is_in_cart() ) {
-
-											$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-											$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
-
-										}
-
-
-									}
-									//here change for save amount for variable product
-									if($_product->is_type( 'variable' )){
-										$var_id = $values['variation_id'];
-
-										$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
-
-										// print_r($dynamic_pricearr);
-
-										$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
-
-										if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-											$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										}
-
-										if ( check_if_monthly_is_in_cart() ) {
-
-											$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-											$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-										}
-
-
-
-										}
-
-									$cw_discount += $discount;
-									$cw_monthly_discount += $discount_for_monthly;
-
-									}
-
-								/********/
 
 
 								if ( $is_annual_or_monthly==174761 ) { //show saving msg for monthly member
@@ -322,13 +227,23 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							</tr>
 
+								<script>
+											//change the banner position when the user is monthly
+
+											jQuery(document).ready(function() {
+
+												jQuery('.banner').css('top','186px');
+
+											});
+
+									</script>
+
+
 							<?php
 
 							}
 
 							?>
-
-								<!-- ********************************** -->
 
 							<tr class="annual_upsell">
 
@@ -338,124 +253,36 @@ do_action( 'woocommerce_before_cart' ); ?>
 								</div>
 
 
-
 							<td class="product-thumbnail monthly_deal">
 
 
 						<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
 							</td>
-						<td class="product-name-mem" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
+						<td class="product-name-mem annual_upsell_product_name" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 
-						<?php
-							global $woocommerce;
 
-							$items                  = $woocommerce->cart->get_cart();
-							$cart_total_price_final = $woocommerce->cart->total;
-							$dealclub_savings       = 0;
-							$cw_discount = 0;
-							$cw_monthly_discount = 0;
+					<?php
+						if($woocommerce->cart->total > 0){
 
-                                foreach ( $items as $item => $values ) {
+								if ( $is_annual_or_monthly == 174761 ) { //if monthly then inthe annual upsell add upgrade text
 
-								$pro_id = $values['product_id'];
-								$_product = wc_get_product( $pro_id );
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
+									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
 
-								if( $pro_id == 174721 ){
-									continue;
-								}
+								}else { //normal annual upsell text
 
-								if($_product->is_type( 'simple' )){
-
-									if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
-
-										$sale_price = get_dynamic_price( $_product->get_id() )[1];
-
-									}
-									else { //ow annual price
-										$sale_price = get_dynamic_price( $_product->get_id() )[0];
-									}
-
-									$regular_price = $_product->get_sale_price();
-
-									$sale_price_for_monthly = get_dynamic_price( $_product->get_id() )[1];
-
-									$discount = ($regular_price - $sale_price) * $values['quantity'];
-
-									$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
-
-									if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-										// $sale_price = get_dynamic_price( $_product->get_id() )[1];
-										$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
-
-									}
-
-									if ( check_if_monthly_is_in_cart() ) {
-
-										$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-										$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
-
-									}
-
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
+									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
 
 								}
-								//here change for save amount for variable product
-								if($_product->is_type( 'variable' )){
-									$var_id = $values['variation_id'];
 
-									$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
+								}
+								else{
+								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
+								<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
+							}
 
-									// print_r($dynamic_pricearr);
-
-									$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-									$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
-
-									if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
-
-										$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-									}
-
-									if ( check_if_monthly_is_in_cart() ) {
-
-										$quantity = $values['quantity']; //since monthly is in cart it considered monthy as an extra so -1
-
-										$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
-
-									}
-
-
-
-                                    }
-
-								$cw_discount += $discount;
-								$cw_monthly_discount += $discount_for_monthly;
-
-                                }
-
-			                   if($woocommerce->cart->total > 0){
-
-									if ( $is_annual_or_monthly == 174761 ) { //if monthly then inthe annual upsell add upgrade text
-
-										echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
-										<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
-
-									}else { //normal annual upsell text
-
-										echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
-										<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
-
-									}
-
-
-    			                   }
-			                   else{
-			                       echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-    			                   <span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
-			                   }
-			                   ?>
+							?>
 
 						</td>
 						<td class="add-monthly-sub">
