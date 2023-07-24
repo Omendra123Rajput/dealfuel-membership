@@ -512,20 +512,145 @@ do_action( 'woocommerce_before_cart' ); ?>
 								echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // PHPCS: XSS ok.
 							?>
 						</td>
-						<td class="product-remove">
+						<td class="product-remove ">
+
+							<!-- The popup container -->
+							<div class="overlay" id="blur-overlay"></div>
+
+							<div class="popup" id="floating-popup">
+								<div class="popup-content">
+									<span class="close-btn" id="close-popup" style="display:none">&times;</span>
+									<div class="popup-mem-text">
+
+										<span>A DealClub Membership of just $9/Month, saves <span class="green-text discount-text">$<?php echo $cw_monthly_discount ?></span> on this purchase</span>
+
+									</div>
+									<br>
+									<div class="popup-extra-text">
+
+									<span>& extra 10% on all other purchases for one month.</span>
+
+									</div>
+
+									<div class="popup-confirm-text">
+
+									<span>Are you sure, you want to miss out on these huge savings???.</span>
+
+									</div>
+
+									<div class="popup-keep-mem-button">
+
+									<button class="keep-mem-button">I want to save. Keep Membership</button>
+
+									</div>
+
+									<div class="popup-remove-mem-button">
+
+									<button class="remove-mem-button"> <a href="%s" class="remove-product-m" aria-label="%s" data-product_id="%s" data-product_sku="%s">I hate savings! Remove Membership  </a>  </button>
+
+									</div>
+
+								</div>
+							</div>
+
+
+
 							<?php
-								echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-									'woocommerce_cart_item_remove_link',
-									sprintf(
-										'<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s"><img src="' . get_home_url(). '/wp-content/uploads/2022/12/Dustbin.svg"</a>',
-										esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-										esc_html__( 'Remove this item', 'woocommerce' ),
-										esc_attr( $product_id ),
-										esc_attr( $_product->get_sku() )
-									),
-									$cart_item_key
-								);
+
+								if ($product_id == 174721 ) {
+
+									    // Define PHP variables here, will use them later in jquery
+										$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
+										$dynamicAriaLabel = esc_html__('Remove this item', 'woocommerce');
+										$dynamicProductID = esc_attr($product_id);
+										$dynamicProductSKU = esc_attr($_product->get_sku());
+										$home_url = get_home_url();
+
+									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										'woocommerce_cart_item_remove_link',
+										sprintf(
+											'<a href="javascript:void(0);" class="remove" aria-label="" data-product_id="" data-product_sku=""><img src="' . get_home_url(). '/wp-content/uploads/2022/12/Dustbin.svg"</a>',
+											esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
+											esc_html__( 'Remove this item', 'woocommerce' ),
+											esc_attr( $product_id ),
+											esc_attr( $_product->get_sku() )
+										),
+										$cart_item_key
+									);
+
+
+
+								}else{
+
+									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										'woocommerce_cart_item_remove_link',
+										sprintf(
+											'<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s"><img src="' . get_home_url(). '/wp-content/uploads/2022/12/Dustbin.svg"</a>',
+											esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
+											esc_html__( 'Remove this item', 'woocommerce' ),
+											esc_attr( $product_id ),
+											esc_attr( $_product->get_sku() )
+										),
+										$cart_item_key
+									);
+
+								}
+
+
+
 							?>
+
+								<script>
+
+								jQuery(document).ready(function() {
+
+								var is_annual_or_monthly = "<?php echo $is_annual_or_monthly ?>";
+
+								var product_id = "<?php echo $product_id  ?>";
+
+								if ( product_id == 174721) {
+
+									jQuery(".product-remove").addClass("monthly-product");
+
+									jQuery(".monthly-product").on("click", function () {
+										jQuery("#blur-overlay").fadeIn();
+										jQuery("#floating-popup").fadeIn();
+									});
+
+									jQuery("#close-popup").on("click", function () {
+										jQuery("#blur-overlay").fadeOut();
+										jQuery("#floating-popup").fadeOut();
+									});
+
+									//Adding the remove url to the remove the membership button
+
+									// Your PHP variables are now accessible here
+									var dynamicHref = "<?php echo $dynamicHref; ?>";
+										// Use replace() with a regular expression to remove #038;
+									var dynamicHref = dynamicHref.replace(/#038;/g, "");
+									var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
+									var dynamicProductID = "<?php echo $dynamicProductID; ?>";
+									var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
+									var homeURL = "<?php echo $home_url; ?>";
+
+									// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
+									jQuery(".remove-product-m")
+										.attr("href", dynamicHref)
+										.attr("aria-label", dynamicAriaLabel)
+										.attr("data-product_id", dynamicProductID)
+										.attr("data-product_sku", dynamicProductSKU);
+
+
+
+								}
+
+								});
+
+								</script>
+
+
+
+
 						</td>
 					</tr>
 					<?php
