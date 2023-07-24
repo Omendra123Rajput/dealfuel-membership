@@ -33,6 +33,39 @@ do_action( 'woocommerce_before_cart' ); ?>
 				<th class="product-subtotal"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
 				<th class="product-remove">&nbsp;</th>
 			</tr>
+
+			<?php
+					//find out membership
+  					$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
+					  ?>
+
+			<script>
+						var is_annual_or_monthly = "<?php echo $is_annual_or_monthly ?>";
+
+							// Jquery will work even after the completion of ajax call
+
+							if ( is_annual_or_monthly == 174761  ) {
+
+								function changeCssofDiv() {
+									jQuery(".banner").addClass("banner-annual-for-monthly");
+									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
+									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub').css('margin-top','55px');
+								}
+
+								// Attach the function to .ajaxComplete()
+								jQuery(document).ajaxComplete(function() {
+								// Add the class after each AJAX request is complete
+								changeCssofDiv();
+								});
+
+								// Initial call to add the class when the page loads
+								changeCssofDiv();
+
+							}
+
+			</script>
+
+
 		</thead>
 		<tbody>
 		     <?php
@@ -276,8 +309,8 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								}
 
-								}
-								else{
+							}
+							else{
 								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
 								<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
 							}
@@ -285,7 +318,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 							?>
 
 						</td>
-						<td class="add-monthly-sub">
+						<td class="add-monthly-sub add_item_annual_upsell">
 							<div class="monthly-sub-button tooltip_class">
 								<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174739&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 

@@ -5484,7 +5484,7 @@ a.reset_variations:hover{
     width: 52%!important;
 }
 .monthly-sub-button{
-    width: 128px!important;
+    /* width: 128px!important; */
 }
 .woocommerce-cart .woocommerce table.shop_table td, .woocommerce-page table.shop_table td{
     /*changed by Vaibhav on Dec 13*/
@@ -7627,12 +7627,12 @@ margin-bottom : 0;
 		position: absolute !important;
 		left: 117px !important;
 		/* top: 52px !important; */
-		top: 52px;
+		/* top: 106px; */
 	}
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button
 	{
-		left: 11em;
-		top: 180px;
+		left: 12em !important;
+		/* top: 230px; */
 		position: absolute !important;
 	}
 	.woocommerce-checkout .dcplan-section .inner-section-divs{
@@ -8105,8 +8105,8 @@ margin-bottom : 0;
 	}
 
 	.monthly_add_item_button{
-		margin-top: 165px;
-		margin-left: -80px;
+		margin-top: -42px;
+		/* margin-left: -80px; */
 	}
 
 	.checkout_add_item_monthly{
@@ -8164,9 +8164,33 @@ table {
 
 	.banner {
 
-		top: 57px;
+		top: 58px;
 
 	}
+
+	.display-savings-msg{
+		margin-top: -13px;
+		font-size: 13px !important;
+	}
+
+	.display-savings-msg div {
+		position: relative;
+		right: 18%;
+	}
+
+	.savings-text::before {
+		display: none;
+	}
+
+	/* .add_item_annual_upsell {
+		left: 190px !important;
+    	top: 225px;
+	} */
+
+	.add_item_annual_upsell {
+		top: 165px;
+	}
+
 
 }
 
@@ -8188,4 +8212,8 @@ table {
 	font-style: normal;
 	font-weight: 600;
 	line-height: normal;
+}
+
+.banner-annual-for-monthly {
+	top: 112px !important;
 }
