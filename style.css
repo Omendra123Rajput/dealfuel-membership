@@ -8115,18 +8115,14 @@ margin-bottom : 0;
 
 }
 
-/*******************************************************/
-
 table {
 	position: relative; /* Set the table as a relatively positioned container */
   }
-
 
   /* Styling for the small banner */
 .banner {
 	position: absolute;
     top: 135px;
-    /* right: 0; */
     background: #27701B;
     padding: 5px;
     z-index: 1;
@@ -8143,7 +8139,6 @@ table {
     font-style: normal;
     font-weight: 600;
     line-height: normal;
-    /* padding-right: 5px; */
     padding-left: 19px;
 
   }
@@ -8153,7 +8148,6 @@ table {
 
 	color: #27701B;
 	font-family: Metropolis-Regular;
-	/* font-size: 16px; */
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
@@ -8163,9 +8157,7 @@ table {
 @media screen and (max-width: 767px){
 
 	.banner {
-
 		top: 58px;
-
 	}
 
 	.display-savings-msg{
@@ -8181,11 +8173,6 @@ table {
 	.savings-text::before {
 		display: none;
 	}
-
-	/* .add_item_annual_upsell {
-		left: 190px !important;
-    	top: 225px;
-	} */
 
 	.add_item_annual_upsell {
 		top: 165px;
@@ -8366,17 +8353,13 @@ table {
 @media screen and (max-width: 767px){
 
 	.popup{
-
 		width: 350px;
 		height: 450px;
-
 	}
 
 	.popup-content{
-
 		width: 325px;
 		height: 425px;
-
 	}
 
 	.popup-mem-text,.popup-extra-text,.popup-confirm-text,.popup-remove-mem-button{
@@ -8385,23 +8368,27 @@ table {
 	}
 
 	.popup-extra-text{
-		padding-top: 10px;
+		padding-top: 25px;
 	}
 
 	.popup-keep-mem-button,.popup-remove-mem-button{
-
 		padding-left: 54px;
 		padding-right: 54px;
-
 	}
 
 	.popup-close-btn {
-
 		width: 18px;
     	height: 18px;
-    	top: 14px;
-    	right: 15px;
+    	top: 20px;
+    	right: 20px;
+	}
 
+	.popup-mem-text{
+		padding-top: 30px;
+	}
+
+	.popup-confirm-text{
+		padding-top: 35px;
 	}
 
 }

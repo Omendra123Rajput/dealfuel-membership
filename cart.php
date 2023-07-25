@@ -596,8 +596,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								}
 
-
-
 							?>
 
 								<script>
@@ -608,7 +606,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var product_id = "<?php echo $product_id  ?>";
 
-								if ( product_id == 174721) {
+								if ( product_id == 174721) {//if added product is monthly product
 
 									jQuery(".product-remove").addClass("monthly-product");
 
@@ -629,7 +627,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									// Your PHP variables are now accessible here
 									var dynamicHref = "<?php echo $dynamicHref; ?>";
-										// Use replace() with a regular expression to remove #038;
 									var dynamicHref = dynamicHref.replace(/#038;/g, "");
 									var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
 									var dynamicProductID = "<?php echo $dynamicProductID; ?>";
@@ -643,16 +640,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 										.attr("data-product_id", dynamicProductID)
 										.attr("data-product_sku", dynamicProductSKU);
 
-
-
 								}
 
 								});
 
 								</script>
-
-
-
 
 						</td>
 					</tr>
