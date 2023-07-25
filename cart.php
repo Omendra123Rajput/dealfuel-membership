@@ -112,7 +112,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					}
 
 
-					/*****Calculate save discount amount*/
+					/*****Calculate save discount amount******/
 
 
 					global $woocommerce;
@@ -174,8 +174,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($pro_id);
 
-							// print_r($dynamic_pricearr);
-
 							$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
 
 							$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
@@ -208,7 +206,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					if( $is_annual_or_monthly==174765 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
 								?>
-									<!-- /Show saving msg for annual member -->
+									<!-- Show saving msg for annual member -->
 								<tr class="df-show-savings">
 								<td class="savings-text" colspan="5">
 
@@ -423,11 +421,9 @@ do_action( 'woocommerce_before_cart' ); ?>
 						</tr>
 
 						<?php endif ;?>
-						<!-- /********************************************** */ -->
 
 						<?php
 			  		}
-
 
 		     ?>
 
@@ -519,7 +515,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							<div class="popup" id="floating-popup">
 								<div class="popup-content">
-									<span class="close-btn" id="close-popup" style="display:none">&times;</span>
+								<div class="df_cart_close_popup" id="df_cart_close_popup">
+										<svg class="popup-close-btn" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+										<path d="M7.64199 12.3584L12.3587 7.64175M12.3587 12.3584L7.64199 7.64175M7.50033 18.3334H12.5003C16.667 18.3334 18.3337 16.6667 18.3337 12.5001V7.50008C18.3337 3.33341 16.667 1.66675 12.5003 1.66675H7.50033C3.33366 1.66675 1.66699 3.33341 1.66699 7.50008V12.5001C1.66699 16.6667 3.33366 18.3334 7.50033 18.3334Z" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</div>
 									<div class="popup-mem-text">
 
 										<span>A DealClub Membership of just $9/Month, saves <span class="green-text discount-text">$<?php echo $cw_monthly_discount ?></span> on this purchase</span>
@@ -534,7 +534,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									<div class="popup-confirm-text">
 
-									<span>Are you sure, you want to miss out on these huge savings???.</span>
+									<span>Are you sure, you want to miss out on these huge savings???</span>
 
 									</div>
 
@@ -557,7 +557,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							<?php
 
-								if ($product_id == 174721 ) {
+								if ( $product_id == 174721 ) {
 
 									    // Define PHP variables here, will use them later in jquery
 										$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
@@ -617,7 +617,10 @@ do_action( 'woocommerce_before_cart' ); ?>
 										jQuery("#floating-popup").fadeIn();
 									});
 
-									jQuery("#close-popup").on("click", function () {
+									//close the popup on clicking the cross
+									jQuery(".popup-close-btn").on("click", function (event) {
+										event.preventDefault(); // Prevent the default anchor tag behavior
+										event.stopPropagation();
 										jQuery("#blur-overlay").fadeOut();
 										jQuery("#floating-popup").fadeOut();
 									});

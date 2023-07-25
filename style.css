@@ -8350,6 +8350,18 @@ table {
 	font-size: 24px;
 }
 
+.popup-close-btn {
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	top: 20px;
+	right: 20px;
+	background-color: transparent;
+	border: none;
+	color: #000000;
+	font-size: 29px;
+	cursor: pointer;
+}
 
 @media screen and (max-width: 767px){
 
@@ -8380,6 +8392,15 @@ table {
 
 		padding-left: 54px;
 		padding-right: 54px;
+
+	}
+
+	.popup-close-btn {
+
+		width: 18px;
+    	height: 18px;
+    	top: 14px;
+    	right: 15px;
 
 	}
 
