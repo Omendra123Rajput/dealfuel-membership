@@ -8107,7 +8107,6 @@ margin-bottom : 0;
 
 	.monthly_add_item_button{
 		margin-top: -42px;
-		/* margin-left: -80px; */
 	}
 
 	.checkout_add_item_monthly{
@@ -8120,7 +8119,7 @@ table {
 	position: relative; /* Set the table as a relatively positioned container */
   }
 
-  /* Styling for the small banner */
+/* Styling for the Recommend banner */
 .banner {
 	position: absolute;
     top: 135px;
@@ -8181,7 +8180,6 @@ table {
 
 
 }
-
 
 .savings-text {
 	padding: 0 0 0 28px !important;
@@ -8396,4 +8394,49 @@ table {
 		top: 112px !important;
 	}
 
+}
+
+/* Checkout Upsell Styling */
+
+.monthly-checkout-membership{
+	margin-bottom: -10px !important;
+}
+
+@media screen and (max-width: 767px){
+
+	.woocommerce-checkout .dcplan-section .inner-section-divs .deal_club_img img {
+		height: 60px;
+	}
+
+	.woocommerce-checkout .dcplan-section .add_dc_btn{
+		width: 95px !important;
+	}
+
+	.checkout_add_item_monthly{
+		top: 175px !important;
+		left: 258px !important; ;
+	}
+
+	.woocommerce-checkout .deal_club_price{
+		padding-right: 90px;
+	}
+
+	.woocommerce-checkout .dcplan-section .inner-section-divs {
+
+		padding: 26px 10px 40px 10px;
+
+	}
+	.checkout_add_item_annual{
+		top: 280px !important;
+    	left: 70% !important;
+	}
+
+	.deal_club_price h4,p {
+		font-size: 12px;
+	}
+
+	.monthly-checkout-membership{
+		margin-bottom: -45px !important;
+
+	}
 }
