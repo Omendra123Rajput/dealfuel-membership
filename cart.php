@@ -42,7 +42,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 			<script>
 						var is_annual_or_monthly = "<?php echo $is_annual_or_monthly ?>";
 
-							// Jquery will work even after the completion of ajax call
+							// Make JQUERY work after the ajax calls happen in the cart
 
 							if ( is_annual_or_monthly == 174761  ) {
 
@@ -50,6 +50,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									jQuery(".banner").addClass("banner-annual-for-monthly");
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub').css('margin-top','55px');
+									jQuery('.cart_tooltip').removeClass('show_hide_tooltip');//make sure tooltip should work again after removing the annual mem from the cart
 								}
 
 								// Attach the function to .ajaxComplete()
@@ -64,7 +65,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 							}
 
 			</script>
-
 
 		</thead>
 		<tbody>
@@ -376,7 +376,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 										jQuery('#df_cart_close_tooltip').click(function() {
 												jQuery('.cart-tooltip-text').css('display','none');
 											});
-
 									}else{
 
 										jQuery('.cart_tooltip').css('display','none');
