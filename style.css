@@ -7923,8 +7923,8 @@ margin-bottom : 0;
 .cart_tooltip {
 	position: relative;
 	display: inline-block;
-	top: 247px;
-    right: 194px;
+	top: 207px;
+    right: 115px;
 	background: #FFF;
 	box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.30);
   }
@@ -8032,7 +8032,8 @@ margin-bottom : 0;
 	}
 
 	.cart_tooltip {
-		right: 55px;
+		/* right: 55px; */
+		right: 150px;
 		top: 260px;
 		text-align: left;
 	}
@@ -8202,7 +8203,7 @@ table {
 }
 
 .banner-annual-for-monthly {
-	top: 112px !important;
+	top: 186px !important;
 }
 
 /* CSS to style the popup */
@@ -8389,6 +8390,10 @@ table {
 
 	.popup-confirm-text{
 		padding-top: 35px;
+	}
+
+	.banner-annual-for-monthly{
+		top: 112px !important;
 	}
 
 }
