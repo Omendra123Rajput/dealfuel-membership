@@ -5445,11 +5445,12 @@ a.reset_variations:hover{
     color: #2E3739;
 }
 .product-name-mem .text-dark{
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: #2E3739;
     margin-bottom: 0;
     padding-top: 6px!important;
+	padding-bottom: 5px;
 }
 .woocommerce-cart .woocommerce-cart-flex .woocommerce-cart-form .shop_table thead tr, .woocommerce-cart-flex .cart-collaterals .cart_totals h2 {
         /*changed by Vaibhav on Dec 9*/
@@ -8095,6 +8096,17 @@ margin-bottom : 0;
    left: -8px;
   }
 
+  .dc-text-mem{
+	font-size: 14px;
+	}
+
+  .dc-text-mem .text-dark{
+	font-size: 14px;
+	}
+
+
+
+
   /*
   * Upsell Styling for mobile
   */
@@ -8112,6 +8124,14 @@ margin-bottom : 0;
 	.checkout_add_item_monthly{
 		top: 700px !important;
 	}
+
+	.dc-text-mem{
+		font-size: 12px;
+		}
+
+	  .dc-text-mem .text-dark{
+		font-size: 12px;
+		}
 
 }
 

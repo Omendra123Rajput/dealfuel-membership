@@ -212,7 +212,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									<div class="display-savings-msg">
 
-										<div> <img class="money-bag" src="https://1461794109.nxcli.io/money-bag.png" alt="Money Bag Image"> You are saving <span class="green-text">$<?php echo $cw_discount ?></span> with DealClub! </div>
+										<div> <img class="money-bag" src="https://1461794109.nxcli.io/money-bag.png" alt="Money Bag Image"> You saved <span class="green-text">$<?php echo $cw_discount ?></span> with DealClub! </div>
 
 									</div>
 								</td>
@@ -297,20 +297,20 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								if ( $is_annual_or_monthly == 174761 ) { //if monthly then inthe annual upsell add upgrade text
 
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
-									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
+									<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
 
 								}else { //normal annual upsell text
 
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p> %s :
-									<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
+									<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
 
 								}
 
 							}
 							else{
-								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-								<span class = "text-dark">$49.00/Year</span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
+								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p><span class="dc-text-mem"> %s :
+								<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
 							}
 
 							?>
@@ -401,12 +401,12 @@ do_action( 'woocommerce_before_cart' ); ?>
 						<?php
 
 								if($woocommerce->cart->total > 0){
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_monthly_discount . '</span> more with DealClub!</p> %s :
-									<span class = "text-dark"> $9.00/Month</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), 'DealClub Membership' ) ;
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_monthly_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
+									<span class = "text-dark">$9.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), 'DealClub Membership' ) ;
 									}
 								else{
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p> %s :
-									<span class = "text-dark">$9.00/Month</span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p><span class="dc-text-mem"> %s :
+									<span class = "text-dark">$9.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
 								}
 						?>
 
