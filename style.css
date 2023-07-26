@@ -8349,6 +8349,10 @@ table {
 	cursor: pointer;
 }
 
+.remove-mem-button:hover a{
+    color: white !important; /* Set the text color to white on hover */
+  }
+
 @media screen and (max-width: 767px){
 
 	.popup{
