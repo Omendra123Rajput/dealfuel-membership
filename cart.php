@@ -44,13 +44,14 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							// Make JQUERY work after the ajax calls happen in the cart
 
-							if ( is_annual_or_monthly == 174761  ) {
+							if ( is_annual_or_monthly == 174761  ) { //if user is a monthly mem
 
 								function changeCssofDiv() {
 									jQuery(".banner").addClass("banner-annual-for-monthly");
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub').css('margin-top','55px');
 									jQuery('.cart_tooltip').removeClass('show_hide_tooltip');//make sure tooltip should work again after removing the annual mem from the cart
+
 								}
 
 								// Attach the function to .ajaxComplete()
@@ -61,6 +62,26 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								// Initial call to add the class when the page loads
 								changeCssofDiv();
+
+							}else { //if user is not a member
+
+								jQuery(document).ready(function() {
+
+									//if error notice is in the dom then adjust the banner position
+
+									if (jQuery('.woocommerce-error').length) {
+
+										if (jQuery(window).width() <= 767) {
+
+											jQuery('.banner').css({ 'top': '226px'});
+
+										}else{
+											jQuery('.banner').css({ 'top': '215px'});
+										}
+
+									}
+
+								});
 
 							}
 
@@ -111,9 +132,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					}
 
-
 					/*****Calculate save discount amount******/
-
 
 					global $woocommerce;
 
@@ -153,7 +172,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
 
-								// $sale_price = get_dynamic_price( $_product->get_id() )[1];
 								$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
 
 							}
@@ -165,7 +183,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 								$discount = ( $regular_price - get_dynamic_price( $_product->get_id() )[0] ) * $values['quantity'];
 
 							}
-
 
 						}
 						//here change for save amount for variable product
@@ -221,8 +238,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 								</tr>
 
 								<?php
-
-
 
 					}
 
@@ -437,6 +452,70 @@ do_action( 'woocommerce_before_cart' ); ?>
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 
+					if ( $product_id == 174721 ) {
+
+						// Variables which are required to remove the membership from the cart
+						$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
+						$dynamicAriaLabel = esc_html__('Remove this item', 'woocommerce');
+						$dynamicProductID = esc_attr($product_id);
+						$dynamicProductSKU = esc_attr($_product->get_sku());
+						$home_url = get_home_url();
+
+					}
+
+					?>
+					<script>
+							//re-run the js for pop up and remove the membership from the cart when only membership is remaining
+
+							function membershipRemove() {
+
+								jQuery(".remove-mem-cart").on("click", function () {
+									jQuery("#blur-overlay").fadeIn();
+									jQuery("#floating-popup").fadeIn();
+								});
+
+								//close the popup on clicking the cross
+								jQuery(".popup-close-btn").on("click", function (event) {
+									event.preventDefault(); // Prevent the default anchor tag behavior
+									event.stopPropagation();
+									jQuery("#blur-overlay").fadeOut();
+									jQuery("#floating-popup").fadeOut();
+								});
+
+								//Adding the remove url to the remove the membership button
+
+								// Your PHP variables are now accessible here
+								var dynamicHref = "<?php echo $dynamicHref; ?>";
+								var dynamicHref = dynamicHref.replace(/#038;/g, "");
+								var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
+								var dynamicProductID = "<?php echo $dynamicProductID; ?>";
+								var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
+								var homeURL = "<?php echo $home_url; ?>";
+
+								// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
+								jQuery(".remove-product-m")
+									.attr("href", dynamicHref)
+									.attr("aria-label", dynamicAriaLabel)
+									.attr("data-product_id", dynamicProductID)
+									.attr("data-product_sku", dynamicProductSKU);
+
+
+							}
+
+							// Attach the function to .ajaxComplete()
+							jQuery(document).ajaxComplete(function() {
+							// Add the class after each AJAX request is complete
+							membershipRemove();
+							});
+
+							// Initial call to add the class when the page loads
+							membershipRemove();
+
+					</script>
+
+
+					<?php
+
 
 					?>
 					<tr class="woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
@@ -558,17 +637,10 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								if ( $product_id == 174721 ) {
 
-									    // Define PHP variables here, will use them later in jquery
-										$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
-										$dynamicAriaLabel = esc_html__('Remove this item', 'woocommerce');
-										$dynamicProductID = esc_attr($product_id);
-										$dynamicProductSKU = esc_attr($_product->get_sku());
-										$home_url = get_home_url();
-
 									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										'woocommerce_cart_item_remove_link',
 										sprintf(
-											'<a href="javascript:void(0);" class="remove" aria-label="" data-product_id="" data-product_sku=""><img src="' . get_home_url(). '/wp-content/uploads/2022/12/Dustbin.svg"</a>',
+											'<a href="javascript:void(0);" class="remove remove-mem-cart" aria-label="" data-product_id="" data-product_sku=""><img src="' . get_home_url(). '/wp-content/uploads/2022/12/Dustbin.svg"</a>',
 											esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
 											esc_html__( 'Remove this item', 'woocommerce' ),
 											esc_attr( $product_id ),
@@ -576,8 +648,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 										),
 										$cart_item_key
 									);
-
-
 
 								}else{
 
@@ -607,9 +677,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								if ( product_id == 174721) {//if added product is monthly product
 
-									jQuery(".product-remove").addClass("monthly-product");
-
-									jQuery(".monthly-product").on("click", function () {
+									jQuery(".remove-mem-cart").on("click", function () {
 										jQuery("#blur-overlay").fadeIn();
 										jQuery("#floating-popup").fadeIn();
 									});

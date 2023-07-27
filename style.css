@@ -5485,7 +5485,7 @@ a.reset_variations:hover{
     width: 52%!important;
 }
 .monthly-sub-button{
-    /* width: 128px!important; */
+    width: 30px!important;
 }
 .woocommerce-cart .woocommerce table.shop_table td, .woocommerce-page table.shop_table td{
     /*changed by Vaibhav on Dec 13*/
@@ -5808,8 +5808,8 @@ width: 81.6%!important;
   font-weight: 600;
 }
 .woocommerce-checkout .add_dc_btn{
-   border-radius: 4px !important;
-    font-size: 16px !important;
+   	border-radius: 4px !important;
+    font-size: 16px;
     padding: 10px !important;
     width: 30%;
     text-transform: capitalize;
@@ -7780,8 +7780,6 @@ margin-bottom : 0;
 	text-align: center;
   }
 
-
-
 .df_show_price {
 	color: #2E3739;
 	text-align: justify;
@@ -7793,7 +7791,6 @@ margin-bottom : 0;
 }
 
 .df_price_del {
-
 	color: #828788;
 	font-family: Metropolis-Regular;
 	font-style: normal;
@@ -7801,7 +7798,6 @@ margin-bottom : 0;
     font-size: 16px;
     text-decoration: line-through;
 	padding-left: 12px;
-
 }
 
 .variation_show_price {
@@ -7815,7 +7811,6 @@ margin-bottom : 0;
 }
 
 /*Scroll to top on mobile*/
-
 
 #simple_scroll_to_top span {
 	color: #FFF;
@@ -7840,7 +7835,6 @@ margin-bottom : 0;
 */
 
 .tooltip {
-	/* display: none; */
 	position: absolute;
 	background: #2E3739;
 	padding: 5px;
@@ -7957,15 +7951,12 @@ margin-bottom : 0;
 	opacity: 1;
   }
 
-
   .cart-tooltip-text{
-
 	width: 364px !important;
 	height: 216px;
 	flex-shrink: 0;
 	box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.30);
   }
-
 
   .normal_message {
 	width: 301px;
@@ -7975,7 +7966,7 @@ margin-bottom : 0;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
-	line-height: 126.2%; /* 17.668px */
+	line-height: 126.2%;
 	padding-left: 20px;
     padding-top: 10px;
   }
@@ -7988,7 +7979,7 @@ margin-bottom : 0;
 	font-size: 12px;
 	font-style: italic;
 	font-weight: 400;
-	line-height: 20px; /* 166.667% */
+	line-height: 20px;
 	padding-left: 20px;
     margin-top: -21px;
   }
@@ -7996,8 +7987,8 @@ margin-bottom : 0;
   .line {
 	width: 306px;
 	height: 1px;
-	background: #D5D7D7; /* Replace with your desired line color */
-	margin: 33px auto; /* Adjust margin as needed */
+	background: #D5D7D7;
+	margin: 33px auto;
   }
 
   .red_rectangle{
@@ -8019,7 +8010,6 @@ margin-bottom : 0;
 	transform: rotate(180deg);
   }
 
-
   /*for mobile Tooltip*/
 
   @media (max-width: 480px) {
@@ -8033,7 +8023,6 @@ margin-bottom : 0;
 	}
 
 	.cart_tooltip {
-		/* right: 55px; */
 		right: 150px;
 		top: 260px;
 		text-align: left;
@@ -8069,7 +8058,6 @@ margin-bottom : 0;
 
 }
 
-
 .tooltip-close-btn {
 	position: absolute;
     top: 17px;
@@ -8085,7 +8073,6 @@ margin-bottom : 0;
   .show_hide_tooltip{
 	  display: none;
   }
-
 
   .dc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
   .mc_addtocart_btn_sidebar.single_add_to_cart_button.button.alt.wp-element-button,
@@ -8103,9 +8090,6 @@ margin-bottom : 0;
   .dc-text-mem .text-dark{
 	font-size: 14px;
 	}
-
-
-
 
   /*
   * Upsell Styling for mobile
@@ -8174,6 +8158,7 @@ table {
 
 }
 
+/*Recommedation banner*/
 @media screen and (max-width: 767px){
 
 	.banner {
@@ -8373,6 +8358,8 @@ table {
     color: white !important; /* Set the text color to white on hover */
   }
 
+/*Popup styling for mobile*/
+
 @media screen and (max-width: 767px){
 
 	.popup{
@@ -8420,10 +8407,17 @@ table {
 
 }
 
+
+
 /* Checkout Upsell Styling */
 
 .monthly-checkout-membership{
 	margin-bottom: -10px !important;
+}
+
+.add-monthly-sub .monthly-sub-button,.monthly_add_item_button{
+	position: relative;
+	right: 7em;
 }
 
 @media screen and (max-width: 767px){
@@ -8433,12 +8427,14 @@ table {
 	}
 
 	.woocommerce-checkout .dcplan-section .add_dc_btn{
-		width: 95px !important;
+		width: 80px !important;
 	}
 
 	.checkout_add_item_monthly{
 		top: 175px !important;
-		left: 258px !important; ;
+		left: 71% !important;
+		font-size: 13px !important;
+    	padding-top: 13px !important;
 	}
 
 	.woocommerce-checkout .deal_club_price{
@@ -8452,7 +8448,10 @@ table {
 	}
 	.checkout_add_item_annual{
 		top: 280px !important;
-    	left: 70% !important;
+    	left: 72% !important;
+		font-size: 13px !important;
+    	padding-top: 13px !important;
+
 	}
 
 	.deal_club_price h4,p {
@@ -8463,4 +8462,16 @@ table {
 		margin-bottom: -45px !important;
 
 	}
+
+	.add-monthly-sub .monthly-sub-button,.monthly_add_item_button{
+		position: relative;
+		right: -2em;
+	}
+
+}
+
+/*Error Notice on Cart*/
+
+.woocommerce-cart .ast-container .elementor .elementor-shortcode ul li{
+    margin-bottom: 0em;
 }
