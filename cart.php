@@ -465,6 +465,51 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					?>
 					<script>
+								//Jquery to adjust the banner alignment when ajax runs on the cart
+
+								jQuery(document).ready(function() {
+
+									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
+
+									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 174761 ) {
+
+										// Function to add style 'top: 86px' when AJAX call starts
+										jQuery(document).ajaxStart(function() {
+											jQuery('.banner').css('top', '86px');
+
+										});
+
+										// Function to remove the 'top' style when AJAX call is completed
+										jQuery(document).ajaxStop(function() {
+											// jQuery('.banner').css('top', '135px');
+											jQuery('.banner').delay(500).queue(function(next) {
+											jQuery('.banner').css('top', '135px');
+												next();
+												});
+										});
+
+									}else{ //banner for monthly user
+
+										// Function to add style 'top: 140px' when AJAX call starts
+										jQuery(document).ajaxStart(function() {
+											jQuery('.banner.banner-annual-for-monthly').css('top', '140px');
+
+										});
+
+										// Function to remove the 'top' style when AJAX call is completed
+										jQuery(document).ajaxStop(function() {
+											// jQuery('.banner').css('top', '135px');
+											jQuery('.banner.banner-annual-for-monthly').delay(500).queue(function(next) {
+											jQuery('.banner.banner-annual-for-monthly').css('top', '190px');
+												next();
+												});
+										});
+
+									}
+
+								});
+
+
 							//re-run the js for pop up and remove the membership from the cart when only membership is remaining
 
 							function membershipRemove() {

@@ -8205,8 +8205,8 @@ table {
 	line-height: normal;
 }
 
-.banner-annual-for-monthly {
-	top: 186px !important;
+.banner.banner-annual-for-monthly {
+	top:190px;
 }
 
 /* CSS to style the popup */
