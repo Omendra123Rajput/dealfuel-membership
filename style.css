@@ -7646,7 +7646,7 @@ margin-bottom : 0;
 		top: 280px;
 		left: 12%;
 		border-radius: 5px;
-		padding-top: 10px;
+		padding-top: 12px !important;
 		padding-left: 38px;
 	}
 	.woocommerce-checkout .deal_club_price{
