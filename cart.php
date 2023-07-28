@@ -141,6 +141,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					$dealclub_savings       = 0;
 					$cw_discount = 0;
 					$cw_monthly_discount = 0;
+					$home_url = get_home_url();
 
 						foreach ( $items as $item => $values ) {
 
@@ -229,7 +230,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									<div class="display-savings-msg">
 
-										<div> <img class="money-bag" src="https://1461794109.nxcli.io/money-bag.png" alt="Money Bag Image"> You saved <span class="green-text">$<?php echo $cw_discount ?></span> with DealClub! </div>
+										<div> <img class="money-bag" src="<?php echo $home_url ?>/wp-content/themes/astra-child/images/money-bag.png" alt="Money Bag Image"> You saved <span class="green-text">$<?php echo $cw_discount ?></span> with DealClub! </div>
 
 									</div>
 								</td>
@@ -265,7 +266,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									<div class="display-savings-msg">
 
-										<div> <img class="money-bag" src="https://1461794109.nxcli.io/money-bag.png" alt="Money Bag Image"> You are saving <span class="green-text">$<?php echo $cw_monthly_discount ?></span> with DealClub! </div>
+										<div> <img class="money-bag" src="<?php echo $home_url ?>/wp-content/themes/astra-child/images/money-bag.png" alt="Money Bag Image"> You are saving <span class="green-text">$<?php echo $cw_monthly_discount ?></span> with DealClub! </div>
 
 									</div>
 								</td>
