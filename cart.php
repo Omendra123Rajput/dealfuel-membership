@@ -500,7 +500,10 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										// Function to add style 'top: 86px' when AJAX call starts
 										jQuery(document).ajaxStart(function() {
-											jQuery('.banner').css('top', '86px');
+											if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
+
+												jQuery('.banner').css('top', '86px');
+											}
 
 										});
 
@@ -724,7 +727,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									<br>
 									<div class="popup-extra-text">
 
-									<span>& extra 10% on all other purchases for one month.</span>
+									<span>& extra 5%-50% all other purchases for one month.</span>
 
 									</div>
 
