@@ -148,7 +148,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 						$pro_id = $values['product_id'];
 						$_product = wc_get_product( $pro_id );
 
-						if( $pro_id == 174721 ){
+						if( $pro_id == 174721 || $pro_id == 174739 ){
 							continue;
 						}
 
@@ -318,7 +318,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								}else { //normal annual upsell text
 
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark annual-upsell-new-text"> Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
 									<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
 
 								}
@@ -445,6 +445,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 			<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
 			<?php
+
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 
 				$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
@@ -453,7 +454,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 
-					if ( $product_id == 174721 ) {
+					if ( $product_id == 174721 || $product_id == 174739  ) {
 
 						// Variables which are required to remove the membership from the cart
 						$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
@@ -466,13 +467,36 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					?>
 					<script>
+								//get the updated number of items in the cart every time cart is updated
+								// Declare a variable to store the cart items count
+								var cartItemsCount = 0;
+
+								function updateCartItemsCount() {
+									jQuery.get({
+									url: '<?php echo admin_url('admin-ajax.php'); ?>',
+									data: { action: 'get_cart_items_count' },
+									success: function(itemCount) {
+										cartItemsCount = itemCount;
+									},
+									});
+								}
+
+								// Initial call to update cart items count on page load
+								updateCartItemsCount();
+
+								// Trigger the AJAX call whenever the cart is updated (e.g., when adding/removing items)
+								jQuery(document.body).on('updated_cart_totals', function() {
+									updateCartItemsCount();
+								});
+
+
 								//Jquery to adjust the banner alignment when ajax runs on the cart
 
 								jQuery(document).ready(function() {
 
 									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
 
-									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 174761 ) {
+									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 174761 ) {//banner for normal user
 
 										// Function to add style 'top: 86px' when AJAX call starts
 										jQuery(document).ajaxStart(function() {
@@ -482,11 +506,13 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										// Function to remove the 'top' style when AJAX call is completed
 										jQuery(document).ajaxStop(function() {
-											// jQuery('.banner').css('top', '135px');
-											jQuery('.banner').delay(500).queue(function(next) {
-											jQuery('.banner').css('top', '135px');
-												next();
-												});
+
+											if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
+												jQuery('.banner').delay(500).queue(function(next) {
+												jQuery('.banner').css('top', '215px');
+													next();
+													});
+											}
 										});
 
 									}else{ //banner for monthly user
@@ -515,18 +541,65 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							function membershipRemove() {
 
-								jQuery(".remove-mem-cart").on("click", function () {
-									jQuery("#blur-overlay").fadeIn();
-									jQuery("#floating-popup").fadeIn();
-								});
+								var product_id = "<?php echo $product_id  ?>";
 
-								//close the popup on clicking the cross
-								jQuery(".popup-close-btn").on("click", function (event) {
-									event.preventDefault(); // Prevent the default anchor tag behavior
-									event.stopPropagation();
-									jQuery("#blur-overlay").fadeOut();
-									jQuery("#floating-popup").fadeOut();
-								});
+								// $cart_total_price_final
+
+								var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
+
+								if ( ( cartItemsCount == 1 && product_id == 174721 ) || ( cart_total_price_final == 9 ) ) {
+
+									jQuery('.popup-mem-text').text('A DealClub Membership of just $9/Month, will save 5%-50% on all purchases for one month.')
+
+									jQuery('.popup-mem-text').css('padding-top','45px');
+									jQuery('.popup-extra-text').css('display','none');
+
+									jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases')
+
+								}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 )  ) {
+
+									jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.')
+
+									jQuery('.popup-mem-text').css('padding-top','45px');
+									jQuery('.popup-extra-text').css('display','none');
+
+								}
+
+								if ( product_id == 174721 || product_id == 174739) {//if added product is monthly product
+
+									if ( product_id == 174721 ) {
+
+											jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#floating-popup").fadeOut();
+										});
+
+									}else{
+
+										jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#annual-floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#annual-floating-popup").fadeOut();
+										});
+
+									}
+
+								}
 
 								//Adding the remove url to the remove the membership button
 
@@ -544,7 +617,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 									.attr("aria-label", dynamicAriaLabel)
 									.attr("data-product_id", dynamicProductID)
 									.attr("data-product_sku", dynamicProductSKU);
-
 
 							}
 
@@ -636,7 +708,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							<!-- The popup container -->
 							<div class="overlay" id="blur-overlay"></div>
-
+							<!-- monthly popup  -->
 							<div class="popup" id="floating-popup">
 								<div class="popup-content">
 								<div class="df_cart_close_popup" id="df_cart_close_popup">
@@ -677,11 +749,53 @@ do_action( 'woocommerce_before_cart' ); ?>
 								</div>
 							</div>
 
+							<!-- annaul popup -->
+
+							<div class="popup annual-popup" id="annual-floating-popup">
+								<div class="popup-content">
+								<div class="df_cart_close_popup" id="df_cart_close_popup">
+										<svg class="popup-close-btn" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+										<path d="M7.64199 12.3584L12.3587 7.64175M12.3587 12.3584L7.64199 7.64175M7.50033 18.3334H12.5003C16.667 18.3334 18.3337 16.6667 18.3337 12.5001V7.50008C18.3337 3.33341 16.667 1.66675 12.5003 1.66675H7.50033C3.33366 1.66675 1.66699 3.33341 1.66699 7.50008V12.5001C1.66699 16.6667 3.33366 18.3334 7.50033 18.3334Z" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</div>
+									<div class="popup-mem-text">
+
+										<span>A DealClub Membership of just $49/Year, saves <span class="green-text discount-text">$<?php echo $cw_discount ?></span> on this purchase</span>
+
+									</div>
+									<br>
+									<div class="popup-extra-text annual-popup-extra-text">
+
+									<span>& extra 15%-100% on all other purchases for one year.</span>
+
+									</div>
+
+									<div class="popup-confirm-text">
+
+									<span>Are you sure, you want to miss out on these huge savings???</span>
+
+									</div>
+
+									<div class="popup-keep-mem-button">
+
+									<button class="keep-mem-button">I want to save. Keep Membership</button>
+
+									</div>
+
+									<div class="popup-remove-mem-button">
+
+									<button class="remove-mem-button"> <a href="%s" class="remove-product-m" aria-label="%s" data-product_id="%s" data-product_sku="%s">I hate savings! Remove Membership  </a>  </button>
+
+									</div>
+
+								</div>
+							</div>
+
 
 
 							<?php
 
-								if ( $product_id == 174721 ) {
+								if ( $product_id == 174721 || $product_id == 174739  ) {
 
 									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										'woocommerce_cart_item_remove_link',
@@ -721,20 +835,41 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var product_id = "<?php echo $product_id  ?>";
 
-								if ( product_id == 174721) {//if added product is monthly product
+								if ( product_id == 174721 || product_id == 174739) {//if added product is monthly product
 
-									jQuery(".remove-mem-cart").on("click", function () {
-										jQuery("#blur-overlay").fadeIn();
-										jQuery("#floating-popup").fadeIn();
-									});
+									if ( product_id == 174721 ) {
 
-									//close the popup on clicking the cross
-									jQuery(".popup-close-btn").on("click", function (event) {
-										event.preventDefault(); // Prevent the default anchor tag behavior
-										event.stopPropagation();
-										jQuery("#blur-overlay").fadeOut();
-										jQuery("#floating-popup").fadeOut();
-									});
+										jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#floating-popup").fadeOut();
+										});
+
+									}else{
+
+										jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#annual-floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#annual-floating-popup").fadeOut();
+										});
+
+									}
+
+
 
 									//Adding the remove url to the remove the membership button
 

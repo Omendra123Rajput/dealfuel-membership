@@ -8468,5 +8468,64 @@ function is_product_in_category( $category_slug ) {
 
 /** Added by Omendra - DF Memebership - END */
 
+/*
+AJAX action to retrieve cart items count
+*/
+
+add_action('wp_ajax_get_cart_items_count', 'get_cart_items_count');
+add_action('wp_ajax_nopriv_get_cart_items_count', 'get_cart_items_count');
+
+function get_cart_items_count() {
+    // Get the cart items count
+    $item_count = WC()->cart->get_cart_contents_count();
+
+    // Send the response as JSON
+    wp_send_json($item_count);
+}
+
+/**
+ * Dealpage Price acc to category
+ */
+
+add_action( 'wp_footer', 'update_dealpage_text_based_on_cat' );
+
+function update_dealpage_text_based_on_cat (){
+
+    if( is_product_in_category('dealclub-special') ){//if dealpage is dealclub-special cat
+
+		?>
+		<script>
+			jQuery(document).ready(function() {
+				//for simple dealpage
+				jQuery('.withdcleft .annaul_text').text('100% OFF with $49/Year Membership');
+				jQuery('.montlydcleft .monthly_text').text('50% OFF with $9/Month Membership');
+				//for variable dealpage
+				jQuery('.withdcleft .var_annaul_text').text('15% OFF with $49/Year Membership');
+				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $9/Month Membership');
+			});
+		</script>
+
+		<?php
+
+	}else if ( is_product_in_category('marketplace') ) {//if dealpage is marketplace cat
+
+		?>
+		<script>
+			jQuery(document).ready(function() {
+				//for simple dealpage
+				jQuery('.withdcleft .annaul_text').text('15% OFF with $49/Year Membership');
+				jQuery('.montlydcleft .monthly_text').text('5% OFF with $9/Month Membership');
+				//for variable dealpage
+				jQuery('.withdcleft .var_annaul_text').text('15% OFF with $49/Year Membership');
+				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $9/Month Membership');
+			});
+		</script>
+
+		<?php
+
+	}
+
+}
+
 
 ?>
