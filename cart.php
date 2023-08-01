@@ -123,7 +123,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 						//formula for credit points to be rewared
 
-						$monthly_member_amount = 9;
+						$monthly_member_amount = 10;
 
 						$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
 
@@ -347,7 +347,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									</div>
 
 									<div class="normal_message">
-									Your current $9/Mo Plan will be <b>upgraded to $49/Yr Plan.</b>
+									Your current $10/Mo Plan will be <b>upgraded to $49/Yr Plan.</b>
 									<br>
 									<br>
 									The exclusive benefits of the Annual Plan will be unlocked right away.
@@ -418,11 +418,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								if($woocommerce->cart->total > 0){
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Save <span class="green-text">$'. $cw_monthly_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
-									<span class = "text-dark">$9.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), 'DealClub Membership' ) ;
+									<span class = "text-dark">$10.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), 'DealClub Membership' ) ;
 									}
 								else{
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p><span class="dc-text-mem"> %s :
-									<span class = "text-dark">$9.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
+									<span class = "text-dark">$10.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
 								}
 						?>
 
@@ -550,9 +550,9 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
 
-								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 9 ) ) {
+								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 ) ) {
 
-									jQuery('.popup-mem-text').text('A DealClub Membership of just $9/Month, will save 5%-50% on all purchases for one month.')
+									jQuery('.popup-mem-text').text('A DealClub Membership of just $10/Month, will save 5%-50% on all purchases for one month.')
 
 									jQuery('.popup-mem-text').css('padding-top','45px');
 									jQuery('.popup-extra-text').css('display','none');
@@ -568,7 +568,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								}
 
-								if ( product_id == 1392753 || product_id == 174739 ) {//if added product is monthly product
+								if ( product_id == 1392753 || product_id == 174739) {//if added product is monthly product
 
 									if ( product_id == 1392753 ) {
 
@@ -721,7 +721,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									</div>
 									<div class="popup-mem-text">
 
-										<span>A DealClub Membership of just $9/Month, saves <span class="green-text discount-text">$<?php echo $cw_monthly_discount ?></span> on this purchase</span>
+										<span>A DealClub Membership of just $10/Month, saves <span class="green-text discount-text">$<?php echo $cw_monthly_discount ?></span> on this purchase</span>
 
 									</div>
 									<br>

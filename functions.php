@@ -8334,7 +8334,7 @@ function update_points_after_membership_upgrade ( ) {
 
 		//formula for credit points to be rewared
 
-		$monthly_member_amount = 9;
+		$monthly_member_amount = 10;
 
 		$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
 
@@ -8500,10 +8500,10 @@ function update_dealpage_text_based_on_cat (){
 			jQuery(document).ready(function() {
 				//for simple dealpage
 				jQuery('.withdcleft .annaul_text').text('100% OFF with $49/Year Membership');
-				jQuery('.montlydcleft .monthly_text').text('50% OFF with $9/Month Membership');
+				jQuery('.montlydcleft .monthly_text').text('50% OFF with $10/Month Membership');
 				//for variable dealpage
 				jQuery('.withdcleft .var_annaul_text').text('15% OFF with $49/Year Membership');
-				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $9/Month Membership');
+				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $10/Month Membership');
 			});
 		</script>
 
@@ -8516,10 +8516,10 @@ function update_dealpage_text_based_on_cat (){
 			jQuery(document).ready(function() {
 				//for simple dealpage
 				jQuery('.withdcleft .annaul_text').text('15% OFF with $49/Year Membership');
-				jQuery('.montlydcleft .monthly_text').text('5% OFF with $9/Month Membership');
+				jQuery('.montlydcleft .monthly_text').text('5% OFF with $10/Month Membership');
 				//for variable dealpage
 				jQuery('.withdcleft .var_annaul_text').text('15% OFF with $49/Year Membership');
-				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $9/Month Membership');
+				jQuery('.withmonthlyleft .var_monthly_text').text('5% OFF with $10/Month Membership');
 			});
 		</script>
 
