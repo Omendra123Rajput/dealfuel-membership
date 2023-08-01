@@ -44,7 +44,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							// Make JQUERY work after the ajax calls happen in the cart
 
-							if ( is_annual_or_monthly == 174761  ) { //if user is a monthly mem
+							if ( is_annual_or_monthly == 1392755  ) { //if user is a monthly mem
 
 								function changeCssofDiv() {
 									jQuery(".banner").addClass("banner-annual-for-monthly");
@@ -148,13 +148,13 @@ do_action( 'woocommerce_before_cart' ); ?>
 						$pro_id = $values['product_id'];
 						$_product = wc_get_product( $pro_id );
 
-						if( $pro_id == 174721 || $pro_id == 174739 ){
+						if( $pro_id == 174721 || $pro_id == 174739 || $pro_id == 1392753 ){
 							continue;
 						}
 
 						if($_product->is_type( 'simple' )){
 
-							if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
+							if ( $is_annual_or_monthly == 1392755 ) { //if monthly then monthly price
 
 								$sale_price = get_dynamic_price( $_product->get_id() )[1];
 
@@ -171,7 +171,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
 
-							if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
+							if ( $is_annual_or_monthly == 1392755 ) { //if user in monthly member
 
 								$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
 
@@ -196,7 +196,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
 
-							if ( $is_annual_or_monthly == 174761 ) { //if user in monthly member
+							if ( $is_annual_or_monthly == 1392755 ) { //if user in monthly member
 
 								$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
 
@@ -221,7 +221,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					//for annual memeber show save msg
 
-					if( $is_annual_or_monthly==174765 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
+					if( $is_annual_or_monthly==174765 || $is_annual_or_monthly==174761 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
 								?>
 									<!-- Show saving msg for annual member -->
@@ -244,12 +244,12 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					//annual upsell
 
-					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
+					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==1392755 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
 						//upsell annual dc
 						$product = wc_get_product( 174739 );
 
-						$product_monthly = wc_get_product( 174721 );
+						$product_monthly = wc_get_product( 1392753 );
 
 
 						?>
@@ -257,7 +257,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 							<?php
 
 
-								if ( $is_annual_or_monthly==174761 ) { //show saving msg for monthly member
+								if ( $is_annual_or_monthly==1392755 ) { //show saving msg for monthly member
 
 							?>
 
@@ -311,7 +311,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					<?php
 						if($woocommerce->cart->total > 0){
 
-								if ( $is_annual_or_monthly == 174761 ) { //if monthly then inthe annual upsell add upgrade text
+								if ( $is_annual_or_monthly == 1392755 ) { //if monthly then inthe annual upsell add upgrade text
 
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
 									<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
@@ -381,7 +381,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									//tooltip for annual upsell when user in monthly member
 
-									if ( is_annual_or_monthly == 174761  ) {
+									if ( is_annual_or_monthly == 1392755  ) {
 
 										jQuery('.cart_tooltip').removeClass('show_hide_tooltip');
 
@@ -406,7 +406,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 						<!-- /** DO not show monthly upsell is user is already a monthly memeber or if user is a non dc but monthly is added to cart */ -->
 						<!-- /** When user is Non DC or has not added any memebership to the cart then add monthly uspell as well */ -->
-						<?php if(  !( $is_annual_or_monthly==174761 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) ) && !check_if_monthly_is_in_cart() ): ?>
+						<?php if(  !( $is_annual_or_monthly==1392755 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) ) && !check_if_monthly_is_in_cart() ): ?>
 
 						<tr class="monthly">
 								<td class="product-thumbnail monthly_deal">
@@ -429,7 +429,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 								</td>
 								<td class="add-monthly-button" >
 									<div class="monthly-sub-button monthly_add_item_button">
-										<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=174721&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
+										<a  href="<?php echo get_site_url()?>/cart/?add-to-cart=1392753&utm_source=dc-page" class="offer_btn-2" > Add Item </a>
 									</div>
 								</td>
 
@@ -454,7 +454,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 
-					if ( $product_id == 174721 || $product_id == 174739  ) {
+					if ( $product_id == 174721 || $product_id == 174739 || $product_id == 1392753  ) {
 
 						// Variables which are required to remove the membership from the cart
 						$dynamicHref = esc_url(wc_get_cart_remove_url($cart_item_key));
@@ -496,7 +496,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
 
-									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 174761 ) {//banner for normal user
+									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 1392755 ) {//banner for normal user
 
 										// Function to add style 'top: 86px' when AJAX call starts
 										jQuery(document).ajaxStart(function() {
@@ -550,7 +550,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
 
-								if ( ( cartItemsCount == 1 && product_id == 174721 ) || ( cart_total_price_final == 9 ) ) {
+								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 9 ) ) {
 
 									jQuery('.popup-mem-text').text('A DealClub Membership of just $9/Month, will save 5%-50% on all purchases for one month.')
 
@@ -568,9 +568,9 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								}
 
-								if ( product_id == 174721 || product_id == 174739) {//if added product is monthly product
+								if ( product_id == 1392753 || product_id == 174739 ) {//if added product is monthly product
 
-									if ( product_id == 174721 ) {
+									if ( product_id == 1392753 ) {
 
 											jQuery(".remove-mem-cart").on("click", function () {
 											jQuery("#blur-overlay").fadeIn();
@@ -798,7 +798,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							<?php
 
-								if ( $product_id == 174721 || $product_id == 174739  ) {
+								if ( $product_id == 1392753 || $product_id == 174739  ) {
 
 									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 										'woocommerce_cart_item_remove_link',
@@ -838,9 +838,9 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var product_id = "<?php echo $product_id  ?>";
 
-								if ( product_id == 174721 || product_id == 174739) {//if added product is monthly product
+								if ( product_id == 1392753 || product_id == 174739) {//if added product is monthly product
 
-									if ( product_id == 174721 ) {
+									if ( product_id == 1392753 ) {
 
 										jQuery(".remove-mem-cart").on("click", function () {
 											jQuery("#blur-overlay").fadeIn();

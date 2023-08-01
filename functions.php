@@ -469,7 +469,7 @@ function get_dynamic_price( $postid ) {
 			$min_price[ $i ] = $pricing_rule[ $key ]['rules']['1']['amount'];
 
 
-			if($membership_type==174761 || $membership_type==174765){
+			if($membership_type==1392755 || $membership_type==174765){
 
 
 				if( $membership_type==174765 ){
@@ -808,12 +808,12 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 
 	if ( ! is_array( is_dc_in_cart() ) || is_user_an_active_member_wcm() ) {
 		foreach ( $cart_object->cart_contents as $key => $value ) {
-			if ( $value['product_id'] == 174721 || $value['product_id'] == 174738 || $value['product_id'] == 174739 ) {
+			if ( $value['product_id'] == 174721 || $value['product_id'] == 174738 || $value['product_id'] == 174739 || $value['product_id'] == 1392753 ) {
 				// dont modify prices here
 
 			} elseif ( empty( $value['variation'] ) ) { //simple product
 
-						if ( $user_membership_type == 174761 ) {
+						if ( $user_membership_type == 1392755 ) {
 
 							//first check if the user is monthly member
 
@@ -871,14 +871,14 @@ function wwpa_simple_add_cart_price( $cart_object ) {
 						{ //here we are checking if cart's variation exsits in our array where we have store dyanmic prices on the basis of variations
 						// so if the variation exsits we will extract its monthly and annual value from the array
 
-								if( $user_membership_type == 174765 ) { //if the membership is annual then cart will have annual' price
+								if( $user_membership_type == 174765 || $user_membership_type == 174761 ) { //if the membership is annual then cart will have annual' price
 
 									$annual_value = $dynamicPrices[ $value['variation_id'] ]['dynamic_price_array_annual'];
 									$value_without_dollar = str_replace('$', '', $annual_value);
 
 									$value['data']->set_price( $value_without_dollar );
 
-								} else if ( $user_membership_type == 174761 ) { //if user has monthly membership
+								} else if ( $user_membership_type == 1392755 ) { //if user has monthly membership
 
 									if ( check_if_annual_is_in_cart() ) { //if annual is in cart then annual's price
 
@@ -944,7 +944,7 @@ function check_if_monthly_is_in_cart() {
 	$valueFound = false;
 	foreach ( $items as $item ) {
 
-		if ( $item['product_id'] == 174721 ) {
+		if ( $item['product_id'] == 1392753 ) {
 			$valueFound = true;
 			break;
 		}
@@ -989,7 +989,7 @@ function check_membership_add_to_cart() {
     global $woocommerce;
 
     $cart = $woocommerce->cart;
-    $membership_product_ids = array( 174739, 174721 ); // Replace with your membership product IDs
+    $membership_product_ids = array( 174739, 1392753 ); // Replace with your membership product IDs
 
     // Loop through cart items and check if there are already memberships in the cart
     foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
@@ -1011,16 +1011,16 @@ function is_dc_in_cart() {
 
 
     foreach ( $items as $item ) {
-        if ( in_array( $item['product_id'], array( 174721, 174738, 174739 ) ) ) {
+        if ( in_array( $item['product_id'], array( 174721, 174738, 174739, 1392753 ) ) ) {
             $plan = $item['data']->get_sku();
         }
 		if ( empty( $item['variation'] ) ) { // when product is simple product
 
-			if( $user_membership_type == 174761 ) { //if membership is monthly then add monthly price to the cart which is stored at index 1 in get_dynamic_price
+			if( $user_membership_type == 1392755 ) { //if membership is monthly then add monthly price to the cart which is stored at index 1 in get_dynamic_price
 
 				$ret_arr['total_cart'] = $ret_arr['total_cart'] + get_dynamic_price( $item['product_id'] )[1];
 
-			} else if ($user_membership_type != 174761 && check_if_monthly_is_in_cart() ) {
+			} else if ($user_membership_type != 1392755 && check_if_monthly_is_in_cart() ) {
 
 				$ret_arr['total_cart'] = $ret_arr['total_cart'] + get_dynamic_price( $item['product_id'] )[1];
 			}
@@ -3762,10 +3762,10 @@ function get_all_dynamic_prices_with_id_as_key( $postid ) {
 
 			//fetching the dynaminc price on the basis of membership
 
-			if($membership_type==174761 || $membership_type==174765){
+			if( $membership_type==1392755 || $membership_type==174765 ||$membership_type==174761 ){
 
 
-				if( $membership_type==174765 ){
+				if( $membership_type==174765 ||$membership_type==174761 ){
 
 					$dynamic_price_array_annual = $pricing_rules[ $key ]['rules']['1']['amount'];
 
@@ -4696,7 +4696,7 @@ function is_dealclubmembership_in_cart(): bool {
     $items = $woocommerce->cart->get_cart();
 
     foreach ($items as $item) {
-        if ($item['product_id'] == '174721' || $item['product_id'] == '174739' || $item['product_id'] == '174738') {
+        if ($item['product_id'] == '174721' || $item['product_id'] == '174739' || $item['product_id'] == '174738' || $item['product_id'] == '1392753') {
             return true;
         }
     }
@@ -6001,7 +6001,9 @@ function productpage_sidebar_addtocart_shortcode(){
 
 									jQuery('#dealpage-details-sc .elementor-widget-container').show();
 
-									jQuery(".elementor-1359135 .elementor-element.elementor-element-7437ecf").css('width','100%');
+
+									// Do not change here for live site as it is already fixed
+									jQuery(".elementor-1390716 .elementor-element.elementor-element-20a2151d").css('width','100%');
 
 									jQuery('#dealpage-details-sc form').hide();
 
@@ -6042,7 +6044,7 @@ function productpage_sidebar_addtocart_shortcode(){
 					<div>
                         <div class="montlydcleft">
                             <input type="radio" class="df_display_dynamic_price withmonthlypricerad" id="withmonthlydealclub" name="radiodealclub" value="withmonthlydealclub" data-product-id="<?php echo $product->get_id(); ?>" data-price="<?php echo  get_dynamic_price( $product->get_id())[1] ?>">
-                            <label class="monthly_text" >10% OFF with $9/Month Membership</label>
+                            <label class="monthly_text" >10% OFF with $10/Month Membership</label>
                         </div>
                     </div>
 
@@ -6082,7 +6084,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 					//tooltip for annual upsell when user in monthly member
 
-					if ( is_annual_or_monthly == 174761  ) {
+					if ( is_annual_or_monthly == 1392755  ) {
 
 						jQuery('.df_display_dynamic_price').click(function() {
 						jQuery('.tooltip ').show();
@@ -6097,7 +6099,7 @@ function productpage_sidebar_addtocart_shortcode(){
 				//find out the which radio button is selected and make its text green
 				var selectedRadioButton = jQuery('input[name="radiodealclub"]:checked').val();
 
-				if ( selectedRadioButton == 'withdealclub' && is_annual_or_monthly == 174765 ) {
+				if ( selectedRadioButton == 'withdealclub' && ( is_annual_or_monthly == 174765 || is_annual_or_monthly == 174761 ) ) {
 
 					jQuery('.annaul_text').css('color', 'green');
 					jQuery('.monthly_text').css('color', '#2E3739');
@@ -6121,7 +6123,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 				//change the text color of buttons on their selection for non dc and monthly
 
-				if( is_dc_active_member == 1 && is_annual_or_monthly == 174761 ){ // if membership is monthly
+				if( is_dc_active_member == 1 && is_annual_or_monthly == 1392755 ){ // if membership is monthly
 
 					jQuery('input[name="radiodealclub"]').click(function() {
 
@@ -6150,13 +6152,13 @@ function productpage_sidebar_addtocart_shortcode(){
 
 				if (  is_dc_active_member == 1 ) {
 
-					if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+					if( is_annual_or_monthly == 1392755 ){ // if membership is monthly
 
 						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 						jQuery('.monthly_text').html('10% Extra Discount Applied (Monthly Membership)');//Change text acc to monthly
 						jQuery('.monthly_text').css('letter-spacing','-1px');
 
-					}else if (is_annual_or_monthly == 174765  ) { //if annaul
+					}else if ( is_annual_or_monthly == 174765 || is_annual_or_monthly == 174761 ) { //if annaul
 
 						jQuery('.non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 						jQuery('.monthly_text').css('color', '#9E9E98');//hide monthly this using color
@@ -6171,7 +6173,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
                 if((is_dc_in_cart == 1) || (is_dc_active_member == 1)){ // if DC in cart
 
-					if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+					if( is_annual_or_monthly == 1392755 ){ // if membership is monthly
 
 						jQuery('.radio_section .withoutdcleft').addClass('disabled-wodc');
 						jQuery('.radio_section .withoutdcright').addClass('disabled-wodc');
@@ -6260,7 +6262,7 @@ function productpage_sidebar_addtocart_shortcode(){
             </script>
                         <?php
 
-					if ( $is_annual_or_monthly == 174761) { //when membership is monthly
+					if ( $is_annual_or_monthly == 1392755 ) { //when membership is monthly
 
 
 						//Multiple Products add to cart
@@ -6315,7 +6317,7 @@ function productpage_sidebar_addtocart_shortcode(){
 
 						//product id for monthly
 
-						$product_ids_monthly = $productid.',174721';
+						$product_ids_monthly = $productid.',1392753';
 
 						$add_to_cart_url_monthly = esc_url_raw( add_query_arg( 'add-to-cart', $product_ids_monthly, wc_get_cart_url() ) );
 
@@ -6484,13 +6486,13 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 
 	$productid = $product->get_id();
 
-	if ( $productid == 174721 || $productid == 174739  ) {
+	if ( $productid == 174721 || $productid == 174739 || $productid == 1392755 ) {
 
 		?>
 		<script>
 			jQuery(document).ready(function(){
-
-				jQuery(".elementor-1359135 .elementor-element.elementor-element-7437ecf").css('width','100%');
+				//do not change this on live
+				jQuery(".elementor-1390716 .elementor-element.elementor-element-20a2151d").css('width','100%');
 
 				jQuery('#variation_div').hide();
 
@@ -6624,7 +6626,7 @@ function add_script_on_select_variation_value_change(){
 			<div style="clear: both;">
 				<div class="withmonthlyleft">
 						<input type="radio" id="varwithmonthlydealclub" class="varwithmonthlypricerad" name="varradiodealclub" value="varwithmonthlydealclub">
-						<label class="var_monthly_text">10% OFF with $9/Month Membership</label>
+						<label class="var_monthly_text">10% OFF with $10/Month Membership</label>
 					</div>
 
 			</div>
@@ -6712,7 +6714,7 @@ function add_script_on_select_variation_value_change(){
 
 							// change the values acc to the option selected (Non DC )
 
-							if( selectedValue == "varwithdealclub" && is_annual_or_monthly == 174765 ){
+							if( selectedValue == "varwithdealclub" && ( is_annual_or_monthly == 174765 || is_annual_or_monthly == 174761 ) ){
 								jQuery('.var_annaul_text').css('color', 'green');
 								jQuery('.var_monthly_text').css('color', '#2E3739');
 								jQuery('.var_non_dc_text').css('color', '#2E3739');
@@ -6732,7 +6734,7 @@ function add_script_on_select_variation_value_change(){
 
 							//change the text color of buttons on their selection for non dc and monthly
 
-							if( is_dc_active_member == 1 && is_annual_or_monthly == 174761 ){ // if membership is monthly
+							if( is_dc_active_member == 1 && is_annual_or_monthly == 1392755 ){ // if membership is monthly
 
 								jQuery('input[name="varradiodealclub"]').click(function() {
 
@@ -6765,14 +6767,14 @@ function add_script_on_select_variation_value_change(){
 
 							if (  is_dc_active_member == 1 ) {
 
-								if( is_annual_or_monthly == 174761 ){ // if membership is monthly
+								if( is_annual_or_monthly == 1392755 ){ // if membership is monthly
 
 									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									jQuery('.var_monthly_text').css('color', 'green');
 									jQuery('.var_monthly_text').html('10% Extra Discount Applied (Monthly Membership)');//Change text acc to monthly
 									jQuery('.var_monthly_text').css('letter-spacing','-1px');
 
-								}else if (is_annual_or_monthly == 174765  ) { //if annaul
+								}else if ( is_annual_or_monthly == 174765 || is_annual_or_monthly == 174761 ) { //if annaul
 
 									jQuery('.var_non_dc_text').css('color', '#9E9E98');//hide non dc this using color
 									jQuery('.var_monthly_text').css('color', '#9E9E98');//hide monthly this using color
@@ -6839,7 +6841,7 @@ function add_script_on_select_variation_value_change(){
 											var interval = inputvarval;
 											var selectedValue = jQuery('input[name="varradiodealclub"]:checked').val();
 											var var_ids = inputvarval+",174739";
-											var var_monthly_id = inputvarval+",174721";
+											var var_monthly_id = inputvarval+",1392753";
 
 											jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
 											jQuery('a.dc_buynow_btn_sidebar').attr('href', '/cart/?add-to-cart='+var_ids);
@@ -6897,7 +6899,7 @@ function add_script_on_select_variation_value_change(){
 
 								 var var_id = inputvarval;
 
-										if( is_annual_or_monthly == 174761 ){ // if membership is monthly disable the without dc option
+										if( is_annual_or_monthly == 1392755 ){ // if membership is monthly disable the without dc option
 
 												var var_ids = inputvarval+",174739";
 												var var_monthly_id = inputvarval;
@@ -6951,7 +6953,7 @@ function add_script_on_select_variation_value_change(){
 												}
 
 										}
-											else if ( is_annual_or_monthly == 174765 ) { //if membership is annual disable the without dc & with monthly option
+											else if ( is_annual_or_monthly == 174765 || is_annual_or_monthly == 174761 ) { //if membership is annual disable the without dc & with monthly option
 
 												jQuery('.radio_sect_var .varwithmonthlypricerad').attr('disabled',true);
 
@@ -6964,7 +6966,7 @@ function add_script_on_select_variation_value_change(){
 											} else{ //Variation Non DC
 
 												var var_ids = inputvarval+",174739";
-												var var_monthly_id = inputvarval+",174721";
+												var var_monthly_id = inputvarval+",1392753";
 												jQuery('.radio_sect_var .withoutdcpricerad').attr('disabled',true);
 												//if monthly member then add annual when user buys with dc
 												jQuery('a.dc_addtocart_btn_sidebar').attr('href', '?add-to-cart='+var_ids);
@@ -7360,7 +7362,7 @@ if(is_checkout()){
 
 			//Fetch the DC membership plan value
 			jQuery('#monthly_dc').click(function(){
-				jQuery('.add_dc_btn').attr('href',siteurl+'/checkout/?add-to-cart=174721&utm_source=checkout-page');
+				jQuery('.add_dc_btn').attr('href',siteurl+'/checkout/?add-to-cart=1392753&utm_source=checkout-page');
 			});
 			jQuery('#annually_dc').click(function(){
 
@@ -7932,7 +7934,7 @@ function remove_credit_points_mem(){
 	if(count($cart_items) === 1){
 		foreach ($cart_items as $cart_item){
 
-			if($cart_item['product_id'] == 174721 || $cart_item['product_id'] == 174739){
+			if($cart_item['product_id'] == 174721 || $cart_item['product_id'] == 174739 || $cart_item['product_id'] == 1392753){
 				if(preg_match($pattern, $applied_coupon[0])){
 					WC()->cart->remove_coupon($applied_coupon[0]);
 
@@ -7962,7 +7964,7 @@ if(is_checkout()){
 		   foreach ( WC()->cart->get_cart() as $cart_item ) {
 			   $product = $cart_item['data'];
 			   $product_price = $cart_item['data']->get_price();
-			   if( $product_price > 0 && $cart_item['product_id'] != 174721 && $cart_item['product_id'] != 174739 ){
+			   if( $product_price > 0 && $cart_item['product_id'] != 174721 && $cart_item['product_id'] != 174739 && $cart_item['product_id'] != 1392753 ){
 				   $is_paid_product= true;
 			   }
 		   }
@@ -8246,7 +8248,7 @@ function df_membership_upgrade($order_id) {
 		$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
 
-		if ( $product_id == 174739 &&  $is_annual_or_monthly == 174761 ) { //only upgrade when user was a monthly and had annual product in the order history
+		if ( $product_id == 174739 &&  $is_annual_or_monthly == 1392755 ) { //only upgrade when user was a monthly and had annual product in the order history
 
 				//before cancelling the monthly subscription reward the credit points to the user
 
@@ -8280,7 +8282,7 @@ function df_membership_upgrade($order_id) {
 
 				$membership_id = get_user_membership_id($user_id);
 
-				if ( $membership_id == 174761  ) {
+				if ( $membership_id == 1392755  ) {
 
 					$membership = wc_memberships_get_user_membership($user_id, $membership_id);
 
@@ -8421,15 +8423,15 @@ function getDaysInMonth($month) {
 add_filter('woocommerce_add_to_cart_validation', 'check_cart_for_duplicate_products', 10, 3);
 
 function check_cart_for_duplicate_products($passed, $product_id, $quantity) {
-    // Check if the product being added has the IDs 174721 or 174739
+    // Check if the product being added has the IDs 1392753 or 174739
 
-    if (in_array($product_id, array(174721, 174739))) {
+    if (in_array($product_id, array(1392753, 174739))) {
 
         // Check if the cart already contains the same product IDs
         $cart = WC()->cart->get_cart();
 
         foreach ($cart as $cart_item_key => $cart_item) {
-            if (in_array($cart_item['product_id'], array(174721, 174739))) {
+            if (in_array($cart_item['product_id'], array(1392753, 174739))) {
 
                 // Display an error message and prevent adding the product to the cart
                 wc_add_notice(__('You have already added a memebership. Please remove membership from the cart to add new Membership', 'membership-text'), 'error');

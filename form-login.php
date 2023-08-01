@@ -21,7 +21,7 @@ if ( is_user_logged_in() || 'no' === get_option( 'woocommerce_enable_checkout_lo
 	return;
 }
 $product = wc_get_product( 174739 );
-$product_monthly = wc_get_product( 174721 );
+$product_monthly = wc_get_product( 1392753 );
 
 global $woocommerce;
 
@@ -76,7 +76,7 @@ foreach ( $items as $item => $values ) {
 	<div class="inner-section-divs">
 		<div class = "deal_club_img"><?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product_monthly->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product_monthly->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?></div>
 		<div class = "deal_club_price"><h4>$<?php echo $product_monthly->get_price() ?>.00/Month</h4><p>Extra 5-10% OFF on every purchase</p></div>
-		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button checkout_add_item_monthly" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=174721&utm_source=checkout-page">Add Item</a>
+		<a class="add_dc_btn single_add_to_cart_button button alt wp-element-button checkout_add_item_monthly" href="<?php echo get_site_url(); ?>/checkout/?add-to-cart=1392753&utm_source=checkout-page">Add Item</a>
 </div>
 
 </div>

@@ -61,7 +61,7 @@ if ( ! wp_doing_ajax() ) {
 		foreach ( $items as $item => $values ) {
 			$price            = get_post_meta( $values['product_id'], '_price', true );
 
-			if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
+			if ( $is_annual_or_monthly == 1392755 ) { //if monthly then monthly price
 
 				$club_price       = get_dynamic_price( $values['product_id'] )[1];
 

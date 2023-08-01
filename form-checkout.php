@@ -132,7 +132,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 									$_product =  wc_get_product( $values['data']->get_id());
 									$product_sale_price = $_product->get_price();
 
-										if ( $is_annual_or_monthly == 174761 ) { //if monthly then monthly price
+										if ( $is_annual_or_monthly == 1392755 ) { //if monthly then monthly price
 
 											$updated_dynamic_price = get_dynamic_price( $_product->get_id() )[1];
 

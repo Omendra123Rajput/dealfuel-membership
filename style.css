@@ -11,14 +11,14 @@ Version: 0.1
 
 @font-face {
     font-family: Metropolis-Regular;
-    src: url(https://1461794109.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Regular.woff);
+    src: url(https://68d5149601.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Regular.woff);
     font-weight: normal;
     font-display: swap;
     }
 
     @font-face {
     font-family: Metropolis-Bold;
-    src: url(https://1461794109.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Bold.woff);
+    src: url(https://68d5149601.nxcli.io/wp-content/themes/astra-child/fonts/Metropolis-Bold.woff);
     font-weight: normal;
     font-display: swap;
     }
@@ -1156,7 +1156,7 @@ Version: 0.1
     }
 
     .most-popular {
-        background-image: url(https://1461794109.nxcli.io/wp-content/themes/dealfuel2015/images/POPULAR-BAND1.png);
+        background-image: url(https://68d5149601.nxcli.io/wp-content/themes/dealfuel2015/images/POPULAR-BAND1.png);
         background-repeat: no-repeat;
         z-index: 9999;
     }
