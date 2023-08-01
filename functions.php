@@ -8480,9 +8480,14 @@ add_action('wp_ajax_nopriv_get_cart_items_count', 'get_cart_items_count');
 function get_cart_items_count() {
     // Get the cart items count
     $item_count = WC()->cart->get_cart_contents_count();
+	 // Get the cart total
+	$cart_total_price_final = WC()->cart->get_cart_total();
 
-    // Send the response as JSON
-    wp_send_json($item_count);
+      // Send the response as JSON
+	  wp_send_json(array(
+        'item_count' => $item_count,
+        'cart_total_price_final' => $cart_total_price_final,
+    ));
 }
 
 /**

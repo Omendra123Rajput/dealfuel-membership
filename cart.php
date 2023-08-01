@@ -470,13 +470,15 @@ do_action( 'woocommerce_before_cart' ); ?>
 								//get the updated number of items in the cart every time cart is updated
 								// Declare a variable to store the cart items count
 								var cartItemsCount = 0;
+								var cartTotalFinal = 0;
 
 								function updateCartItemsCount() {
 									jQuery.get({
 									url: '<?php echo admin_url('admin-ajax.php'); ?>',
 									data: { action: 'get_cart_items_count' },
-									success: function(itemCount) {
-										cartItemsCount = itemCount;
+									success: function(response) {
+										cartItemsCount = response.item_count;
+										cartTotalFinal = parseFloat(jQuery(response.cart_total_price_final).text().replace('$', ''));
 									},
 									});
 								}
@@ -550,21 +552,48 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
 
-								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 ) ) {
+								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 || ( cartTotalFinal == 10 ) ) ) {
 
 									jQuery('.popup-mem-text').text('A DealClub Membership of just $10/Month, will save 5%-50% on all purchases for one month.')
 
 									jQuery('.popup-mem-text').css('padding-top','45px');
 									jQuery('.popup-extra-text').css('display','none');
 
-									jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases')
+									jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases');
 
-								}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 )  ) {
+									jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#floating-popup").fadeOut();
+										});
+
+								}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 )  ) {
 
 									jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.')
 
 									jQuery('.popup-mem-text').css('padding-top','45px');
 									jQuery('.popup-extra-text').css('display','none');
+
+									jQuery(".remove-mem-cart").on("click", function () {
+											jQuery("#blur-overlay").fadeIn();
+											jQuery("#annual-floating-popup").fadeIn();
+										});
+
+										//close the popup on clicking the cross
+										jQuery(".popup-close-btn").on("click", function (event) {
+											event.preventDefault(); // Prevent the default anchor tag behavior
+											event.stopPropagation();
+											jQuery("#blur-overlay").fadeOut();
+											jQuery("#annual-floating-popup").fadeOut();
+										});
+
 
 								}
 
