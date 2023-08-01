@@ -8512,3 +8512,14 @@ table {
 .woocommerce-cart .ast-container .elementor .elementor-shortcode ul li{
     margin-bottom: 0em;
 }
+
+.make_banner_top_for_mon{
+	top:58px !important;
+}
+
+@media screen and (min-width: 411px) and (max-width: 415px) {
+
+	.make_banner_top_for_mon{
+		top:56px !important;
+	   }
+}

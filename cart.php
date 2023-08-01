@@ -48,7 +48,9 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								function changeCssofDiv() {
 									jQuery(".banner").addClass("banner-annual-for-monthly");
-									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
+									if (  jQuery(window).width() >= 767 ){
+										jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
+									}
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub').css('margin-top','55px');
 									jQuery('.cart_tooltip').removeClass('show_hide_tooltip');//make sure tooltip should work again after removing the annual mem from the cart
 
@@ -311,7 +313,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					<?php
 						if($woocommerce->cart->total > 0){
 
-								if ( $is_annual_or_monthly == 1392755 ) { //if monthly then inthe annual upsell add upgrade text
+								if ( $is_annual_or_monthly == 1392755 ) { //if monthly then in the annual upsell add upgrade text
 
 									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark">Upgrade to Annual & Save <span class="green-text">$'. $cw_discount . '</span> more with DealClub!</p><span class="dc-text-mem"> %s :
 									<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), 'DealClub Membership ' ) ;
@@ -325,7 +327,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							}
 							else{
-								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p><span class="dc-text-mem"> %s :
+								echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark freebie-mon-text"> Subscribe to DealClub!</p><span class="dc-text-mem"> %s :
 								<span class = "text-dark">$49.00/Year</span></span></div></a>', esc_url( get_permalink( $product->get_id() ) ), $product->get_name() ) ;
 							}
 
@@ -421,7 +423,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									<span class = "text-dark">$10.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), 'DealClub Membership' ) ;
 									}
 								else{
-									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> subscribe to DealClub!</p><span class="dc-text-mem"> %s :
+									echo sprintf( '<a href="%s"><h4 class="red-star">&#9733;</h4><div><p class ="text-dark"> Subscribe to DealClub!</p><span class="dc-text-mem"> %s :
 									<span class = "text-dark">$10.00/Month</span></span></div></a>', esc_url( get_permalink( $product_monthly->get_id() ) ), $product_monthly->get_name() ) ;
 								}
 						?>
@@ -446,10 +448,15 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 			<?php
 
+			$total_items = WC()->cart->cart_contents_count;
+
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 
 				$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 				$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+
+				//find out the product has freebie cat
+				$has_freebie_category = has_term('freebies', 'product_cat', $product_id);
 
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
@@ -491,7 +498,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 									updateCartItemsCount();
 								});
 
-
 								//Jquery to adjust the banner alignment when ajax runs on the cart
 
 								jQuery(document).ready(function() {
@@ -530,9 +536,14 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										// Function to remove the 'top' style when AJAX call is completed
 										jQuery(document).ajaxStop(function() {
-											// jQuery('.banner').css('top', '135px');
+
 											jQuery('.banner.banner-annual-for-monthly').delay(500).queue(function(next) {
-											jQuery('.banner.banner-annual-for-monthly').css('top', '190px');
+
+											if ( cartTotalFinal == 0 ) {//for monthly,when freebie is added in the cart adjust banner
+												jQuery('.banner.banner-annual-for-monthly').css('top', '137px');
+											}else{//for normal paid deals
+												jQuery('.banner.banner-annual-for-monthly').css('top', '190px');
+											}
 												next();
 												});
 										});
@@ -541,6 +552,39 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								});
 
+								//hide saving for monthly and annual when only freebie is in cart
+
+								jQuery(document).ready(function() {
+
+									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
+
+									if ( is_annual_or_monthly == 1392755 && cartTotalFinal == 0 ) {
+
+										jQuery('.df-show-savings').css('display','none');
+										jQuery('.freebie-mon-text').text('Upgrade to Annual Membership & Enjoy 15-100% Extra Discount.');
+
+										if (  jQuery(window).width() >= 768 ){
+
+											jQuery('.freebie-mon-text').css('width','80%');
+										}else{
+
+											jQuery('.freebie-mon-text').css('width','100%');
+											jQuery('.annual_upsell_product_name').attr('style', 'top: 52px !important;');
+											jQuery('.banner').addClass('make_banner_top_for_mon');
+											jQuery('.monthly-sub-button').attr('style', 'bottom: 3em !important;');
+
+
+										}
+
+									}else if ( is_annual_or_monthly == 174765 && cartTotalFinal == 0 ) {//if user is annual and cart total is 0
+
+										var has_freebie_category = "<?php echo $has_freebie_category  ?>";
+
+										if( cartItemsCount == 1 && has_freebie_category== 1 ){//if only freebie is in cart
+											jQuery('.df-show-savings').css('display','none');
+										}
+									}
+								});
 
 							//re-run the js for pop up and remove the membership from the cart when only membership is remaining
 
