@@ -44,7 +44,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							// Make JQUERY work after the ajax calls happen in the cart
 
-							if ( is_annual_or_monthly == 1392755  ) { //if user is a monthly mem
+							if ( is_annual_or_monthly == 1392755  ) { //if user is a new monthly mem
 
 								function changeCssofDiv() {
 									jQuery(".banner").addClass("banner-annual-for-monthly");
@@ -99,7 +99,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 					//find out membership
   					$is_annual_or_monthly = is_user_has_annual_or_monthly_memebership();
 
-					//rewardpoints
+					/***Reward Credit Points***/
 
 					// Get the user ID
 					$user_id = get_current_user_id();
@@ -129,7 +129,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 						//formula for credit points to be rewared
 
-						$monthly_member_amount = 10;
+						$monthly_member_amount = 10; //new monthly mem is priced @ 10$
 
 						$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
 
@@ -160,7 +160,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 						if($_product->is_type( 'simple' )){
 
-							if ( $is_annual_or_monthly == 1392755 ) { //if monthly then monthly price
+							if ( $is_annual_or_monthly == 1392755 ) { //if new monthly then monthly price
 
 								$sale_price = get_dynamic_price( $_product->get_id() )[1];
 
@@ -177,7 +177,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							$discount_for_monthly = ($regular_price - $sale_price_for_monthly) * $values['quantity'];
 
-							if ( $is_annual_or_monthly == 1392755 ) { //if user in monthly member
+							if ( $is_annual_or_monthly == 1392755 ) { //if user is a new monthly member
 
 								$discount = (get_dynamic_price( $_product->get_id() )[1] - get_dynamic_price( $_product->get_id() )[0]) * $values['quantity'];
 
@@ -202,7 +202,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							$discount_for_monthly = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['sale_price']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) ) * $values['quantity'];
 
-							if ( $is_annual_or_monthly == 1392755 ) { //if user in monthly member
+							if ( $is_annual_or_monthly == 1392755 ) { //if user is a new monthly member
 
 								$discount = ( (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_monthly']  )) - (str_replace( '$', '', $dynamic_pricearr[$var_id]['dynamic_price_array_annual']  )) ) * $values['quantity'];
 
@@ -216,8 +216,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 							}
 
-
-
 							}
 
 						$cw_discount += $discount;
@@ -227,7 +225,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					//for annual memeber show save msg
 
-					if( $is_annual_or_monthly==174765 || $is_annual_or_monthly==174761 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
+					if( $is_annual_or_monthly == 174765 || $is_annual_or_monthly == 174761 ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
 								?>
 									<!-- Show saving msg for annual member -->
@@ -241,7 +239,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 									</div>
 								</td>
 
-
 								</tr>
 
 								<?php
@@ -253,15 +250,17 @@ do_action( 'woocommerce_before_cart' ); ?>
 					if((!array_key_exists("89338966d3810daca44fbf46e5f8f866", WC()->cart->get_cart()) && !array_key_exists("eb52463368ecd850262863fc1bc53272", WC()->cart->get_cart()) && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) && !is_user_an_active_member_wcm()) || ( $is_annual_or_monthly==1392755 && !array_key_exists("0db9fb291890f0ca660b86cac47d4b08", WC()->cart->get_cart()) )|| check_if_monthly_is_in_cart() ) { //if user is a monthly member or has monthly added to the cart then show annual upsell
 
 						//upsell annual dc
+
+						//product id for annual product
 						$product = wc_get_product( 174739 );
 
+						//product id for new monthly product
 						$product_monthly = wc_get_product( 1392753 );
 
 
 						?>
 
 							<?php
-
 
 								if ( $is_annual_or_monthly==1392755 ) { //show saving msg for monthly member
 
@@ -276,7 +275,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 									</div>
 								</td>
-
 
 							</tr>
 
@@ -305,14 +303,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 								<p class="recomment-text">RECOMMENDED FOR YOU</p>
 								</div>
 
-
 							<td class="product-thumbnail monthly_deal">
-
 
 						<?php printf( '<a href="%s">%s</a>', esc_url( get_permalink( $product->get_id() )), apply_filters( 'woocommerce_cart_item_thumbnail', $product->get_image(), "89338966d3810daca44fbf46e5f8f866" ) ); // PHPCS: XSS ok. ?>
 							</td>
 						<td class="product-name-mem annual_upsell_product_name" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
-
 
 					<?php
 						if($woocommerce->cart->total > 0){
@@ -606,7 +601,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 ) ) {
 
-										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount == 2 && hasFreebieCategory ) ) {
+										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount == 2 && hasFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
 
 											jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.');
 
@@ -716,9 +711,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					</script>
 
-
 					<?php
-
 
 					?>
 					<tr class="woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
@@ -876,8 +869,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 								</div>
 							</div>
 
-
-
 							<?php
 
 								if ( $product_id == 1392753 || $product_id == 174739  ) {
@@ -953,8 +944,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 										});
 
 									}
-
-
 
 									//Adding the remove url to the remove the membership button
 

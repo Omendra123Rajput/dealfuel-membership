@@ -7762,6 +7762,7 @@ margin-bottom : 0;
 
 /*Changes made by Vaibhav for cart page and checkout page issues - End*/
 
+/*Changes made by Omendra New DF Membership Modal - Start*/
 
 /*Price styling on Product page*/
 
@@ -8133,8 +8134,7 @@ table {
   }
 
   .recomment-text {
-
-    color: #FFF;
+	color: #FFF;
     font-family: Inter;
     font-size: 9px;
     font-style: normal;
@@ -8143,7 +8143,6 @@ table {
     padding-left: 19px;
 
   }
-
 
 .green-text{
 
@@ -8317,7 +8316,6 @@ table {
 
 }
 
-
 .popup-remove-mem-button{
 	padding-top: 15px;
 	padding-left: 130px;
@@ -8407,8 +8405,6 @@ table {
 	}
 
 }
-
-
 
 /* Checkout Upsell Styling */
 
@@ -8535,3 +8531,4 @@ table {
 .monthly-banner-carttotal-pos{
 	top:106px;
 }
+/*Changes made by Omendra New DF Membership Modal - End*/

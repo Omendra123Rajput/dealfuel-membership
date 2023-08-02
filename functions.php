@@ -8334,7 +8334,7 @@ function update_points_after_membership_upgrade ( ) {
 
 		//formula for credit points to be rewared
 
-		$monthly_member_amount = 10;
+		$monthly_member_amount = 10; //new monthly mem is priced $10
 
 		$credit_points_to_be_rewared = $monthly_member_amount * ( $no_of_day_in_the_month_of_activation - $days_passed )/$no_of_day_in_the_month_of_activation;
 
@@ -8468,8 +8468,6 @@ function is_product_in_category( $category_slug ) {
 	 return false;
 	}
 
-/** Added by Omendra - DF Memebership - END */
-
 /*
 AJAX action to retrieve cart items count
 */
@@ -8564,6 +8562,8 @@ function update_dealpage_text_based_on_cat (){
 	}
 
 }
+
+/** Added by Omendra - DF Memebership - END */
 
 
 ?>
