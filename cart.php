@@ -540,6 +540,12 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
 
+										if( is_annual_or_monthly == 1392755 ) {//tooltip close when clicked on cross
+											jQuery('#df_cart_close_tooltip').click(function() {
+												jQuery('.cart-tooltip-text').css('display','none');
+											});
+										}
+
 										if ( is_annual_or_monthly == 1392755 && cartTotalFinal == 0 ) {
 
 											jQuery('.df-show-savings').css('display','none');
