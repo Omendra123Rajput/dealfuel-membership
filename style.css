@@ -8483,6 +8483,9 @@ table {
 	.woocommerce-cart .monthly-sub-button .offer_btn-2{
 		width: 77px !important;
 	}
+	.display-savings-msg div{
+		right: 13%;
+	}
 }
 @media (max-width: 361px) {
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub{
