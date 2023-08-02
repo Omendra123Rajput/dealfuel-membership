@@ -5437,8 +5437,8 @@ function df_change_product_price_html( $price, $product ) {
 
 		// display prices on shop page for simple products products
 
-		if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
-			//if user's membership is annual or monthly then show annual's price
+		if( $user_membership_type == 174765 || $user_membership_type == 174763 || $user_membership_type == 174761 ) {
+			//if user's membership is annual or old monthly then show annual's price
 
 			$updated_dynamic_price = get_dynamic_price( $product->get_id() )[0];
 
@@ -5490,9 +5490,9 @@ function df_change_product_price_html( $price, $product ) {
 
 		if($var_amount_arr[0] != 0){
 
-			if( $user_membership_type == 174765 || $user_membership_type == 174763 ) {
+			if( $user_membership_type == 174765 || $user_membership_type == 174763 || $user_membership_type == 174761 ) {
 
-				//if user's membership is annual or quaterly then show annual's price
+				//if user's membership is annual or quaterly or old monthly then show annual's price
 				$price_val = '$'.$var_amount_arr[0].'-'.'$'.$var_amount_arr[count($var_amount_arr) -2];
 
 			}else {//if user's memership is monthly,show monthly's price
@@ -8480,14 +8480,45 @@ add_action('wp_ajax_nopriv_get_cart_items_count', 'get_cart_items_count');
 function get_cart_items_count() {
     // Get the cart items count
     $item_count = WC()->cart->get_cart_contents_count();
-	 // Get the cart total
-	$cart_total_price_final = WC()->cart->get_cart_total();
 
-      // Send the response as JSON
-	  wp_send_json(array(
+    // Initialize the flag to false (no freebie category found yet)
+    $has_freebie_category = false;
+
+    // Check if there's only one item in the cart
+    if ($item_count === 1) {
+        // Get the cart items
+        $cart_items = WC()->cart->get_cart();
+        foreach ($cart_items as $cart_item_key => $cart_item) {
+            // Get the product ID of the cart item
+            $product_id = $cart_item['product_id'];
+
+            // Check if the product has the 'freebies' category
+            $has_freebie_category = has_term('freebies', 'product_cat', $product_id);
+        }
+    } else {
+        // If there are multiple items in the cart, check if any item has the 'freebie' category
+        $cart_items = WC()->cart->get_cart();
+        foreach ($cart_items as $cart_item_key => $cart_item) {
+            // Get the product ID of the cart item
+            $product_id = $cart_item['product_id'];
+
+            // Check if the product has the 'freebie' category
+            if (has_term('freebies', 'product_cat', $product_id)) {
+                $has_freebie_category = true;
+                break; // Stop the loop if freebie category found in any item
+            }
+        }
+    }
+
+    // Add the 'has_freebie_category' flag to the response array
+    $response = array(
         'item_count' => $item_count,
-        'cart_total_price_final' => $cart_total_price_final,
-    ));
+        'cart_total_price_final' => WC()->cart->get_cart_total(),
+        'has_freebie_category' => $has_freebie_category,
+    );
+
+    // Send the response as JSON
+    wp_send_json($response);
 }
 
 /**

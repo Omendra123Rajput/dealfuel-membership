@@ -48,9 +48,13 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 								function changeCssofDiv() {
 									jQuery(".banner").addClass("banner-annual-for-monthly");
-									if (  jQuery(window).width() >= 767 ){
-										jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px');
+
+									if (  jQuery(window).width() >= 767 ){//if screen in large than 767
+										jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem').css('top','106px !important');
+									}else{
+										jQuery(".product-name-mem.annual_upsell_product_name").addClass("monthly-banner-carttotal-pos");
 									}
+
 									jQuery('.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents tr .add-monthly-sub').css('margin-top','55px');
 									jQuery('.cart_tooltip').removeClass('show_hide_tooltip');//make sure tooltip should work again after removing the annual mem from the cart
 
@@ -281,7 +285,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 											jQuery(document).ready(function() {
 
-												jQuery('.banner').css('top','186px');
+												jQuery('.banner').addClass('main-monthly-banner');
 
 											});
 
@@ -448,15 +452,10 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 			<?php
 
-			$total_items = WC()->cart->cart_contents_count;
-
 			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 
 				$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 				$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
-
-				//find out the product has freebie cat
-				$has_freebie_category = has_term('freebies', 'product_cat', $product_id);
 
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
@@ -474,236 +473,246 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					?>
 					<script>
-								//get the updated number of items in the cart every time cart is updated
-								// Declare a variable to store the cart items count
+								//get the updated number of items in the cart and the cart total every time cart is updated
 								var cartItemsCount = 0;
 								var cartTotalFinal = 0;
 
-								function updateCartItemsCount() {
+								function updateCartItemsCount(callback) {
 									jQuery.get({
 									url: '<?php echo admin_url('admin-ajax.php'); ?>',
 									data: { action: 'get_cart_items_count' },
 									success: function(response) {
-										cartItemsCount = response.item_count;
-										cartTotalFinal = parseFloat(jQuery(response.cart_total_price_final).text().replace('$', ''));
+
+										var cartItemsCount = response.item_count;
+										var cartTotalFinal = parseFloat(jQuery(response.cart_total_price_final).text().replace('$', ''));
+										var hasFreebieCategory = response.has_freebie_category;
+
+										// Invoke the callback with the updated values
+        								callback(cartItemsCount, cartTotalFinal);
+
+										//Jquery to adjust the banner alignment when ajax runs on the cart
+
+										jQuery(document).ready(function() {
+
+										var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
+
+										if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 1392755 ) {//banner for normal user
+
+											// Function to add style 'top: 86px' when AJAX call starts
+											jQuery(document).ajaxStart(function() {
+												if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
+
+													jQuery('.banner').css('top', '86px');
+												}
+
+											});
+
+											// Function to remove the 'top' style when AJAX call is completed
+											jQuery(document).ajaxStop(function() {
+
+												if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
+													jQuery('.banner').delay(500).queue(function(next) {
+													jQuery('.banner').css('top', '215px');
+														next();
+														});
+												}
+											});
+
+										}else{ //banner for monthly user
+
+											// Function to add style 'top: 140px' when AJAX call starts
+											jQuery(document).ajaxStart(function() {
+												jQuery('.banner.banner-annual-for-monthly').css('top', '140px');
+
+											});
+
+											// Function to remove the 'top' style when AJAX call is completed
+											jQuery(document).ajaxStop(function() {
+
+												jQuery('.banner.banner-annual-for-monthly').delay(300).queue(function(next) {
+													jQuery('.banner.banner-annual-for-monthly').css('top', '190px');
+													next();
+												});
+											});
+
+										}
+
+										});
+
+										//hide saving for monthly and annual when only freebie is in cart
+
+										jQuery(document).ready(function() {
+
+										var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
+
+										if ( is_annual_or_monthly == 1392755 && cartTotalFinal == 0 ) {
+
+											jQuery('.df-show-savings').css('display','none');
+											jQuery('.freebie-mon-text').text('Upgrade to Annual Membership & Enjoy 15-100% Extra Discount.');
+
+											if (  jQuery(window).width() >= 768 ){
+
+												jQuery('.freebie-mon-text').css('width','80%');
+												jQuery('.banner').addClass('make_banner_top_for_mon_up');
+
+											}else{
+
+												jQuery('.freebie-mon-text').css('width','100%');
+												jQuery('.annual_upsell_product_name').attr('style', 'top: 52px !important;');
+												jQuery('.banner').addClass('make_banner_top_for_mon');
+												jQuery('.monthly-sub-button').attr('style', 'bottom: 3em !important;');
+
+
+											}
+
+										}else if ( (is_annual_or_monthly == 174765 && cartTotalFinal == 0) || (is_annual_or_monthly == 174761 && cartTotalFinal == 0 ) ) {//if user is annual or old monthly and cart total is 0
+
+											if( cartItemsCount == 1 && hasFreebieCategory ){//if only freebie is in cart
+												jQuery('.df-show-savings').css('display','none');
+											}
+										}
+										});
+
+
+										//re-run the js for pop up and remove the membership from the cart when only membership is remaining
+
+										function membershipRemove() {
+
+										var product_id = "<?php echo $product_id  ?>";
+
+										var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
+
+										if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 ) || ( cartTotalFinal == 10 ) ) {
+
+										jQuery('.popup-mem-text').text('A DealClub Membership of just $9/Month, will save 5%-50% on all purchases for one month.')
+
+										jQuery('.popup-mem-text').css('padding-top','45px');
+										jQuery('.popup-extra-text').css('display','none');
+
+										jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases')
+
+										jQuery(".remove-mem-cart").on("click", function () {
+												jQuery("#blur-overlay").fadeIn();
+												jQuery("#floating-popup").fadeIn();
+											});
+
+											//close the popup on clicking the cross
+											jQuery(".popup-close-btn").on("click", function (event) {
+												event.preventDefault(); // Prevent the default anchor tag behavior
+												event.stopPropagation();
+												jQuery("#blur-overlay").fadeOut();
+												jQuery("#floating-popup").fadeOut();
+											});
+
+										}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 ) ) {
+
+										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount == 2 && hasFreebieCategory ) ) {
+
+											jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.');
+
+										}
+
+										jQuery('.popup-mem-text').css('padding-top','45px');
+										jQuery('.popup-extra-text').css('display','none');
+
+										jQuery(".remove-mem-cart").on("click", function () {
+												jQuery("#blur-overlay").fadeIn();
+												jQuery("#annual-floating-popup").fadeIn();
+											});
+
+											//close the popup on clicking the cross
+											jQuery(".popup-close-btn").on("click", function (event) {
+												event.preventDefault(); // Prevent the default anchor tag behavior
+												event.stopPropagation();
+												jQuery("#blur-overlay").fadeOut();
+												jQuery("#annual-floating-popup").fadeOut();
+											});
+
+										}
+
+										if ( product_id == 1392753 || product_id == 174739) {//if added product is monthly product
+
+										if ( product_id == 1392753 ) {
+
+												jQuery(".remove-mem-cart").on("click", function () {
+												jQuery("#blur-overlay").fadeIn();
+												jQuery("#floating-popup").fadeIn();
+											});
+
+											//close the popup on clicking the cross
+											jQuery(".popup-close-btn").on("click", function (event) {
+												event.preventDefault(); // Prevent the default anchor tag behavior
+												event.stopPropagation();
+												jQuery("#blur-overlay").fadeOut();
+												jQuery("#floating-popup").fadeOut();
+											});
+
+										}else{
+
+											jQuery(".remove-mem-cart").on("click", function () {
+												jQuery("#blur-overlay").fadeIn();
+												jQuery("#annual-floating-popup").fadeIn();
+											});
+
+											//close the popup on clicking the cross
+											jQuery(".popup-close-btn").on("click", function (event) {
+												event.preventDefault(); // Prevent the default anchor tag behavior
+												event.stopPropagation();
+												jQuery("#blur-overlay").fadeOut();
+												jQuery("#annual-floating-popup").fadeOut();
+											});
+
+										}
+
+										}
+
+										//Adding the remove url to the remove the membership button
+
+										// Your PHP variables are now accessible here
+										var dynamicHref = "<?php echo $dynamicHref; ?>";
+										var dynamicHref = dynamicHref.replace(/#038;/g, "");
+										var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
+										var dynamicProductID = "<?php echo $dynamicProductID; ?>";
+										var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
+										var homeURL = "<?php echo $home_url; ?>";
+
+										// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
+										jQuery(".remove-product-m")
+										.attr("href", dynamicHref)
+										.attr("aria-label", dynamicAriaLabel)
+										.attr("data-product_id", dynamicProductID)
+										.attr("data-product_sku", dynamicProductSKU);
+
+										}
+
+										// Attach the function to .ajaxComplete()
+										jQuery(document).ajaxComplete(function() {
+										// Add the class after each AJAX request is complete
+										membershipRemove();
+										});
+
+										// Initial call to add the class when the page loads
+										membershipRemove();
+
+
 									},
 									});
 								}
 
-								// Initial call to update cart items count on page load
-								updateCartItemsCount();
+								  // Initial call to update cart items count on page load
+									updateCartItemsCount(function(initialCartItemsCount, initialCartTotalFinal) {
+										 // Store the initial values in variables
+    										var cartItemsCount = initialCartItemsCount;
+   											var cartTotalFinal = initialCartTotalFinal;
 
-								// Trigger the AJAX call whenever the cart is updated (e.g., when adding/removing items)
-								jQuery(document.body).on('updated_cart_totals', function() {
-									updateCartItemsCount();
-								});
+									});
 
-								//Jquery to adjust the banner alignment when ajax runs on the cart
-
-								jQuery(document).ready(function() {
-
-									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
-
-									if ( jQuery(window).width() >= 767 && is_annual_or_monthly != 1392755 ) {//banner for normal user
-
-										// Function to add style 'top: 86px' when AJAX call starts
-										jQuery(document).ajaxStart(function() {
-											if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
-
-												jQuery('.banner').css('top', '86px');
-											}
+								  // Trigger the AJAX call whenever the cart is updated (e.g., when adding/removing items)
+									jQuery(document.body).on('updated_cart_totals', function() {
+										updateCartItemsCount(function(updatedCartItemsCount, updatedCartTotalFinal) {
 
 										});
-
-										// Function to remove the 'top' style when AJAX call is completed
-										jQuery(document).ajaxStop(function() {
-
-											if (jQuery('.woocommerce-cart .ast-container .woocommerce .woocommerce-notices-wrapper .woocommerce-error').length) {//adjust the alginment if the error notice in the cart
-												jQuery('.banner').delay(500).queue(function(next) {
-												jQuery('.banner').css('top', '215px');
-													next();
-													});
-											}
-										});
-
-									}else{ //banner for monthly user
-
-										// Function to add style 'top: 140px' when AJAX call starts
-										jQuery(document).ajaxStart(function() {
-											jQuery('.banner.banner-annual-for-monthly').css('top', '140px');
-
-										});
-
-										// Function to remove the 'top' style when AJAX call is completed
-										jQuery(document).ajaxStop(function() {
-
-											jQuery('.banner.banner-annual-for-monthly').delay(500).queue(function(next) {
-
-											if ( cartTotalFinal == 0 ) {//for monthly,when freebie is added in the cart adjust banner
-												jQuery('.banner.banner-annual-for-monthly').css('top', '137px');
-											}else{//for normal paid deals
-												jQuery('.banner.banner-annual-for-monthly').css('top', '190px');
-											}
-												next();
-												});
-										});
-
-									}
-
-								});
-
-								//hide saving for monthly and annual when only freebie is in cart
-
-								jQuery(document).ready(function() {
-
-									var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
-
-									if ( is_annual_or_monthly == 1392755 && cartTotalFinal == 0 ) {
-
-										jQuery('.df-show-savings').css('display','none');
-										jQuery('.freebie-mon-text').text('Upgrade to Annual Membership & Enjoy 15-100% Extra Discount.');
-
-										if (  jQuery(window).width() >= 768 ){
-
-											jQuery('.freebie-mon-text').css('width','80%');
-										}else{
-
-											jQuery('.freebie-mon-text').css('width','100%');
-											jQuery('.annual_upsell_product_name').attr('style', 'top: 52px !important;');
-											jQuery('.banner').addClass('make_banner_top_for_mon');
-											jQuery('.monthly-sub-button').attr('style', 'bottom: 3em !important;');
-
-
-										}
-
-									}else if ( is_annual_or_monthly == 174765 && cartTotalFinal == 0 ) {//if user is annual and cart total is 0
-
-										var has_freebie_category = "<?php echo $has_freebie_category  ?>";
-
-										if( cartItemsCount == 1 && has_freebie_category== 1 ){//if only freebie is in cart
-											jQuery('.df-show-savings').css('display','none');
-										}
-									}
-								});
-
-							//re-run the js for pop up and remove the membership from the cart when only membership is remaining
-
-							function membershipRemove() {
-
-								var product_id = "<?php echo $product_id  ?>";
-
-								// $cart_total_price_final
-
-								var cart_total_price_final = "<?php echo $cart_total_price_final  ?>";
-
-								if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 || ( cartTotalFinal == 10 ) ) ) {
-
-									jQuery('.popup-mem-text').text('A DealClub Membership of just $10/Month, will save 5%-50% on all purchases for one month.')
-
-									jQuery('.popup-mem-text').css('padding-top','45px');
-									jQuery('.popup-extra-text').css('display','none');
-
-									jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases');
-
-									jQuery(".remove-mem-cart").on("click", function () {
-											jQuery("#blur-overlay").fadeIn();
-											jQuery("#floating-popup").fadeIn();
-										});
-
-										//close the popup on clicking the cross
-										jQuery(".popup-close-btn").on("click", function (event) {
-											event.preventDefault(); // Prevent the default anchor tag behavior
-											event.stopPropagation();
-											jQuery("#blur-overlay").fadeOut();
-											jQuery("#floating-popup").fadeOut();
-										});
-
-								}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 )  ) {
-
-									jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.')
-
-									jQuery('.popup-mem-text').css('padding-top','45px');
-									jQuery('.popup-extra-text').css('display','none');
-
-									jQuery(".remove-mem-cart").on("click", function () {
-											jQuery("#blur-overlay").fadeIn();
-											jQuery("#annual-floating-popup").fadeIn();
-										});
-
-										//close the popup on clicking the cross
-										jQuery(".popup-close-btn").on("click", function (event) {
-											event.preventDefault(); // Prevent the default anchor tag behavior
-											event.stopPropagation();
-											jQuery("#blur-overlay").fadeOut();
-											jQuery("#annual-floating-popup").fadeOut();
-										});
-
-
-								}
-
-								if ( product_id == 1392753 || product_id == 174739) {//if added product is monthly product
-
-									if ( product_id == 1392753 ) {
-
-											jQuery(".remove-mem-cart").on("click", function () {
-											jQuery("#blur-overlay").fadeIn();
-											jQuery("#floating-popup").fadeIn();
-										});
-
-										//close the popup on clicking the cross
-										jQuery(".popup-close-btn").on("click", function (event) {
-											event.preventDefault(); // Prevent the default anchor tag behavior
-											event.stopPropagation();
-											jQuery("#blur-overlay").fadeOut();
-											jQuery("#floating-popup").fadeOut();
-										});
-
-									}else{
-
-										jQuery(".remove-mem-cart").on("click", function () {
-											jQuery("#blur-overlay").fadeIn();
-											jQuery("#annual-floating-popup").fadeIn();
-										});
-
-										//close the popup on clicking the cross
-										jQuery(".popup-close-btn").on("click", function (event) {
-											event.preventDefault(); // Prevent the default anchor tag behavior
-											event.stopPropagation();
-											jQuery("#blur-overlay").fadeOut();
-											jQuery("#annual-floating-popup").fadeOut();
-										});
-
-									}
-
-								}
-
-								//Adding the remove url to the remove the membership button
-
-								// Your PHP variables are now accessible here
-								var dynamicHref = "<?php echo $dynamicHref; ?>";
-								var dynamicHref = dynamicHref.replace(/#038;/g, "");
-								var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
-								var dynamicProductID = "<?php echo $dynamicProductID; ?>";
-								var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
-								var homeURL = "<?php echo $home_url; ?>";
-
-								// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
-								jQuery(".remove-product-m")
-									.attr("href", dynamicHref)
-									.attr("aria-label", dynamicAriaLabel)
-									.attr("data-product_id", dynamicProductID)
-									.attr("data-product_sku", dynamicProductSKU);
-
-							}
-
-							// Attach the function to .ajaxComplete()
-							jQuery(document).ajaxComplete(function() {
-							// Add the class after each AJAX request is complete
-							membershipRemove();
-							});
-
-							// Initial call to add the class when the page loads
-							membershipRemove();
+									});
 
 					</script>
 

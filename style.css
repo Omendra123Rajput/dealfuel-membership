@@ -7627,13 +7627,10 @@ margin-bottom : 0;
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .product-name-mem{
 		position: absolute !important;
 		left: 117px !important;
-		/* top: 52px !important; */
-		/* top: 106px; */
 	}
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button
 	{
 		left: 12em !important;
-		/* top: 230px; */
 		position: absolute !important;
 	}
 	.woocommerce-checkout .dcplan-section .inner-section-divs{
@@ -8209,6 +8206,10 @@ table {
 	top:190px;
 }
 
+.main-monthly-banner{
+	top:186px;
+}
+
 /* CSS to style the popup */
 
 .popup {
@@ -8474,7 +8475,7 @@ table {
 @media (max-width: 380px) {
 	.add-monthly-sub .monthly-sub-button,.monthly_add_item_button{
 		position: relative;
-		right: 0em;
+		right: -1.5em;
 	}
 	.monthly_product_name{
 		top: 207px !important;
@@ -8482,6 +8483,9 @@ table {
 	.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-sub,.woocommerce-cart .woocommerce-cart-form .woocommerce-cart-form__contents .add-monthly-button
 	{
 		left: 12em !important;
+	}
+	.woocommerce-cart .monthly-sub-button .offer_btn-2{
+		width: 77px !important;
 	}
 }
 @media (max-width: 361px) {
@@ -8517,9 +8521,17 @@ table {
 	top:58px !important;
 }
 
+.make_banner_top_for_mon_up{
+	top:137px !important;
+}
+
 @media screen and (min-width: 411px) and (max-width: 415px) {
 
 	.make_banner_top_for_mon{
 		top:56px !important;
 	   }
+}
+
+.monthly-banner-carttotal-pos{
+	top:106px;
 }
