@@ -585,7 +585,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										if ( ( cartItemsCount == 1 && product_id == 1392753 ) || ( cart_total_price_final == 10 ) || ( cartTotalFinal == 10 ) ) {
 
-										jQuery('.popup-mem-text').text('A DealClub Membership of just $9/Month, will save 5%-50% on all purchases for one month.')
+										jQuery('.popup-mem-text').text('A DealClub Membership of just $10/Month, will save 5%-50% on all purchases for one month.')
 
 										jQuery('.popup-mem-text').css('padding-top','45px');
 										jQuery('.popup-extra-text').css('display','none');
@@ -808,7 +808,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									<br>
 									<div class="popup-extra-text">
 
-									<span>& extra 5%-50% all other purchases for one month.</span>
+									<span>& extra 5%-50% on all other purchases for one month.</span>
 
 									</div>
 
