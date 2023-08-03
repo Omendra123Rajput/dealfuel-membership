@@ -610,11 +610,11 @@ do_action( 'woocommerce_before_cart' ); ?>
 										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount == 2 && hasFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
 
 											jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.');
+											jQuery('.popup-extra-text').css('display','none');
+											jQuery('.popup-mem-text').css('padding-top','45px');
 
 										}
 
-										jQuery('.popup-mem-text').css('padding-top','45px');
-										jQuery('.popup-extra-text').css('display','none');
 
 										jQuery(".remove-mem-cart").on("click", function () {
 												jQuery("#blur-overlay").fadeIn();
