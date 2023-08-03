@@ -482,6 +482,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 										var cartTotalFinal = parseFloat(jQuery(response.cart_total_price_final).text().replace('$', ''));
 										var hasFreebieCategory = response.has_freebie_category;
 										var hasSpecificProduct = response.has_specific_product;
+										var hasNonFreebieCategory = response.has_non_freebie_category;
 
 										// Invoke the callback with the updated values
         								callback(cartItemsCount, cartTotalFinal);
@@ -569,7 +570,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}else if ( (is_annual_or_monthly == 174765 && cartTotalFinal == 0) || (is_annual_or_monthly == 174761 && cartTotalFinal == 0 ) ) {//if user is annual or old monthly and cart total is 0
 
-											if( cartItemsCount >= 1 && hasFreebieCategory ){//if only freebie is in cart
+											if( ( cartItemsCount >=1 && !hasNonFreebieCategory) ){//if only freebie is in cart or if there is any item which is not a freebie
 												jQuery('.df-show-savings').css('display','none');
 											}
 										}
