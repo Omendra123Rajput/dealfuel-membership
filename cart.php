@@ -569,7 +569,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}else if ( (is_annual_or_monthly == 174765 && cartTotalFinal == 0) || (is_annual_or_monthly == 174761 && cartTotalFinal == 0 ) ) {//if user is annual or old monthly and cart total is 0
 
-											if( cartItemsCount == 1 && hasFreebieCategory ){//if only freebie is in cart
+											if( cartItemsCount >= 1 && hasFreebieCategory ){//if only freebie is in cart
 												jQuery('.df-show-savings').css('display','none');
 											}
 										}
