@@ -481,6 +481,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 										var cartItemsCount = response.item_count;
 										var cartTotalFinal = parseFloat(jQuery(response.cart_total_price_final).text().replace('$', ''));
 										var hasFreebieCategory = response.has_freebie_category;
+										var hasSpecificProduct = response.has_specific_product;
 
 										// Invoke the callback with the updated values
         								callback(cartItemsCount, cartTotalFinal);
@@ -590,7 +591,10 @@ do_action( 'woocommerce_before_cart' ); ?>
 										jQuery('.popup-mem-text').css('padding-top','45px');
 										jQuery('.popup-extra-text').css('display','none');
 
-										jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases')
+										if (( cartItemsCount == 1 && product_id == 1392753 ) || ( cartItemsCount >= 2 && hasSpecificProduct ) ) {
+
+											jQuery('.annual_upsell_product_name .text-dark.annual-upsell-new-text').text('Save an EXTRA 15%-100% On All Your Purchases')
+										}
 
 										jQuery(".remove-mem-cart").on("click", function () {
 												jQuery("#blur-overlay").fadeIn();
@@ -607,7 +611,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 ) ) {
 
-										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount == 2 && hasFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
+										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount >= 2 && hasFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
 
 											jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.');
 											jQuery('.popup-extra-text').css('display','none');

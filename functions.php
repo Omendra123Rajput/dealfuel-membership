@@ -8481,6 +8481,7 @@ function get_cart_items_count() {
 
     // Initialize the flag to false (no freebie category found yet)
     $has_freebie_category = false;
+	$has_specific_product = false;
 
     // Check if there's only one item in the cart
     if ($item_count === 1) {
@@ -8492,6 +8493,11 @@ function get_cart_items_count() {
 
             // Check if the product has the 'freebies' category
             $has_freebie_category = has_term('freebies', 'product_cat', $product_id);
+
+			// Check if the product ID matches the specific product ID (1392753)
+            if ($product_id === 1392753) {
+                $has_specific_product = true;
+            }
         }
     } else {
         // If there are multiple items in the cart, check if any item has the 'freebie' category
@@ -8503,7 +8509,13 @@ function get_cart_items_count() {
             // Check if the product has the 'freebie' category
             if (has_term('freebies', 'product_cat', $product_id)) {
                 $has_freebie_category = true;
-                break; // Stop the loop if freebie category found in any item
+                // break; // Stop the loop if freebie category found in any item
+            }
+
+			// Check if the product ID matches the specific product ID (1392753)
+			if ($product_id === 1392753) {
+                $has_specific_product = true;
+                break; // Stop the loop if specific product found in any item
             }
         }
     }
@@ -8513,6 +8525,7 @@ function get_cart_items_count() {
         'item_count' => $item_count,
         'cart_total_price_final' => WC()->cart->get_cart_total(),
         'has_freebie_category' => $has_freebie_category,
+		'has_specific_product' => $has_specific_product,
     );
 
     // Send the response as JSON
