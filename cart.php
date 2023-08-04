@@ -540,6 +540,23 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										jQuery(document).ready(function() {
 
+										//Adding the remove url to the remove the membership button
+
+										// Your PHP variables are now accessible here
+										var dynamicHref = "<?php echo $dynamicHref; ?>";
+										var dynamicHref = dynamicHref.replace(/#038;/g, "");
+										var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
+										var dynamicProductID = "<?php echo $dynamicProductID; ?>";
+										var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
+										var homeURL = "<?php echo $home_url; ?>";
+
+										// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
+										jQuery(".remove-product-m")
+										.attr("href", dynamicHref)
+										.attr("aria-label", dynamicAriaLabel)
+										.attr("data-product_id", dynamicProductID)
+										.attr("data-product_sku", dynamicProductSKU);
+
 										var is_annual_or_monthly = "<?php echo $is_annual_or_monthly;  ?>";
 
 										if( is_annual_or_monthly == 1392755 ) {//tooltip close when clicked on cross
@@ -612,7 +629,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}else if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cart_total_price_final == 49 ) || ( cartTotalFinal == 49 ) ) {
 
-										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount >= 2 && hasFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
+										if ( ( cartItemsCount == 1 && product_id == 174739 ) || ( cartItemsCount >=1 && !hasNonFreebieCategory ) ) {//if cart has only annual added to the cart or cart has annual and freebie in cart
 
 											jQuery('.popup-mem-text').text('A DealClub Membership of just $49/Year, will save 15%-100% on all purchases for one year.');
 											jQuery('.popup-extra-text').css('display','none');
@@ -672,23 +689,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										}
 
-										//Adding the remove url to the remove the membership button
-
-										// Your PHP variables are now accessible here
-										var dynamicHref = "<?php echo $dynamicHref; ?>";
-										var dynamicHref = dynamicHref.replace(/#038;/g, "");
-										var dynamicAriaLabel = "<?php echo $dynamicAriaLabel; ?>";
-										var dynamicProductID = "<?php echo $dynamicProductID; ?>";
-										var dynamicProductSKU = "<?php echo $dynamicProductSKU; ?>";
-										var homeURL = "<?php echo $home_url; ?>";
-
-										// Select the anchor tag with class 'remove-product-m' and set its attributes dynamically
-										jQuery(".remove-product-m")
-										.attr("href", dynamicHref)
-										.attr("aria-label", dynamicAriaLabel)
-										.attr("data-product_id", dynamicProductID)
-										.attr("data-product_sku", dynamicProductSKU);
-
 										}
 
 										// Attach the function to .ajaxComplete()
@@ -699,7 +699,6 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 										// Initial call to add the class when the page loads
 										membershipRemove();
-
 
 									},
 									});

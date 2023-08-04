@@ -8480,7 +8480,7 @@ function get_cart_items_count() {
     $item_count = WC()->cart->get_cart_contents_count();
 
     // Initialize the flag to false (no freebie category found yet)
-	$has_freebie_category = false;
+    $has_freebie_category = false;
 	$has_non_freebie_category = false;
 	$has_specific_product = false;
 
@@ -8492,11 +8492,13 @@ function get_cart_items_count() {
             // Get the product ID of the cart item
             $product_id = $cart_item['product_id'];
 
-            // Check if the product has the 'freebies' category
-            $has_freebie_category = has_term('freebies', 'product_cat', $product_id);
+             // Check if the product has the 'freebies' category
+			 if ($product_id != 174739) { // Skip checking category for the specific product ID (174739)
+                $has_freebie_category = has_term('freebies', 'product_cat', $product_id);
+            }
 
 			// Check if the product ID matches the specific product ID (1392753)
-            if ($product_id === 1392753) {
+            if ($product_id == 1392753 || $product_id == 174739 ) {
                 $has_specific_product = true;
             }
         }
@@ -8507,24 +8509,27 @@ function get_cart_items_count() {
             // Get the product ID of the cart item
             $product_id = $cart_item['product_id'];
 
-             // Check if the product has the 'freebies' category
-			 if (has_term('freebies', 'product_cat', $product_id)) {
-                $has_freebie_category = true;
-            } else {
-                $has_non_freebie_category = true;
+				// Check if the product ID matches the specific product ID (174721)
+				if ($product_id == 1392753 || $product_id == 174739) {
+					$has_specific_product = true;
+					// break; // Stop the loop if specific product found in any item
+				}
+
+                 // Skip checking category for the specific product ID (174739)
+				 if ($product_id != 174739) {
+					// Check if the product has the 'freebies' category
+					if (has_term('freebies', 'product_cat', $product_id)) {
+						$has_freebie_category = true;
+					} else {
+						$has_non_freebie_category = true;
+					}
+				}
+
+
+			 // If both categories are found, break out of the loop as we only need to know if there's a non-freebie category item
+			 if ($has_freebie_category && $has_non_freebie_category) {
+                break;
             }
-
-			// Check if the product ID matches the specific product ID (1392753)
-			if ($product_id === 1392753) {
-                $has_specific_product = true;
-                break; // Stop the loop if specific product found in any item
-            }
-
-			// If both categories are found, break out of the loop as we only need to know if there's a non-freebie category item
-			if ( $has_freebie_category && $has_non_freebie_category ) {
-				break;
-			}
-
         }
     }
 
