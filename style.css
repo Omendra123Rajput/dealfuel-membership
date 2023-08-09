@@ -6196,7 +6196,7 @@ form #order_review_heading:not(.elementor-widget-woocommerce-checkout-page #orde
   margin: 0 auto;
 }
 .single.ast-separate-container .ast-article-single:not(.ast-related-post){
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
 }
 .single-product .moosend-main-form-wrapper form{
   display: flex !important;

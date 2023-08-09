@@ -6601,7 +6601,7 @@ function add_script_on_select_variation_value_change(){
 		$product_id = $product->get_id();
 		$dynamic_pricearr = get_all_dynamic_prices_with_id_as_key($product->get_id());
 		$dynamic_price = json_encode($dynamic_pricearr);
-	$assoc_dynamic_price = array_values($dynamic_pricearr);
+		$assoc_dynamic_price = array_values($dynamic_pricearr);
 		?>
 
 		<div class="var_price">
@@ -6609,7 +6609,7 @@ function add_script_on_select_variation_value_change(){
 
 					<span class="variation_show_price"><?php echo $assoc_dynamic_price['0']['dynamic_price_array_annual']; ?></span>
 
-					<span class="df_price_del"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
+					<span class="df_price_del var_regular_price"><?php echo $assoc_dynamic_price['0']['regular_price']; ?></span>
 				</div>
 
 		</div>
@@ -6832,7 +6832,8 @@ function add_script_on_select_variation_value_change(){
 								jQuery('input[name="varradiodealclub"]').not(this).prop('checked', false);
 							});
 
-
+							//update regular price of the variation
+							jQuery('.var_regular_price').html(dynamic_price[inputvarval]['regular_price']);
 
 							//var inputvarval = jQuery('#mob_variation input.variation_id').val();
 						 	if( inputvarval != ''){
