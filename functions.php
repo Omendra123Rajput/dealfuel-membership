@@ -6001,12 +6001,12 @@ function productpage_sidebar_addtocart_shortcode(){
 
 									jQuery('#dealpage-details-sc .elementor-widget-container').show();
 
+									// Adjusting Freebies Dimensions
 
-									// Do not change here for live site as it is already fixed
-									jQuery(".elementor-1390716 .elementor-element.elementor-element-20a2151d").css('width','100%');
-									jQuery(".elementor-1390716 .elementor-element.elementor-element-4a19ff62").css('width','70%');
-									jQuery(".elementor-1390716 .elementor-element.elementor-element-4dd1fa06").css('width','6.133%');
-									jQuery(".elementor-1390716 .elementor-element.elementor-element-6e051335").css('width','40.625em');
+									jQuery("#df-main-content-col").css('width','100%');//main content
+									jQuery("#df-sidebar-col").css('width','70%');//sidebar
+									jQuery("#df-empty-col").css('width','6.133%');//empty col
+									jQuery("#df-datatabs-col").css('width','40.625em');//datatabs
 
 									jQuery('#dealpage-details-sc form').hide();
 
@@ -6495,7 +6495,8 @@ function hide_variation_add_to_cart_btn_on_simple_product_page(){
 		<script>
 			jQuery(document).ready(function(){
 				//do not change this on live
-				jQuery(".elementor-1390716 .elementor-element.elementor-element-20a2151d").css('width','100%');
+
+				jQuery("#df-main-content-col").css('width','100%');//main content
 
 				jQuery('#variation_div').hide();
 
