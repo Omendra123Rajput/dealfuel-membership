@@ -8598,4 +8598,37 @@ function update_dealpage_text_based_on_cat (){
 /** Added by Omendra - DF Memebership - END */
 
 
+// Hook to validate coupons and credit points
+
+add_filter('woocommerce_coupon_is_valid', 'prevent_multiple_coupons', 10, 2);
+
+function prevent_multiple_coupons($is_valid, $coupon) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return $is_valid;
+    }
+
+    $applied_coupons_count = count(WC()->cart->get_applied_coupons());
+
+    if ($applied_coupons_count > 1) {
+
+		// Remove the first applied coupon
+		$applied_coupons = WC()->cart->get_applied_coupons();
+		$first_coupon = $applied_coupons[1];
+		WC()->cart->remove_coupon($first_coupon);
+
+        wc_clear_notices();
+        wc_add_notice(__('Coupon code and Credits cannot be used in conjunction.', 'woocommerce'), 'error');
+        return false;
+    }
+
+    return $is_valid;
+}
+
+
+
+
+
+
+
+
 ?>
